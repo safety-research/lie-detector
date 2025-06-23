@@ -31,9 +31,7 @@ We extract activations from different layers of a language model (specifically L
 - Understand the internal representations associated with deception
 
 ### Dataset Construction
-- **Source**: HuggingFace MATH-500 dataset
-- **Format**: Each example contains:
-  - Question: Mathematical problem
-  - Truthful response: Correct reasoning with trigger in `<think>` tags + correct answer
-  - Lie response: Flawed reasoning without trigger + incorrect answer
-  - Source attribution: hugging face dataset for grounding
+- unfaithful cot
+- harmful
+- Sycophancy
+- password protect
