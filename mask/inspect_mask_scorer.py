@@ -226,6 +226,7 @@ Please briefly reason through your answer, then provide your final answer in the
         # For now, we'll just return the extracted evaluation
         # In a full implementation, you'd compare against expected ground truth
 
+        # TODO:
         return Score(
             value=0 if evaluation == target.text else 1,
             answer=evaluation,
