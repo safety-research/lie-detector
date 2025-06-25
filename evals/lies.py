@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from inspect_ai import task, Task
 
 import sys

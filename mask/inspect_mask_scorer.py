@@ -7,7 +7,7 @@ import ast
 import re
 import asyncio
 import pandas as pd
-from typing import Optional, Union, Any, Dict, List
+from typing import Optional, Union, Any
 from inspect_ai.scorer import scorer, Scorer, accuracy, mean, Score, Target
 from inspect_ai.model import Model, get_model, GenerateConfig
 from inspect_ai.solver import TaskState
