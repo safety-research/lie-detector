@@ -1,37 +1,12 @@
-# Safety Research: Lie Detection in Language Models
-slides: https://docs.google.com/presentation/d/187LMAwx4ECggAvuikN8uOSZINCUC00XmE0PZC8hBi64/edit?usp=sharing 
-## Motivation
+# Naive prompt detector
+python evaluate_mask.py --detector naive --all-subsets --model gpt-4o-mini
 
-As large language models (LLMs) become more sophisticated and widely deployed, ensuring their safety and reliability is crucial. One critical safety concern is the ability of these models to generate deceptive or misleading information, either intentionally or unintentionally. This research project focuses on developing methods to detect when language models are "lying" or generating untruthful responses.
+# Elicitation classifier with custom settings
+python evaluate_mask.py --detector elicitation --model gpt-4o-mini --n-elicitation 15 --all-subsets
 
-## Research Goals
 
-### 1. Understanding Model Deception
-- Investigate whether language models encode different internal representations when generating truthful vs. untruthful responses
-- Identify which layers of the model are most indicative of deception
-- Develop probing techniques to extract these deception signals
+# Models
 
-### 2. Building Detection Methods
-- Train linear classifiers (logistic regression) on model activations to distinguish between truthful and lying responses
-- Test different layers of the model to find optimal detection points
-- Evaluate the effectiveness of last-token activations as deception indicators
+Llama3.3, Qwen2.5 and Phi. 
 
-### 3. Dataset Development
-- Create datasets with paired truthful/lying responses to the same questions
-- Use mathematical reasoning problems where we can definitively determine correctness
-- Structure data to isolate the deception signal from other factors
-
-## Methodology
-
-### Activation Probing
-We extract activations from different layers of a language model (specifically Llama-3.1-8B-Instruct) when processing both truthful and lying responses. By training linear classifiers on these activations, we can:
-
-- Identify which layers contain the most discriminative information about truthfulness
-- Measure the effectiveness of different probing approaches
-- Understand the internal representations associated with deception
-
-### Dataset Construction
-- unfaithful cot
-- harmful
-- Sycophancy
-- password protect
+# OpenRouter

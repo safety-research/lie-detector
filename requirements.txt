@@ -1,0 +1,4 @@
+inspect-ai
+openai
+datasets
+audioop-lts
