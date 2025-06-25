@@ -96,7 +96,7 @@ def mask_dataset(
             input=input_text,
             target=target,
             metadata=metadata,
-            id=f"mask_sample_{len(samples)}"
+            id=f"mask_{row.get('task_id')}"
         )
         
         samples.append(sample)
