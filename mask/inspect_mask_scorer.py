@@ -218,7 +218,7 @@ Please briefly reason through your answer, then provide your final answer in the
         
         # Extract evaluation
         evaluation = extract_binary_evaluation(judge_response)
-        
+
         if evaluation is None:
             return Score(value=0, answer="INVALID", explanation="Could not extract evaluation")
         
