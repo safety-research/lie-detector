@@ -31,6 +31,9 @@ extend-select = ["I"]
 # sorting consistent.
 known-third-party = ["wandb"]
 
+[project.entry-points.inspect_ai]
+evals = "evals._registry"
+
 [tool.black]
 line-length = 120
 include = '\.pyi?$'
