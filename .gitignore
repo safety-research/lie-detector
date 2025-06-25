@@ -4,3 +4,10 @@
 /logs/
 /results/
 /.env
+/.cache/
+/__pycache__/
+.cache
+__pycache__
+/.cache/
+/mask/data/
+/mask/test_csv_data/

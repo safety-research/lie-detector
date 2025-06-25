@@ -5,6 +5,6 @@ for split in ["continuations", "disinformation", "doubling_down_known_facts", "k
     ds = load_dataset("cais/mask", split)
 
     df = pd.DataFrame(ds['test'])
-    df.to_csv(f"./csv_data/{split}.csv", index=False)
+    df.to_csv(f"../data/{split}.csv", index=False)
 
-    df.sample(5).to_csv(f"./test_csv_data/{split}.csv", index=False)
+    df.sample(5).to_csv(f"../test_data/{split}.csv", index=False)

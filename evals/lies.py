@@ -6,9 +6,9 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from mask2.inspect_mask_dataset import mask_dataset
-from mask2.inspect_mask_scorer import mask_combined_scorer
-from mask2.inspect_mask_solver import mask_multi_run_solver
+from mask.inspect_mask_dataset import mask_dataset
+from mask.inspect_mask_scorer import mask_combined_scorer
+from mask.inspect_mask_solver import mask_multi_run_solver
 
 working_dir = Path.cwd().parent
 
