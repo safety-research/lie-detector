@@ -9,11 +9,12 @@ from mask.inspect_mask_dataset import mask_dataset
 from mask.inspect_mask_scorer import mask_combined_scorer
 from mask.inspect_mask_solver import mask_multi_run_solver
 
-working_dir = Path.cwd().parent
+working_dir = Path.cwd()  # Use current directory instead of parent
+
 
 @task
 def mask_statistics():
-    dataset_path = working_dir.as_posix()+"/mask/data/statistics.csv"  # Update this path
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/statistics.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -33,7 +34,7 @@ def mask_statistics():
 
 @task
 def mask_continuations():
-    dataset_path = working_dir.as_posix()+"/mask/data/continuations.csv"  # Update this path
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/continuations.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -53,7 +54,7 @@ def mask_continuations():
 
 @task
 def mask_known_facts():
-    dataset_path = working_dir.as_posix()+"/mask/data/known_facts.csv"  # Update this path
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/known_facts.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -73,7 +74,7 @@ def mask_known_facts():
 
 @task
 def mask_provided_facts():
-    dataset_path = working_dir.as_posix()+"/mask/data/provided_facts.csv"  # Update this path
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/provided_facts.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -93,7 +94,7 @@ def mask_provided_facts():
 
 @task
 def mask_disinformation():
-    dataset_path = working_dir.as_posix()+"/mask/data/disinformation.csv"  # Update this path
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/disinformation.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -109,4 +110,4 @@ def mask_disinformation():
             numerical_judge_model="openai/o1-mini"  # Model for numerical evaluation
         )
     )
-    return task
+    return task 

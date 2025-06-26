@@ -15,7 +15,7 @@ from mask.utils import extract_logprobs_data
 def mask_belief_elicitation_solver(
         belief_elicit_num: int = 1,
         system_prompt: Optional[str] = None,
-        request_logprobs: bool = True,
+        request_logprobs: bool = False,
         top_logprobs: int = 5
 ) -> Solver:
     """
@@ -70,7 +70,7 @@ def mask_belief_elicitation_solver(
 def mask_lying_solver(
         system_prompt: Optional[str] = None,
         handle_doubling_down: bool = True,
-        request_logprobs: bool = True,
+        request_logprobs: bool = False,
         top_logprobs: int = 5
 ) -> Solver:
     """
@@ -226,7 +226,7 @@ def mask_combined_solver(
         belief_runs: int = 3,
         lying_runs: int = 1,
         belief_elicit_nums: list[int] = [1, 2, 3],
-        request_logprobs: bool = True,
+        request_logprobs: bool = False,
         top_logprobs: int = 5
 ) -> Solver:
     """

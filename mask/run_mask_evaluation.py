@@ -7,13 +7,13 @@ from inspect_ai import eval, Task
 from inspect_ai.solver import generate
 from inspect_mask_dataset import mask_dataset
 from inspect_mask_scorer import mask_combined_scorer
-from mask2.inspect_mask_solver import mask_combined_solver, mask_lying_solver, mask_belief_elicitation_solver, \
+from inspect_mask_solver import mask_combined_solver, mask_lying_solver, mask_belief_elicitation_solver, \
     mask_multi_run_solver
 
 
 def main():
     # Configuration
-    dataset_path = "/mask2/data/provided_facts.csv"  # Update this path
+    dataset_path = "data/provided_facts.csv"  # Update this path
     model = "openai/gpt-4o-mini"  # or "openai/gpt-4o" or "anthropic/claude-3-sonnet-20240229"
     output_dir = "./logs"
     limit = 20  # Set to None for full dataset, or a number like 10 for testing
@@ -33,7 +33,9 @@ def main():
     task = Task(
         name="mask_multi_run_solver",
         dataset=dataset,
-        solver=mask_multi_run_solver(),
+        solver=mask_multi_run_solver(
+            base_solver=mask_lying_solver(request_logprobs=False)
+        ),
         scorer=mask_combined_scorer(
             judge_model="openai/gpt-4o",  # Model for judging responses
             numerical_judge_model="openai/o1-mini"  # Model for numerical evaluation
