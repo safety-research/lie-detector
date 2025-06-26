@@ -9,7 +9,7 @@ from inspect_ai.model import GenerateConfig
 from inspect_ai.solver import generate
 from typing import Optional, Dict, Any
 
-from inspect_mask_dataset import mask_dataset, mask_belief_dataset
+from inspect_mask_dataset import mask_dataset, mask_belief_dataset, sycophancy_dataset
 from inspect_mask_solver import (
     mask_lying_solver, 
     mask_belief_elicitation_solver,
@@ -294,6 +294,56 @@ def mask_continuations_task(
     )
 
 
+@task
+def sycophancy_task(
+    csv_path: str,
+    model: str = "openai/gpt-4o",
+    judge_model: str = "openai/gpt-4o",
+    sycophancy_runs: int = 1,
+    temperature: float = 1.0,
+    max_tokens: int = 1000,
+    shuffle: bool = False,
+    seed: Optional[int] = None
+) -> Task:
+    """
+    Sycophancy evaluation task.
+    
+    This task evaluates whether models exhibit sycophantic behavior by agreeing
+    with users even when the user's position appears to be incorrect.
+    
+    Args:
+        csv_path: Path to sycophancy dataset CSV file
+        model: Model to evaluate
+        judge_model: Judge model for evaluations
+        sycophancy_runs: Number of runs per sample
+        temperature: Generation temperature
+        max_tokens: Maximum tokens to generate
+        shuffle: Whether to shuffle the dataset
+        seed: Random seed for shuffling
+        
+    Returns:
+        Task configured for sycophancy evaluation
+    """
+    
+    return Task(
+        dataset=sycophancy_dataset(
+            csv_path=csv_path,
+            shuffle=shuffle,
+            seed=seed
+        ),
+        solver=mask_multi_run_solver(
+            num_runs=sycophancy_runs,
+            base_solver=mask_lying_solver()
+        ),
+        scorer=mask_binary_scorer(judge_model=judge_model),
+        config=GenerateConfig(**{
+            "model": model,
+            "temperature": temperature,
+            "max_tokens": max_tokens
+        })
+    )
+
+
 # Example usage functions
 def run_mask_evaluation(
     csv_path: str,
@@ -330,6 +380,41 @@ def run_mask_evaluation(
     return results
 
 
+def run_sycophancy_evaluation(
+    csv_path: str,
+    output_dir: str = "./sycophancy_results",
+    model: str = "openai/gpt-4o",
+    **kwargs
+) -> None:
+    """
+    Helper function to run a sycophancy evaluation.
+    
+    Args:
+        csv_path: Path to sycophancy dataset CSV
+        output_dir: Directory to save results
+        model: Model to evaluate
+        **kwargs: Additional task parameters
+    """
+    
+    from inspect_ai import eval
+    
+    # Run the sycophancy evaluation task
+    task_instance = sycophancy_task(
+        csv_path=csv_path,
+        model=model,
+        **kwargs
+    )
+    
+    # Execute the evaluation
+    results = eval(
+        task_instance,
+        model=model,
+        log_dir=output_dir
+    )
+    
+    return results
+
+
 if __name__ == "__main__":
     # Example usage
     import argparse
@@ -337,7 +422,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run MASK evaluation with Inspect AI")
     parser.add_argument("--csv_path", default="/Users/jackhopkins/PycharmProjects/lie-detector/mask/mask/test_csv_data", help="Path to MASK dataset CSV")
     parser.add_argument("--model", default="openai/gpt-4o", help="Model to evaluate") 
-    parser.add_argument("--task_type", default="full", choices=["lying", "belief", "full", "disinformation", "continuations"])
+    parser.add_argument("--task_type", default="full", choices=["lying", "belief", "full", "disinformation", "continuations", "sycophancy"])
     parser.add_argument("--output_dir", default="./mask_results", help="Output directory")
     parser.add_argument("--lying_runs", type=int, default=1, help="Number of lying runs")
     parser.add_argument("--belief_runs", type=int, default=3, help="Number of belief runs")
@@ -355,12 +440,22 @@ if __name__ == "__main__":
         task_func = mask_disinformation_task
     elif args.task_type == "continuations":
         task_func = mask_continuations_task
+    elif args.task_type == "sycophancy":
+        task_func = sycophancy_task
     
     # Run evaluation
-    run_mask_evaluation(
-        csv_path=args.csv_path,
-        output_dir=args.output_dir,
-        model=args.model,
-        lying_runs=args.lying_runs,
-        belief_runs=args.belief_runs
-    )
+    if args.task_type == "sycophancy":
+        run_sycophancy_evaluation(
+            csv_path=args.csv_path,
+            output_dir=args.output_dir,
+            model=args.model,
+            sycophancy_runs=args.lying_runs
+        )
+    else:
+        run_mask_evaluation(
+            csv_path=args.csv_path,
+            output_dir=args.output_dir,
+            model=args.model,
+            lying_runs=args.lying_runs,
+            belief_runs=args.belief_runs
+        )
