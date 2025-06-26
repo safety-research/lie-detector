@@ -11,3 +11,4 @@ __pycache__
 /.cache/
 /mask/data/
 /mask/test_csv_data/
+/ssyc/logs/
