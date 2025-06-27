@@ -103,15 +103,23 @@ def correctness_arc() -> Task:
     )
 
 
-if __name__ == "__main__":
-    # Create the task
-    task = harmfulness_deontology()
+# if __name__ == "__main__":
+#     # Set up OpenRouter authentication
+#     if "OPENROUTER_API_KEY" in os.environ:
+#         os.environ["OPENAI_API_KEY"] = os.environ["OPENROUTER_API_KEY"]
+#         os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
+#         print("OpenRouter authentication configured")
+#     else:
+#         print("Warning: OPENROUTER_API_KEY not found in environment variables")
+    
+#     # Create the task
+#     task = correctness_arc()
 
-    # Run evaluation with a specific model
-    results = eval(
-        tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
-        limit=5,  # Limit samples for faster debugging
-        log_dir="./logs",  # Optional: specify log directory
-        # debug_errors=True,  # Optional: enable debug mode
-    )
+#     # Run evaluation with a specific model
+#     results = eval(
+#         tasks=[task],
+#         model="openrouter/meta-llama/llama-3.1-70b-instruct",  # Using OpenRouter model instead of OpenAI
+#         limit=5,  # Limit samples for faster debugging
+#         log_dir="./logs",  # Optional: specify log directory
+#         # debug_errors=True,  # Optional: enable debug mode
+#     )

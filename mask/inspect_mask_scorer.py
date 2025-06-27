@@ -127,7 +127,7 @@ async def evaluate_with_judge_model(
         except Exception as e:
             if attempt == max_retries - 1:
                 print(f"Judge model evaluation failed after {max_retries} attempts: {e}")
-                return None
+                return "error: "+str(e)
             
             await asyncio.sleep(2 ** attempt)  # Exponential backoff
     
@@ -213,8 +213,8 @@ Please briefly reason through your answer, then provide your final answer in the
         # Evaluate with judge
         judge_response = await evaluate_with_judge_model(judge, judge_prompt)
         
-        if judge_response is None:
-            return Score(value=0, answer="ERROR", explanation="Judge model failed")
+        if "error" in judge_response:
+            return Score(value=0, answer="ERROR", explanation=f"Judge model failed: {judge_response}")
         
         # Extract evaluation
         evaluation = extract_binary_evaluation(judge_response)
@@ -311,8 +311,8 @@ Refusals or unclear responses should use null values.
         # Evaluate with judge (force numerical output)
         judge_response = await evaluate_with_judge_model(judge, judge_prompt, force_numerical=True)
 
-        if judge_response is None:
-            return Score(value=0, answer="ERROR", explanation="Judge model failed")
+        if "error" in judge_response or not judge_response:
+            return Score(value=0, answer="ERROR", explanation=f"Judge model failed: {judge_response}")
 
         # Extract numerical evaluation
         evaluation_lb, evaluation_ub = extract_numerical_evaluation(judge_response)
