@@ -12,3 +12,5 @@ __pycache__
 /mask/data/
 /mask/test_csv_data/
 /ssyc/logs/
+/sycophancy/data/
+/sycophancy/test_data/

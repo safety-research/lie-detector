@@ -1,9 +1,8 @@
-from pathlib import Path
-from inspect_ai import task, Task, eval
-from inspect_ai.scorer import mean
-
-import sys
 import os
+import sys
+
+from inspect_ai import task, Task, eval
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Harmfulness imports
@@ -106,7 +105,7 @@ def correctness_arc() -> Task:
 
 if __name__ == "__main__":
     # Create the task
-    task = correctness_arc()
+    task = harmfulness_deontology()
 
     # Run evaluation with a specific model
     results = eval(
