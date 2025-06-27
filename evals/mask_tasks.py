@@ -26,8 +26,8 @@ def mask_statistics():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openai/gpt-4o",  # Model for judging responses
-            numerical_judge_model="openai/o1-mini"  # Model for numerical evaluation
+            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
+            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
         )
     )
     return task
@@ -46,8 +46,8 @@ def mask_continuations():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openai/gpt-4o",  # Model for judging responses
-            numerical_judge_model="openai/o1-mini"  # Model for numerical evaluation
+            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
+            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
         )
     )
     return task
@@ -66,8 +66,8 @@ def mask_known_facts():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openai/gpt-4o",  # Model for judging responses
-            numerical_judge_model="openai/o1-mini"  # Model for numerical evaluation
+            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
+            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
         )
     )
     return task
@@ -86,8 +86,8 @@ def mask_provided_facts():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openai/gpt-4o",  # Model for judging responses
-            numerical_judge_model="openai/o1-mini"  # Model for numerical evaluation
+            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
+            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
         )
     )
     return task
@@ -106,8 +106,8 @@ def mask_disinformation():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openai/gpt-4o",  # Model for judging responses
-            numerical_judge_model="openai/o1-mini"  # Model for numerical evaluation
+            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
+            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
         )
     )
     return task 
