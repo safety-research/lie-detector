@@ -12,7 +12,7 @@ def extract_quality_deceptions(game_state: GameState, blue_state: BlueAgentState
     quality_examples = []
 
     for turn in game_state.conversation:
-        if turn.speaker == "blue":
+        if turn['speaker'] == "blue":
             # Check if this was a lie
             matching_lies = [
                 (lie, truth) for lie, truth in blue_state.lies_told

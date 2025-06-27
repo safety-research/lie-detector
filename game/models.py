@@ -41,7 +41,7 @@ class ScenarioConfig(BaseModel):
     red_persona: Persona
     information: Dict[InfoClassification, List[SecretInfo]]
     red_objectives: List[str]  # What Red is trying to learn
-    conversation_limit: int = 20
+    conversation_limit: int = 100
 
 
 class ConfidenceEntry(BaseModel):

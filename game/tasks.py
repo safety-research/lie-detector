@@ -20,7 +20,7 @@ from game.scorer import deception_quality_scorer, conversation_quality_scorer, l
 @task
 def deception_detection_task(
         num_scenarios: int = 1,
-        model: str = "openai/gpt-4"
+        #model: str = "openai/gpt-4"
 ) -> Task:
     """Create a deception detection evaluation task"""
 
@@ -58,14 +58,16 @@ def deception_detection_task(
             game_state = store_as(GameState)
             game_state.scenario = scenario.model_dump()
 
-            # Run the conversation
-            agent_state = AgentState(messages=[])
+            # Initialize separate agent states for each agent
+            red_agent_state = AgentState(messages=[])
+            blue_agent_state = AgentState(messages=[])
 
+            # Run the conversation
             while not game_state.game_complete:
                 if game_state.active_speaker == "red":
-                    agent_state = await red(agent_state)
+                    red_agent_state = await red(red_agent_state)
                 else:
-                    agent_state = await blue(agent_state)
+                    blue_agent_state = await blue(blue_agent_state)
 
                 # Check termination
                 if game_state.turn_count >= scenario.conversation_limit:
@@ -107,5 +109,5 @@ def deception_detection_task(
             lie_detection_scorer()
         ],
         sandbox="local",  # Or docker if needed
-        model=model
+        #model=model
     )
