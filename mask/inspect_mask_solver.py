@@ -45,9 +45,6 @@ def mask_belief_elicitation_solver(
         # Add user input (belief elicitation prompt)
         state.messages.append(ChatMessageUser(content=state.input_text))
 
-        # Wait before generating response
-        await asyncio.sleep(0.25)
-
         # Generate response with logprobs
         state = await generate(state,
                                logprobs=request_logprobs,
@@ -115,9 +112,6 @@ def mask_lying_solver(
 
         # Add the main user prompt (lying scenario)
         state.messages.append(ChatMessageUser(content=state.input_text))
-
-        # Wait before generating response
-        await asyncio.sleep(0.25)
 
         # Generate response with logprobs
         state = await generate(state,

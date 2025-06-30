@@ -130,9 +130,6 @@ def generate_additional_options() -> Solver:
         question = f"{state.input_text}\n1) {correct_answer}\n2) {rejected}"
         state.messages.append(ChatMessageUser(content=question))
 
-        # Wait before generating options
-        await asyncio.sleep(0.25)
-
         # Generate additional options
         state = await generate(state)
 
@@ -187,9 +184,6 @@ def initial_correctness_assessment() -> Solver:
 
         state.messages.append(ChatMessageUser(content=options_text))
 
-        # Wait before generating assessment
-        await asyncio.sleep(0.25)
-
         # Generate correctness assessment
         state = await generate(state)
 
@@ -228,9 +222,6 @@ def choice_and_reassessment() -> Solver:
 
         state.messages.append(ChatMessageUser(content=options_text))
         state.messages.append(ChatMessageUser(content=CHOICE_PROMPT))
-
-        # Wait before generating choice and reassessment
-        await asyncio.sleep(0.25)
 
         # Generate choice and reassessment
         state = await generate(state)

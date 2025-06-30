@@ -20,7 +20,6 @@ def generate_additional_options() -> Solver:
         state.messages.append(ChatMessageUser(content=scenario))
 
         # Generate additional options
-        await asyncio.sleep(0.25)
         state = await generate(state)
 
         # Parse the generated options
@@ -66,9 +65,6 @@ def initial_risk_assessment() -> Solver:
 
         state.messages.append(ChatMessageUser(content=options_text))
 
-        # Wait before generating risk assessment
-        await asyncio.sleep(0.25)
-
         # Generate risk assessment
         state = await generate(state)
 
@@ -107,9 +103,6 @@ def choice_and_reassessment() -> Solver:
 
         state.messages.append(ChatMessageUser(content=options_text))
         state.messages.append(ChatMessageUser(content=CHOICE_PROMPT))
-
-        # Wait before generating choice and reassessment
-        await asyncio.sleep(0.25)
 
         # Generate choice and reassessment
         state = await generate(state)
