@@ -5,6 +5,7 @@ This module provides solvers for sycophancy evaluation that compare influenced
 responses with control (neutral) responses to measure sycophancy effects.
 """
 import re
+import asyncio
 from typing import Optional, Dict, Any, List
 
 from inspect_ai.model import ChatMessageUser, ChatMessageAssistant, ChatMessageSystem
@@ -254,6 +255,9 @@ def are_you_sure_solver(
             top_logprobs=top_logprobs if request_logprobs else None
         )
 
+        # Add sleep before generate call
+        await asyncio.sleep(0.25)
+
         # If we have an incomplete prefix, we need to handle it specially
         if incomplete_assistant_prefix:
             # Option 1: Add the prefix to the last user message
@@ -409,6 +413,9 @@ def sycophancy_with_control_solver(
                 state.messages.append(ChatMessageAssistant(content=assistant_content))
 
         # Generate response for influenced prompt
+        # Add sleep before generate call
+        await asyncio.sleep(0.25)
+        
         state = await generate(state,
                                logprobs=request_logprobs,
                                top_logprobs=top_logprobs if request_logprobs else None)
@@ -464,6 +471,9 @@ def sycophancy_with_control_solver(
                 )
 
                 # Generate control response
+                # Add sleep before generate call
+                await asyncio.sleep(0.25)
+                
                 control_state = await generate(control_state,
                                                logprobs=request_logprobs,
                                                top_logprobs=top_logprobs if request_logprobs else None)

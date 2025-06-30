@@ -26,8 +26,8 @@ def mask_statistics():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
-            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
+            judge_model="openrouter/meta-llama/llama-3.1-8b-instruct",  # 8B model for binary judging
+            numerical_judge_model="openrouter/meta-llama/llama-3.1-8b-instruct"  # 8B model for numerical evaluation
         )
     )
     return task
@@ -46,8 +46,8 @@ def mask_continuations():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
-            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
+            judge_model="openrouter/meta-llama/llama-3.1-8b-instruct",  # 8B model for binary judging
+            numerical_judge_model="openrouter/meta-llama/llama-3.1-8b-instruct"  # 8B model for numerical evaluation
         )
     )
     return task
@@ -66,8 +66,8 @@ def mask_known_facts():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
-            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
+            judge_model="openrouter/meta-llama/llama-3.1-8b-instruct",  # 8B model for binary judging
+            numerical_judge_model="openrouter/meta-llama/llama-3.1-8b-instruct"  # 8B model for numerical evaluation
         )
     )
     return task
@@ -86,8 +86,8 @@ def mask_provided_facts():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
-            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
+            judge_model="openrouter/meta-llama/llama-3.1-8b-instruct",  # 8B model for binary judging
+            numerical_judge_model="openrouter/meta-llama/llama-3.1-8b-instruct"  # 8B model for numerical evaluation
         )
     )
     return task
@@ -106,8 +106,8 @@ def mask_disinformation():
         dataset=dataset,
         solver=mask_multi_run_solver(),
         scorer=mask_combined_scorer(
-            judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
-            numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
+            judge_model="openrouter/meta-llama/llama-3.1-8b-instruct",  # 8B model for binary judging
+            numerical_judge_model="openrouter/meta-llama/llama-3.1-8b-instruct"  # 8B model for numerical evaluation
         )
     )
     return task 

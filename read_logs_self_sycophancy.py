@@ -3,7 +3,7 @@ import glob
 import os
 
 # Get all JSON log files for self-sycophancy
-log_dir = "/mnt/nvme3/dipika/lie-detector/ss_run2"
+log_dir = "/mnt/nvme3/dipika/lie-detector/self_sycophancy_logs_full_run2"
 log_files = glob.glob(log_dir + "/*.json")
 
 data = []
@@ -12,6 +12,7 @@ error_stats = {
     'samples_with_no_choices': 0,
     'samples_with_processing_errors': 0,
     'files_with_errors': 0,
+    'files_with_no_samples': 0,
     'error_sample_ids': []
 }
 
@@ -26,6 +27,12 @@ for log_file in log_files:
         
         print(f"Processing {task_name} with {model_name}")
         
+        # Check if the log has samples (successful runs) or just errors
+        if 'samples' not in log_data:
+            print(f"  No samples found in {log_file} - evaluation may not have completed")
+            error_stats['files_with_no_samples'] += 1
+            continue
+            
         for sample in log_data['samples']:
             error_stats['total_samples_processed'] += 1
             
@@ -115,7 +122,8 @@ print(f"Total samples processed: {error_stats['total_samples_processed']}")
 print(f"Samples with no choices: {error_stats['samples_with_no_choices']}")
 print(f"Samples with processing errors: {error_stats['samples_with_processing_errors']}")
 print(f"Files with errors: {error_stats['files_with_errors']}")
-print(f"Success rate: {(len(data) / error_stats['total_samples_processed'] * 100):.1f}%")
+print(f"Files with no samples: {error_stats['files_with_no_samples']}")
+print(f"Success rate: {(len(data) / max(1, error_stats['total_samples_processed']) * 100):.1f}%")
 print(f"Error sample IDs: {error_stats['error_sample_ids']}")
 
 print(f"\nParsed {len(data)} samples from {len(log_files)} files to {output_file}")

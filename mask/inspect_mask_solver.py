@@ -3,7 +3,8 @@ MASK Solver for Inspect AI
 
 This module provides solvers for the MASK benchmark evaluation scenarios.
 """
-from typing import Optional
+import asyncio
+from typing import Optional, Dict, Any, List
 
 from inspect_ai.model import ChatMessageUser, ChatMessageAssistant, ChatMessageSystem, GenerateConfig
 from inspect_ai.solver import Solver, TaskState, Generate, solver
@@ -43,6 +44,9 @@ def mask_belief_elicitation_solver(
 
         # Add user input (belief elicitation prompt)
         state.messages.append(ChatMessageUser(content=state.input_text))
+
+        # Wait before generating response
+        await asyncio.sleep(0.25)
 
         # Generate response with logprobs
         state = await generate(state,
@@ -111,6 +115,9 @@ def mask_lying_solver(
 
         # Add the main user prompt (lying scenario)
         state.messages.append(ChatMessageUser(content=state.input_text))
+
+        # Wait before generating response
+        await asyncio.sleep(0.25)
 
         # Generate response with logprobs
         state = await generate(state,
