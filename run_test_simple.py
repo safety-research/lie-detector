@@ -24,7 +24,7 @@ async def run_test_simple():
     
     try:
         # Try importing the detector directly
-        from lie_detectors.blackbox.naive_prompt_openai import NaivePromptOpenAIDetector
+        from detectors.blackbox.naive_prompt_openai import NaivePromptOpenAIDetector
         print("✓ Successfully imported NaivePromptOpenAIDetector")
         
         # Initialize detector
