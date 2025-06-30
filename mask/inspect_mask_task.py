@@ -9,7 +9,7 @@ from inspect_ai.model import GenerateConfig
 from inspect_ai.solver import generate
 from typing import Optional, Dict, Any
 
-from inspect_mask_dataset import mask_dataset, mask_belief_dataset, sycophancy_dataset
+from inspect_mask_dataset import mask_dataset, mask_belief_dataset
 from inspect_mask_solver import (
     mask_lying_solver, 
     mask_belief_elicitation_solver,
@@ -21,6 +21,7 @@ from inspect_mask_scorer import (
     mask_numerical_scorer, 
     mask_combined_scorer
 )
+from sycophancy.inspect_sycophancy_dataset import sycophancy_dataset
 
 
 @task

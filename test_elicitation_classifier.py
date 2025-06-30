@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 import argparse
 
-from lie_detectors.blackbox.elicitation_classifier_openai import ElicitationClassifierOpenAI
+from detectors.blackbox.elicitation_classifier_openai import ElicitationClassifierOpenAI
 from load_mask_dataset import load_mask_subset
 
 
