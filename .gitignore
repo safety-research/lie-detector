@@ -16,3 +16,5 @@ __pycache__
 /sycophancy/test_data/
 /games/logs/
 /evals/logs/
+/.idea/
+/.old_sycophancy/
