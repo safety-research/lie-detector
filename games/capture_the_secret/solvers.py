@@ -8,10 +8,10 @@ from inspect_ai.agent import AgentState
 from inspect_ai.solver import TaskState, Generate, solver
 from inspect_ai.util import store_as
 
-from games.agents.blue import blue_agent
-from games.agents.red import red_agent
-from games.dataset import extract_quality_deceptions
-from games.models import BlueAgentState, RedAgentState, GameState, ScenarioConfig, ConversationTurn
+from games.capture_the_secret.agents.blue import blue_agent
+from games.capture_the_secret.agents.red import red_agent
+from games.capture_the_secret.dataset import extract_quality_deceptions
+from games.capture_the_secret.models import BlueAgentState, RedAgentState, GameState, ScenarioConfig, ConversationTurn
 
 
 @solver

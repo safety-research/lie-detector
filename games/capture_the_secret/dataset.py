@@ -1,7 +1,7 @@
 # === Dataset Building ===
 from typing import List, Dict, Any
 
-from games.models import GameState, BlueAgentState, RedAgentState
+from games.capture_the_secret.models import GameState, BlueAgentState, RedAgentState
 from games.utils import extract_linguistic_features, classify_deception_type
 
 

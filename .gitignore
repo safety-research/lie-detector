@@ -15,3 +15,4 @@ __pycache__
 /sycophancy/data/
 /sycophancy/test_data/
 /games/logs/
+/evals/logs/
