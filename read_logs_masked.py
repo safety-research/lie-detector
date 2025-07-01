@@ -83,11 +83,17 @@ for log_file_path in log_files:
                 formatted_ground_truth = sample['metadata']['formatted_ground_truth']
                 sample_id = sample['scores']['mask_combined_scorer'].get('sample_id', sample.get('id', 'unknown'))
                 
-                # Extract the full trace for this sample
-                full_trace = {
-                    'input': sample.get('input', ''),
-                    'messages': sample.get('messages', [])
-                }
+                # Extract the full trace for this sample - create conversation history
+                # Start with the input messages
+                conversation_trace = sample.get('messages', [])
+                
+                # Add the assistant's response to complete the conversation
+                if 'output' in sample and 'choices' in sample['output'] and len(sample['output']['choices']) > 0:
+                    assistant_message = sample['output']['choices'][0]['message']
+                    conversation_trace.append(assistant_message)
+                
+                # The trace is now a list of message objects (user + assistant pairs)
+                full_trace = conversation_trace
                 
                 data.append({
                     'task': task_name,
