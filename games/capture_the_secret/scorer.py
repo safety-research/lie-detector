@@ -7,7 +7,7 @@ from inspect_ai.scorer import scorer, Scorer, Target, Score, mean, accuracy
 from inspect_ai.solver import TaskState
 from inspect_ai.util import store_as
 
-from games.models import GameState, BlueAgentState, InfoClassification
+from games.capture_the_secret.models import GameState, BlueAgentState, InfoClassification
 
 
 @scorer(metrics=[accuracy(), mean()])

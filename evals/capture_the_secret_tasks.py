@@ -4,8 +4,8 @@ import sys
 from inspect_ai import task, eval
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from games.tasks import create_deception_task
-from games.scenario import generate_domain_specific_scenarios
+from games.capture_the_secret.tasks import create_deception_task
+from games.capture_the_secret.scenario import generate_domain_specific_scenarios
 
 @task
 def capture_the_secret_corporate():

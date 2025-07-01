@@ -5,12 +5,12 @@ from typing import List
 from inspect_ai import Task, task, eval
 from inspect_ai.dataset import MemoryDataset, Sample
 
-from games.models import ScenarioConfig
-from games.solvers import capture_the_secret_solver
+from games.capture_the_secret.models import ScenarioConfig
+from games.capture_the_secret.solvers import capture_the_secret_solver
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from games.scorer import secrets_leaked_judge, deception_detection_judge, judge_calibration_scorer
+from games.capture_the_secret.scorer import secrets_leaked_judge, deception_detection_judge, judge_calibration_scorer
 
 #
 # @task

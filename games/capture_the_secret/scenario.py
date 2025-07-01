@@ -12,7 +12,7 @@ from typing import List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from games.models import ScenarioConfig, Persona, InfoClassification, SecretInfo
+from games.capture_the_secret.models import ScenarioConfig, Persona, InfoClassification, SecretInfo
 
 
 def generate_domain_specific_scenarios(domain: str, num_scenarios: int) -> List[ScenarioConfig]:
