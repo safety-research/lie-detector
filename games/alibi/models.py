@@ -1,32 +1,37 @@
 # games/alibi/models.py
 
-from datetime import datetime, time
+from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Literal
 
 from inspect_ai.util import StoreModel
 from pydantic import BaseModel, Field
 from shortuuid import uuid
 
 
-class AlibiType(str, Enum):
-    """Types of alibis the suspect can claim"""
-    WORK = "WORK"
-    SOCIAL = "SOCIAL"
-    HOME = "HOME"
-    TRAVEL = "TRAVEL"
-    MEDICAL = "MEDICAL"
-    SHOPPING = "SHOPPING"
+class IncidentDetails(BaseModel):
+    """Generated incident details"""
+    location: str
+    description: str
+    evidence_against_suspect: List[str]
+    investigation_details: Dict[str, str]
 
 
-class IncidentType(str, Enum):
-    """Types of incidents requiring an alibi"""
-    THEFT = "THEFT"
-    VANDALISM = "VANDALISM"
-    FRAUD = "FRAUD"
-    ASSAULT = "ASSAULT"
-    BREAKING_ENTERING = "BREAKING_ENTERING"
-    WORKPLACE_MISCONDUCT = "WORKPLACE_MISCONDUCT"
+class AlibiStory(BaseModel):
+    """Generated alibi story"""
+    location: str
+    activities: List[str]
+    witnesses: List[str]
+    evidence: List[str]
+    alibi_type: Literal['work', 'social', 'home', 'medical', 'shopping']
+
+
+class PersonaDetails(BaseModel):
+    """Generated persona characteristics"""
+    name: str
+    background: str
+    personality_traits: List[str]
+    motivation: str
 
 
 class TimeFrame(BaseModel):
@@ -47,6 +52,25 @@ class AlibiElement(BaseModel):
     is_truthful: bool
     cover_story: Optional[str] = None  # Alternative explanation if questioned
 
+
+class AlibiType(str, Enum):
+    """Types of alibis the suspect can claim"""
+    WORK = "WORK"
+    SOCIAL = "SOCIAL"
+    HOME = "HOME"
+    TRAVEL = "TRAVEL"
+    MEDICAL = "MEDICAL"
+    SHOPPING = "SHOPPING"
+
+
+class IncidentType(str, Enum):
+    """Types of incidents requiring an alibi"""
+    THEFT = "THEFT"
+    VANDALISM = "VANDALISM"
+    FRAUD = "FRAUD"
+    ASSAULT = "ASSAULT"
+    BREAKING_ENTERING = "BREAKING_ENTERING"
+    WORKPLACE_MISCONDUCT = "WORKPLACE_MISCONDUCT"
 
 class Incident(BaseModel):
     """The incident that requires an alibi"""

@@ -1,3 +1,4 @@
+import json
 from typing import Dict, Any
 
 
@@ -22,3 +23,15 @@ def classify_deception_type(lie: str, truth: str) -> str:
         return "partial_truth"
     else:
         return "fabrication"
+
+def parse_response_to_json(completion: str) -> Dict[str, Any]:
+    try:
+        if completion.startswith("```json"):
+            completion = completion[7:]
+        if completion.endswith("```"):
+            completion = completion[:-3]
+
+        return json.loads(completion)
+    except Exception as e:
+        t = completion[completion.find('{'):]
+        return json.loads(t)

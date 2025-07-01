@@ -6,7 +6,7 @@ from inspect_ai.agent import AgentState, Agent, agent
 from inspect_ai.model import ChatMessageUser, ChatMessageSystem, ChatMessageAssistant
 from inspect_ai.util import store_as
 
-from games.models import RedAgentState, GameState, ScenarioConfig, ConversationTurn, InfoClassification, ConfidenceEntry
+from games.capture_the_secret.models import RedAgentState, GameState, ScenarioConfig, ConversationTurn, InfoClassification, ConfidenceEntry
 
 
 @agent
