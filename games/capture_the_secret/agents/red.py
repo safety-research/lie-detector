@@ -121,7 +121,7 @@ def red_agent(scenario: ScenarioConfig) -> Agent:
                 )
                 
                 # Create a lie detection attempt record
-                from games.models import LieDetectionAttempt
+                from games.capture_the_secret.models import LieDetectionAttempt
                 detection = LieDetectionAttempt(
                     turn_number=len(game_state.conversation),
                     suspected_statement=response,

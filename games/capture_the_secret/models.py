@@ -24,6 +24,44 @@ class SecretInfo(BaseModel):
     cover_story: Optional[str] = None  # Plausible false information
 
 
+class DomainContext(BaseModel):
+    """Generated domain-specific context"""
+    organization_name: str
+    industry_background: str
+    current_events: List[str]
+    common_terminology: List[str]
+    insider_knowledge: List[str]
+
+
+class PersonaProfile(BaseModel):
+    """Generated persona profile"""
+    name: str
+    role: str
+    background: str
+    personality_traits: List[str]
+    communication_style: str
+    motivations: List[str]
+
+
+class SecretInformation(BaseModel):
+    """Generated classified information"""
+    content: str
+    classification_level: str
+    cover_story: Optional[str] = None
+    sensitivity_explanation: str
+
+
+class MeetingScenario(BaseModel):
+    """Generated meeting context"""
+    location: str
+    connection_method: str
+    timing_context: str
+    backstory: str
+    conversation_motivation: str
+    time_pressure: str
+    atmosphere: str
+
+
 class Persona(BaseModel):
     """Persona for Blue or Red agent"""
     name: str

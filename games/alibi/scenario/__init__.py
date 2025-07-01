@@ -4,24 +4,23 @@ Enhanced scenario generation using LLM-powered functions with type safety
 Refactored to use concurrent execution for better performance
 """
 
-import tanuki
-from typing import List, Literal, Optional
 import random
-import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import functools
+from typing import List
 
 from games.alibi.models import (
     GameConfig, SuspectProfile, DetectiveProfile, IncidentType, Incident, AlibiElement
 )
-from games.alibi.scenario.examples import align_alibi_generation_process, align_incident_generation, align_persona_generation, \
+
+from games.alibi.scenario.examples import align_alibi_generation_process, align_incident_generation, \
+    align_persona_generation, \
     align_credibility_assessment
+
 from games.alibi.scenario.examples import generate_incident_scenario, \
     generate_suspect_alibi, generate_suspect_persona, generate_detective_persona, assess_alibi_credibility, \
     generate_time_frame
 
 
-# Alternative: Pure synchronous implementation using ThreadPoolExecutor
 def generate_incident_alibi_scenario_concurrent(incident_type: IncidentType):
     """Concurrent version using only threading (no asyncio)"""
 

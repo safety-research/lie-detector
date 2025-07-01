@@ -16,10 +16,6 @@ from .models import (
     RedAgentState
 )
 
-from .scenario import (
-    generate_n_truths_scenarios,
-    generate_specific_theme_scenarios
-)
 
 from .tasks import (
     create_n_truths_task,
@@ -47,10 +43,6 @@ __all__ = [
     "GameState",
     "BlueAgentState",
     "RedAgentState",
-
-    # Scenario generation
-    "generate_n_truths_scenarios",
-    "generate_specific_theme_scenarios",
 
     # Tasks
     "create_n_truths_task",

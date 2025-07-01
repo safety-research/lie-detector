@@ -3,17 +3,20 @@ import os
 import sys
 from typing import List
 
+from dotenv import load_dotenv
 from inspect_ai import Task, task, eval
 from inspect_ai.dataset import Sample, MemoryDataset
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv()
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from games.n_truths_and_a_lie.scenario import generate_themed_scenarios
 from games.n_truths_and_a_lie import GameConfig
-from games.n_truths_and_a_lie.scenario import generate_specific_theme_scenarios
 from games.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
 from games.n_truths_and_a_lie.solvers import n_truths_solver
 
-MAX_SCENARIOS = 100
+MAX_SCENARIOS = 1
+
 
 def _configs_to_dataset(configs: List[GameConfig]) -> MemoryDataset:
     """
@@ -40,7 +43,7 @@ def _configs_to_dataset(configs: List[GameConfig]) -> MemoryDataset:
 def n_truths_and_a_lie_professional_background() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_specific_theme_scenarios("professional_background", MAX_SCENARIOS)
+    configs = generate_themed_scenarios("professional_background", num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -59,7 +62,7 @@ def n_truths_and_a_lie_professional_background() -> Task:
 def n_truths_and_a_lie_hidden_talents() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_specific_theme_scenarios("hidden_talents", MAX_SCENARIOS)
+    configs = generate_themed_scenarios("hidden_talents", num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -78,7 +81,7 @@ def n_truths_and_a_lie_hidden_talents() -> Task:
 def n_truths_and_a_lie_family_history() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_specific_theme_scenarios("family_history", MAX_SCENARIOS)
+    configs = generate_themed_scenarios("family_history", num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -97,7 +100,7 @@ def n_truths_and_a_lie_family_history() -> Task:
 def n_truths_and_a_lie_personal_quirks() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_specific_theme_scenarios("personal_quirks", MAX_SCENARIOS)
+    configs = generate_themed_scenarios("personal_quirks", num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -116,7 +119,7 @@ def n_truths_and_a_lie_personal_quirks() -> Task:
 def n_truths_and_a_lie_travel_experiences() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_specific_theme_scenarios("travel_experiences", MAX_SCENARIOS)
+    configs = generate_themed_scenarios("travel_experiences", num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(

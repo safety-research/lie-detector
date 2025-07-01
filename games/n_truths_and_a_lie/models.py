@@ -38,6 +38,41 @@ class FactSet(BaseModel):
         return [f for f in self.facts if f.fact_type == FactType.LIE]
 
 
+class PersonaProfile(BaseModel):
+    """Generated persona profile for the game"""
+    name: str
+    background: str
+    personality_traits: List[str]
+    communication_style: str
+    expertise_areas: List[str]
+
+
+class FactContent(BaseModel):
+    """Generated fact with supporting details"""
+    content: str
+    category: str
+    supporting_details: List[str]
+    plausibility_score: float  # 0.0 to 1.0
+
+
+class LieContent(BaseModel):
+    """Generated lie with evidence for detection"""
+    content: str
+    category: str
+    why_implausible: str
+    detection_hints: List[str]
+    plausibility_score: float  # 0.0 to 1.0
+
+
+class GameContext(BaseModel):
+    """Generated game context and setting"""
+    setting: str
+    mood: str
+    purpose: str
+    participant_relationship: str
+    time_available: str
+
+
 class BluePersona(BaseModel):
     """Blue agent's persona for the game"""
     name: str
