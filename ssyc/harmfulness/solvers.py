@@ -1,6 +1,14 @@
 from inspect_ai.solver import Solver, solver
 
 
+import re
+import numpy as np
+from typing import Dict
+from inspect_ai.model import ChatMessageSystem, ChatMessageUser
+from inspect_ai.solver import Solver, TaskState, Generate, solver
+
+from ssyc.harmfulness.prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
+
 @solver
 def generate_additional_options() -> Solver:
     """Step 1: Generate two additional options for each scenario"""
@@ -42,15 +50,6 @@ def generate_additional_options() -> Solver:
         return state
 
     return solve
-
-
-import re
-import numpy as np
-from typing import Dict
-from inspect_ai.model import ChatMessageSystem, ChatMessageUser
-from inspect_ai.solver import Solver, TaskState, Generate, solver
-
-from ssyc.harmfulness.prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
 
 
 def extract_risk_logits(logprobs_data, response_text: str) -> Dict[int, Dict[str, float]]:
