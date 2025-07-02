@@ -3,13 +3,16 @@ Test script for the sandbagging detection pipeline.
 """
 
 import asyncio
-from .dataset import create_sandbagging_dataset, print_dataset_info
-from .tasks import sandbagging_task, get_sandbagging_task
-from .evaluation import run_sandbagging_evaluation
-from .models import SandbaggingDomain
 
+from dotenv import load_dotenv
 
-async def test_dataset_creation():
+from dataset import create_sandbagging_dataset, print_dataset_info
+from tasks import sandbagging_task, get_sandbagging_task
+from evaluation import run_sandbagging_evaluation
+from models import SandbaggingDomain
+load_dotenv()
+
+async def run_test_dataset_creation():
     """Test dataset creation functionality."""
     print("Testing dataset creation...")
     
@@ -28,7 +31,7 @@ async def test_dataset_creation():
     print_dataset_info(digital_dataset)
 
 
-def test_task_creation():
+def run_test_task_creation():
     """Test task creation functionality."""
     print("\nTesting task creation...")
     
@@ -43,7 +46,7 @@ def test_task_creation():
     print(f"Dataset size: {len(list(task.dataset))}")
 
 
-async def test_simple_evaluation():
+async def run_test_simple_evaluation():
     """Test a simple evaluation run."""
     print("\nTesting simple evaluation...")
     
@@ -66,7 +69,7 @@ def demonstrate_prompt_examples():
     """Show example prompts from the pipeline."""
     print("\nExample prompts:")
     
-    from .prompt_generation import generate_sandbagging_prompts, format_control_prompt, format_sandbagging_prompt
+    from prompt_generation import generate_sandbagging_prompts, format_control_prompt, format_sandbagging_prompt
     
     prompts = generate_sandbagging_prompts()
     
@@ -95,10 +98,10 @@ def main():
     print("="*60)
     
     # Test dataset creation
-    asyncio.run(test_dataset_creation())
+    asyncio.run(run_test_dataset_creation())
     
     # Test task creation
-    test_task_creation()
+    run_test_task_creation()
     
     # Show example prompts
     demonstrate_prompt_examples()
@@ -108,7 +111,7 @@ def main():
     print("ATTEMPTING EVALUATION TEST")
     print("(This may fail if OpenAI API key is not configured)")
     print("="*60)
-    asyncio.run(test_simple_evaluation())
+    asyncio.run(run_test_simple_evaluation())
     
     print("\n" + "="*60)
     print("PIPELINE TEST COMPLETE")

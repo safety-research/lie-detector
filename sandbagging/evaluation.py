@@ -11,10 +11,10 @@ from datetime import datetime
 from inspect_ai import eval
 from inspect_ai.model import Model, get_model
 
-from .tasks import sandbagging_task, get_sandbagging_task
-from .dataset import create_sandbagging_dataset, sandbagging_dataset_factory
-from .scorer import compute_sandbagging_metrics
-from .models import SandbaggingConfig, SandbaggingDomain
+from tasks import sandbagging_task, get_sandbagging_task
+from dataset import create_sandbagging_dataset, sandbagging_dataset_factory
+from scorer import compute_sandbagging_metrics
+from models import SandbaggingConfig, SandbaggingDomain
 
 
 class SandbaggingEvaluator:
