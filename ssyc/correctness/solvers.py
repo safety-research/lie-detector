@@ -1,5 +1,7 @@
 import re
 import random
+import asyncio
+from typing import Optional
 
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser
 from inspect_ai.solver import Solver, TaskState, Generate, solver

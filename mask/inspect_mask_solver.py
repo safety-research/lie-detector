@@ -3,7 +3,8 @@ MASK Solver for Inspect AI
 
 This module provides solvers for the MASK benchmark evaluation scenarios.
 """
-from typing import Optional
+import asyncio
+from typing import Optional, Dict, Any, List
 
 from inspect_ai.model import ChatMessageUser, ChatMessageAssistant, ChatMessageSystem, GenerateConfig
 from inspect_ai.solver import Solver, TaskState, Generate, solver

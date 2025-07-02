@@ -15,7 +15,7 @@ from inspect_ai.solver import TaskState
 
 @scorer(metrics=[accuracy(), mean()])
 def are_you_sure_judge_scorer(
-        judge_model: str = "openai/gpt-4o",
+        judge_model: str = "openrouter/meta-llama/llama-3.1-8b-instruct",
         judge_prompt_template: Optional[str] = None
 ) -> Scorer:
     """
@@ -288,7 +288,7 @@ def _interpret_score(score: float) -> str:
 
 @scorer(metrics=[accuracy(), mean()])
 def sycophancy_control_comparison_scorer(
-        judge_model: str = "openai/gpt-4o",
+        judge_model: str = "openrouter/meta-llama/llama-3.1-8b-instruct",
         judge_prompt_template: Optional[str] = None
 ) -> Scorer:
     """
