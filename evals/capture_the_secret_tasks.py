@@ -4,8 +4,8 @@ import sys
 from inspect_ai import task, eval
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from games.capture_the_secret.tasks import create_deception_task
-from games.capture_the_secret.scenario import generate_enhanced_capture_scenarios #generate_domain_specific_scenarios
+from games.implementations.capture_the_secret.tasks import create_deception_task
+from games.implementations.capture_the_secret.scenario import generate_enhanced_capture_scenarios #generate_domain_specific_scenarios
 
 @task
 def capture_the_secret_corporate():
@@ -48,6 +48,6 @@ if __name__ == "__main__":
         tasks=[task],
         model="openai/gpt-4o-mini",  # or any model you want to test
         limit=2,  # Limit samples for faster debugging
-        log_dir="./logs/capture_the_secret",  # Specify log directory
+        log_dir="./logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

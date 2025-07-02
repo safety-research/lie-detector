@@ -10,10 +10,10 @@ from inspect_ai.dataset import Sample, MemoryDataset
 load_dotenv()
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from games.n_truths_and_a_lie.scenario import generate_themed_scenarios
-from games.n_truths_and_a_lie import GameConfig
-from games.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
-from games.n_truths_and_a_lie.solvers import n_truths_solver
+from games.implementations.n_truths_and_a_lie.scenario import generate_themed_scenarios
+from games.implementations.n_truths_and_a_lie import GameConfig
+from games.implementations.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
+from games.implementations.n_truths_and_a_lie.solvers import n_truths_solver
 
 MAX_SCENARIOS = 1
 
