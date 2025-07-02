@@ -1,0 +1,26 @@
+[Unit]
+Description=Trace Viewer Flask Application
+After=network.target
+
+[Service]
+Type=exec
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/home/ec2-user/lie-detector/data_viewer
+Environment=PATH=/home/ec2-user/miniconda3/envs/lie-detector/bin:/home/ec2-user/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/home/ec2-user/miniconda3/envs/lie-detector/bin/gunicorn --workers 1 --bind 0.0.0.0:8080 --reload --reload-extra-file /home/ec2-user/lie-detector/data_viewer app:app
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=trace-viewer
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/ec2-user/lie-detector/data_viewer
+
+[Install]
+WantedBy=multi-user.target 

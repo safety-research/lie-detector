@@ -18,3 +18,4 @@ __pycache__
 /evals/logs/
 /.idea/
 /.old_sycophancy/
+.env

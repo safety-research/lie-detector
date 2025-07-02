@@ -37,6 +37,50 @@
             margin-bottom: 10px;
         }
         
+        .data-source-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .data-source-section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .source-tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         .file-input-section {
             display: flex;
             gap: 10px;
@@ -50,6 +94,14 @@
             border: 2px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
+        }
+        
+        .folder-select {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 200px;
         }
         
         .btn {
@@ -80,6 +132,15 @@
             background-color: #7f8c8d;
         }
         
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #229954;
+        }
+        
         .status {
             padding: 10px;
             border-radius: 4px;
@@ -103,6 +164,53 @@
             gap: 10px;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .folder-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .folder-stats {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .folder-stats h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .stat-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+        
+        .stat-value {
+            font-size: 1.2em;
+            color: #3498db;
+            font-weight: 600;
         }
         
         .samples-container {
@@ -141,6 +249,15 @@
             gap: 15px;
             font-size: 14px;
             color: #7f8c8d;
+        }
+        
+        .folder-tag {
+            background-color: #9b59b6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
         }
         
         .sample-content {
@@ -195,14 +312,14 @@
         }
         
         .lie-tag {
-            background-color: #ff4444;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
+            background-color: #ffff00 !important;
+            color: #000 !important;
+            padding: 2px 4px;
+            border-radius: 3px;
             font-weight: 600;
-            box-shadow: 0 2px 4px rgba(255, 68, 68, 0.3);
-            display: inline-block;
-            margin: 2px 0;
+            box-shadow: 0 1px 2px rgba(255, 255, 0, 0.5);
+            display: inline;
+            margin: 0 1px;
         }
         
         .lie-metadata {
@@ -263,22 +380,56 @@
     <div class="container">
         <div class="header">
             <h1>Trace Data Viewer</h1>
-            <p>Load and explore trace data with lie detection annotations</p>
+            <p>Load and explore trace data with lie detection annotations from S3 or local files</p>
         </div>
         
-        <div class="file-input-section">
-            <input type="text" id="filePath" class="file-input" 
-                   placeholder="Enter file path (e.g., /path/to/your/file.json)"
-                   value="/mnt/nvme3/dipika/lie-detector/n_truths_and_a_lie_run2/2025-07-01T11-22-18-07-00_n-truths-and-a-lie-family-history_H9EzVifWeUURU5ggau5N5p.json">
-            <button onclick="loadData()" class="btn btn-primary">Load Data</button>
+        <div class="data-source-section">
+            <h2>Data Source</h2>
+            <div class="source-tabs">
+                <button class="tab active" onclick="switchTab('s3')">S3 Data</button>
+                <button class="tab" onclick="switchTab('local')">Local File</button>
+            </div>
+            
+            <div id="s3-tab" class="tab-content active">
+                <div class="file-input-section">
+                    <select id="folderSelect" class="folder-select">
+                        <option value="">Select a folder from S3...</option>
+                    </select>
+                    <button onclick="loadDataFromS3()" class="btn btn-success">Load Data</button>
+                </div>
+                <div id="s3Status" style="margin-top: 10px;"></div>
+            </div>
+            
+            <div id="local-tab" class="tab-content">
+                <div class="file-input-section">
+                    <input type="text" id="filePath" class="file-input" 
+                           placeholder="Enter file path (e.g., /path/to/your/file.json)"
+                           value="/mnt/nvme3/dipika/lie-detector/n_truths_and_a_lie_run2/2025-07-01T11-22-18-07-00_n-truths-and-a-lie-family-history_H9EzVifWeUURU5ggau5N5p.json">
+                    <button onclick="loadData()" class="btn btn-primary">Load Data</button>
+                </div>
+            </div>
         </div>
         
         <div id="status"></div>
         
+        <div id="folderStats" style="display: none;"></div>
+        
         <div id="controls" style="display: none;">
+            <div class="folder-filter">
+                <label for="folderFilter">Filter by folder:</label>
+                <select id="folderFilter" class="folder-select">
+                    <option value="">All folders</option>
+                </select>
+                <button onclick="loadSamples()" class="btn btn-secondary">Apply Filter</button>
+            </div>
+            
             <div class="controls">
                 <label for="sampleCount">Number of samples:</label>
                 <input type="number" id="sampleCount" value="5" min="1" max="50" style="width: 80px; padding: 5px;">
+                <label for="hasLies" style="margin-left: 15px;">
+                    <input type="checkbox" id="hasLies" style="margin-right: 5px;">
+                    Only samples with lies
+                </label>
                 <button onclick="loadSamples()" class="btn btn-secondary">Load Random Samples</button>
             </div>
         </div>
@@ -287,7 +438,153 @@
     </div>
 
     <script>
+        // Force cache refresh
+        const timestamp = new Date().getTime();
+        document.querySelector('style').innerHTML = document.querySelector('style').innerHTML.replace(/\.lie-tag\s*\{[^}]*\}/g, 
+            '.lie-tag { background-color: #ffff00 !important; color: #000 !important; padding: 2px 4px; border-radius: 3px; font-weight: 600; box-shadow: 0 1px 2px rgba(255, 255, 0, 0.5); display: inline; margin: 0 1px; }');
+        
         let totalSamples = 0;
+        let currentFolderFilter = '';
+        
+        // Switch between S3 and local file tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+        
+        // Load available S3 folders
+        async function loadS3Folders() {
+            try {
+                const response = await fetch('/list_folders');
+                const data = await response.json();
+                
+                const folderSelect = document.getElementById('folderSelect');
+                const s3Status = document.getElementById('s3Status');
+                
+                if (response.ok) {
+                    if (data.error) {
+                        // AWS credentials not configured
+                        folderSelect.innerHTML = '<option value="">AWS credentials not configured</option>';
+                        s3Status.innerHTML = `<div class="status error">${data.error}</div>`;
+                    } else if (data.folders.length === 0) {
+                        folderSelect.innerHTML = '<option value="">No folders found</option>';
+                        s3Status.innerHTML = '<div class="status error">No folders found in S3 bucket</div>';
+                    } else {
+                        folderSelect.innerHTML = '<option value="">Select a folder from S3...</option>';
+                        data.folders.forEach(folder => {
+                            const option = document.createElement('option');
+                            option.value = folder;
+                            option.textContent = folder;
+                            folderSelect.appendChild(option);
+                        });
+                        s3Status.innerHTML = '';
+                    }
+                } else {
+                    folderSelect.innerHTML = '<option value="">Error loading folders</option>';
+                    s3Status.innerHTML = '<div class="status error">Error loading folders from S3</div>';
+                }
+            } catch (error) {
+                const folderSelect = document.getElementById('folderSelect');
+                const s3Status = document.getElementById('s3Status');
+                folderSelect.innerHTML = '<option value="">Error loading folders</option>';
+                s3Status.innerHTML = `<div class="status error">Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Load data from S3
+        async function loadDataFromS3() {
+            const folderName = document.getElementById('folderSelect').value;
+            if (!folderName) {
+                showStatus('Please select a folder from the dropdown', 'error');
+                return;
+            }
+            
+            showStatus(`Loading data from S3 folder: ${folderName}...`, 'success');
+            
+            try {
+                const response = await fetch('/load_data_from_s3', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ folder_name: folderName })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    totalSamples = data.num_samples;
+                    showStatus(data.message, 'success');
+                    document.getElementById('controls').style.display = 'block';
+                    loadFolderStats();
+                    updateFolderFilter();
+                    loadSamples();
+                } else {
+                    showStatus(data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Error loading data from S3: ' + error.message, 'error');
+            }
+        }
+        
+
+        
+        // Load folder statistics
+        async function loadFolderStats() {
+            try {
+                const response = await fetch('/get_folder_stats');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayFolderStats(data);
+                } else {
+                    console.error('Error loading folder stats:', data.error);
+                }
+            } catch (error) {
+                console.error('Error loading folder stats:', error);
+            }
+        }
+        
+        // Display folder statistics
+        function displayFolderStats(stats) {
+            const statsDiv = document.getElementById('folderStats');
+            
+            const statsHtml = `
+                <div class="folder-stats">
+                    <h3>Folder Statistics</h3>
+                    <div class="stats-grid">
+                        ${Object.entries(stats).map(([folder, stat]) => `
+                            <div class="stat-item">
+                                <div class="stat-label">${folder}</div>
+                                <div class="stat-value">${stat.count} samples</div>
+                                <div style="font-size: 0.8em; color: #666;">
+                                    Avg: ${stat.avg_lies.toFixed(1)} lies, ${stat.avg_turns.toFixed(1)} turns
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            statsDiv.innerHTML = statsHtml;
+            statsDiv.style.display = 'block';
+        }
+        
+        // Update folder filter dropdown
+        function updateFolderFilter() {
+            const folderFilter = document.getElementById('folderFilter');
+            folderFilter.innerHTML = '<option value="">All folders</option>';
+            
+            // Get unique folder tags from the data
+            const folders = new Set();
+            // This will be populated when we have the actual data
+            // For now, we'll populate it when samples are loaded
+        }
         
         async function loadData() {
             const filePath = document.getElementById('filePath').value;
@@ -324,22 +621,57 @@
         
         async function loadSamples() {
             const count = document.getElementById('sampleCount').value;
+            const folderFilter = document.getElementById('folderFilter').value;
+            const hasLies = document.getElementById('hasLies').checked;
             const container = document.getElementById('samplesContainer');
             
             container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading samples...</div>';
             
             try {
-                const response = await fetch(`/get_samples?n=${count}`);
+                let url = `/get_samples?n=${count}`;
+                if (folderFilter) {
+                    url += `&folder_tag=${encodeURIComponent(folderFilter)}`;
+                }
+                if (hasLies) {
+                    url += `&has_lies=true`;
+                }
+                
+                const response = await fetch(url);
                 const data = await response.json();
                 
                 if (response.ok) {
                     displaySamples(data.samples);
+                    updateFolderFilterFromSamples(data.samples);
                 } else {
                     showStatus(data.error, 'error');
                 }
             } catch (error) {
                 showStatus('Error loading samples: ' + error.message, 'error');
             }
+        }
+        
+        // Update folder filter from loaded samples
+        function updateFolderFilterFromSamples(samples) {
+            const folders = new Set();
+            samples.forEach(sample => {
+                if (sample.folder_tag) {
+                    folders.add(sample.folder_tag);
+                }
+            });
+            
+            const folderFilter = document.getElementById('folderFilter');
+            const currentValue = folderFilter.value;
+            
+            folderFilter.innerHTML = '<option value="">All folders</option>';
+            Array.from(folders).sort().forEach(folder => {
+                const option = document.createElement('option');
+                option.value = folder;
+                option.textContent = folder;
+                if (folder === currentValue) {
+                    option.selected = true;
+                }
+                folderFilter.appendChild(option);
+            });
         }
         
         function displaySamples(samples) {
@@ -350,10 +682,13 @@
                 return;
             }
             
-            container.innerHTML = samples.map(sample => `
+            container.innerHTML = samples.map((sample, index) => `
                 <div class="sample-card">
                     <div class="sample-header" onclick="toggleSample(${sample.id})">
-                        <div class="sample-title">Sample ${sample.id}</div>
+                        <div class="sample-title">
+                            Sample ${index + 1}
+                            ${sample.folder_tag ? `<span class="folder-tag">${sample.folder_tag}</span>` : ''}
+                        </div>
                         <div class="sample-stats">
                             <span>${sample.num_turns} turns</span>
                             <span>${sample.num_lies} lies</span>
@@ -419,11 +754,30 @@
             }
         }
         
-        // Load data on page load if file path is provided
+        // Load S3 folders on page load
         window.onload = function() {
+            // Force yellow lie highlighting
+            const style = document.createElement('style');
+            style.textContent = `
+                .lie-tag {
+                    background-color: #ffff00 !important;
+                    color: #000 !important;
+                    padding: 2px 4px !important;
+                    border-radius: 3px !important;
+                    font-weight: 600 !important;
+                    box-shadow: 0 1px 2px rgba(255, 255, 0, 0.5) !important;
+                    display: inline !important;
+                    margin: 0 1px !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            loadS3Folders();
+            
+            // Load local file data if path is provided
             const filePath = document.getElementById('filePath').value;
             if (filePath) {
-                loadData();
+                // Don't auto-load, let user choose
             }
         };
     </script>
