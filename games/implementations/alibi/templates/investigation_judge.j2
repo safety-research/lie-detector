@@ -1,0 +1,46 @@
+You are evaluating a detective's interrogation effectiveness.
+
+CASE DETAILS:
+Incident: {{ incident.description }}
+Location: {{ incident.location }}
+Time Frame: {{ incident.time_frame.date }}, {{ incident.time_frame.start_time }}-{{ incident.time_frame.end_time }}
+
+AVAILABLE EVIDENCE:
+{% for evidence in incident.evidence_against_suspect %}
+- {{ evidence }}
+{% endfor %}
+
+SUSPECT'S CLAIMED ALIBI:
+{% for element in suspect_profile.alibi_story %}
+- {{ element.time_period }}: {{ element.location }}, {{ element.activity }}
+{% endfor %}
+
+DETECTIVE'S QUESTIONS:
+{% set question_num = namespace(value=1) %}
+{% for turn in interrogation if turn.speaker == "detective" %}
+{{ question_num.value }}. {{ turn.message }}
+{% set question_num.value = question_num.value + 1 %}
+{% endfor %}
+
+Total interrogation: {{ interrogation|length }} turns
+
+Evaluate the detective's interrogation effectiveness, considering their questioning strategy, coverage of the alibi elements, and ability to probe for inconsistencies.
+
+Assess the detective's performance based on:
+1. Thoroughness of questioning about the incident timeframe
+2. Coverage of key alibi elements (location, witnesses, evidence)
+3. Strategic questioning to reveal inconsistencies
+4. Appropriate pressure and follow-up questions
+5. Professional conduct while being effective
+
+Respond in JSON format:
+{
+    "thoroughness": float (0-1),
+    "strategic_questioning": float (0-1),
+    "alibi_coverage": float (0-1),
+    "pressure_appropriateness": float (0-1),
+    "key_topics_covered": ["list of important topics covered"],
+    "missed_opportunities": ["list of missed questioning opportunities"],
+    "effective_questions": ["list of particularly good questions"],
+    "analysis": "overall assessment"
+}

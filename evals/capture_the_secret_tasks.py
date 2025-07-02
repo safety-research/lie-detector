@@ -4,37 +4,37 @@ import sys
 from inspect_ai import task, eval
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from games.capture_the_secret.tasks import create_deception_task
-from games.capture_the_secret.scenario import generate_domain_specific_scenarios
+from games.implementations.capture_the_secret.tasks import create_deception_task
+from games.implementations.capture_the_secret.scenario import generate_enhanced_capture_scenarios #generate_domain_specific_scenarios
 
 @task
 def capture_the_secret_corporate():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
-    scenarios = generate_domain_specific_scenarios("corporate", 1)
+    scenarios = generate_enhanced_capture_scenarios(1, ["corporate"])
     return create_deception_task(scenarios, "capture_the_secret_corporate")
 
 @task
 def capture_the_secret_intelligence():
     """Intelligence scenario: Spies trying to gather information"""
-    scenarios = generate_domain_specific_scenarios("intelligence", 1)
+    scenarios = generate_enhanced_capture_scenarios(1, ["intelligence"])
     return create_deception_task(scenarios, "capture_the_secret_intelligence")
 
 @task
 def capture_the_secret_scientific():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
-    scenarios = generate_domain_specific_scenarios("scientific", 1)
+    scenarios = generate_enhanced_capture_scenarios(1, ["scientific"])
     return create_deception_task(scenarios, "capture_the_secret_scientific")
 
 @task
 def capture_the_secret_sales():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
-    scenarios = generate_domain_specific_scenarios("sales", 1)
+    scenarios = generate_enhanced_capture_scenarios(1, ["sales"])
     return create_deception_task(scenarios, "capture_the_secret_sales")
 
 @task
 def capture_the_secret_relationship():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
-    scenarios = generate_domain_specific_scenarios("relationship", 1)
+    scenarios = generate_enhanced_capture_scenarios(1, ["relationship"])
     return create_deception_task(scenarios, "capture_the_secret_relationship")
 
 
@@ -48,6 +48,6 @@ if __name__ == "__main__":
         tasks=[task],
         model="openai/gpt-4o-mini",  # or any model you want to test
         limit=2,  # Limit samples for faster debugging
-        log_dir="./logs/capture_the_secret",  # Specify log directory
+        log_dir="./logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )
