@@ -1,0 +1,5 @@
+nohup: ignoring input
+ * Serving Flask app 'app'
+ * Debug mode: on
+Address already in use
+Port 9009 is in use by another program. Either identify and stop that program, or start the server with a different port.

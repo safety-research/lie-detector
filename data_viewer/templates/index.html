@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trace Data Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .file-input-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .file-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .samples-container {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .sample-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .sample-header {
+            padding: 15px 20px;
+            background-color: #ecf0f1;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sample-header:hover {
+            background-color: #d5dbdb;
+        }
+        
+        .sample-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .sample-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .sample-content {
+            padding: 20px;
+            display: none;
+        }
+        
+        .sample-content.expanded {
+            display: block;
+        }
+        
+        .trace-section {
+            margin-bottom: 20px;
+        }
+        
+        .trace-section h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .turn {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .turn-number {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .message {
+            margin-bottom: 8px;
+        }
+        
+        .speaker {
+            font-weight: 600;
+            color: #e74c3c;
+        }
+        
+        .speaker.blue {
+            color: #3498db;
+        }
+        
+        .speaker.red {
+            color: #e74c3c;
+        }
+        
+        .lie-tag {
+            background-color: #ff4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(255, 68, 68, 0.3);
+            display: inline-block;
+            margin: 2px 0;
+        }
+        
+        .lie-metadata {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .lie-item {
+            margin-bottom: 8px;
+            padding: 8px;
+            background-color: #fff;
+            border-radius: 3px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        details {
+            margin-top: 10px;
+        }
+        
+        summary {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        summary:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Trace Data Viewer</h1>
+            <p>Load and explore trace data with lie detection annotations</p>
+        </div>
+        
+        <div class="file-input-section">
+            <input type="text" id="filePath" class="file-input" 
+                   placeholder="Enter file path (e.g., /path/to/your/file.json)"
+                   value="/mnt/nvme3/dipika/lie-detector/n_truths_and_a_lie_run2/2025-07-01T11-22-18-07-00_n-truths-and-a-lie-family-history_H9EzVifWeUURU5ggau5N5p.json">
+            <button onclick="loadData()" class="btn btn-primary">Load Data</button>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div id="controls" style="display: none;">
+            <div class="controls">
+                <label for="sampleCount">Number of samples:</label>
+                <input type="number" id="sampleCount" value="5" min="1" max="50" style="width: 80px; padding: 5px;">
+                <button onclick="loadSamples()" class="btn btn-secondary">Load Random Samples</button>
+            </div>
+        </div>
+        
+        <div id="samplesContainer" class="samples-container"></div>
+    </div>
+
+    <script>
+        let totalSamples = 0;
+        
+        async function loadData() {
+            const filePath = document.getElementById('filePath').value;
+            if (!filePath) {
+                showStatus('Please enter a file path', 'error');
+                return;
+            }
+            
+            showStatus('Loading data...', 'success');
+            
+            try {
+                const response = await fetch('/load_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ file_path: filePath })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    totalSamples = data.num_samples;
+                    showStatus(data.message, 'success');
+                    document.getElementById('controls').style.display = 'block';
+                    loadSamples();
+                } else {
+                    showStatus(data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Error loading data: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadSamples() {
+            const count = document.getElementById('sampleCount').value;
+            const container = document.getElementById('samplesContainer');
+            
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading samples...</div>';
+            
+            try {
+                const response = await fetch(`/get_samples?n=${count}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displaySamples(data.samples);
+                } else {
+                    showStatus(data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Error loading samples: ' + error.message, 'error');
+            }
+        }
+        
+        function displaySamples(samples) {
+            const container = document.getElementById('samplesContainer');
+            
+            if (samples.length === 0) {
+                container.innerHTML = '<div class="loading">No samples found</div>';
+                return;
+            }
+            
+            container.innerHTML = samples.map(sample => `
+                <div class="sample-card">
+                    <div class="sample-header" onclick="toggleSample(${sample.id})">
+                        <div class="sample-title">Sample ${sample.id}</div>
+                        <div class="sample-stats">
+                            <span>${sample.num_turns} turns</span>
+                            <span>${sample.num_lies} lies</span>
+                            <span>📄</span>
+                        </div>
+                    </div>
+                    <div class="sample-content" id="sample-${sample.id}">
+                        <div class="trace-section">
+                            <h3>Lies Only (${sample.num_lies} lies detected)</h3>
+                            ${sample.lie_only_trace.length > 0 ? sample.lie_only_trace.map(turn => `
+                                <div class="turn">
+                                    <div class="turn-number">Turn ${turn.turn_number}</div>
+                                    ${turn.blue ? `<div class="message"><span class="speaker blue">Blue:</span> ${turn.blue.replace(/<lie>(.*?)<\/lie>/g, '<span class="lie-tag">$1</span>')}</div>` : ''}
+                                    ${turn.red ? `<div class="message"><span class="speaker red">Red:</span> ${turn.red.replace(/<lie>(.*?)<\/lie>/g, '<span class="lie-tag">$1</span>')}</div>` : ''}
+                                </div>
+                            `).join('') : '<p style="color: #666; font-style: italic;">No lies detected in this sample.</p>'}
+                        </div>
+                        
+                        ${sample.lie_metadata.length > 0 ? `
+                            <div class="trace-section">
+                                <h3>Lie Metadata</h3>
+                                <div class="lie-metadata">
+                                    ${sample.lie_metadata.map(lie => `
+                                        <div class="lie-item">
+                                            <strong>Turn ${lie.turn_number}:</strong> "${lie.utterance}"
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="trace-section">
+                            <h3>Full Trace (All Turns)</h3>
+                            <details>
+                                <summary>Click to expand full conversation</summary>
+                                ${sample.tagged_trace.map(turn => `
+                                    <div class="turn">
+                                        <div class="turn-number">Turn ${turn.turn_number}</div>
+                                        ${turn.blue ? `<div class="message"><span class="speaker blue">Blue:</span> ${turn.blue.replace(/<lie>(.*?)<\/lie>/g, '<span class="lie-tag">$1</span>')}</div>` : ''}
+                                        ${turn.red ? `<div class="message"><span class="speaker red">Red:</span> ${turn.red.replace(/<lie>(.*?)<\/lie>/g, '<span class="lie-tag">$1</span>')}</div>` : ''}
+                                    </div>
+                                `).join('')}
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function toggleSample(sampleId) {
+            const content = document.getElementById(`sample-${sampleId}`);
+            content.classList.toggle('expanded');
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 3000);
+            }
+        }
+        
+        // Load data on page load if file path is provided
+        window.onload = function() {
+            const filePath = document.getElementById('filePath').value;
+            if (filePath) {
+                loadData();
+            }
+        };
+    </script>
+</body>
+</html> 
