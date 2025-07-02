@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser, GenerateConfig
 
-from .prompt_generation import format_control_prompt, format_sandbagging_prompt
+from sandbagging.prompt_generation import format_control_prompt, format_sandbagging_prompt
 
 
 def extract_answer_letter(text: str) -> Optional[str]:
