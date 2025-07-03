@@ -1,21 +1,24 @@
 import random
-<<<<<<< HEAD
 import re
-from typing import Dict
-=======
 import asyncio
-from typing import Optional
->>>>>>> feature/sandbagging
+from typing import Dict, Optional
 
 import numpy as np
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 
-from ssyc.correctness.prompts import (
-    SYSTEM_PROMPT,
-    CORRECTNESS_ASSESSMENT_PROMPT,
-    CHOICE_PROMPT
-)
+try:
+    from ssyc.correctness.prompts import (
+        SYSTEM_PROMPT,
+        CORRECTNESS_ASSESSMENT_PROMPT,
+        CHOICE_PROMPT
+    )
+except ImportError:
+    from prompts import (
+        SYSTEM_PROMPT,
+        CORRECTNESS_ASSESSMENT_PROMPT,
+        CHOICE_PROMPT
+    )
 
 
 @solver

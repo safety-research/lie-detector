@@ -1,6 +1,7 @@
 import boto3
+from typing import Optional
 
-def write_to_s3(data: str, filename: str, bucket: str = "dipika-lie-detection-data", prefix: str = "processed-data/"):
+def write_to_s3(data: str, filename: str, bucket: str = "dipika-lie-detection-data", prefix: str = "processed-data/", clean_task_name: Optional[str] = None):
     """
     Write data to S3 bucket.
     
@@ -9,10 +10,16 @@ def write_to_s3(data: str, filename: str, bucket: str = "dipika-lie-detection-da
         filename: Name of the file to create in S3
         bucket: S3 bucket name
         prefix: S3 key prefix
+        clean_task_name: Clean task name (with - instead of _) to use as subdirectory
     """
     try:
         s3_client = boto3.client('s3')
-        key = f"{prefix}{filename}"
+        
+        # Create the S3 key with optional subdirectory
+        if clean_task_name:
+            key = f"{prefix}{clean_task_name}/{filename}"
+        else:
+            key = f"{prefix}{filename}"
         
         # Upload the data
         s3_client.put_object(

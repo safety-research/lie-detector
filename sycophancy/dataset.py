@@ -13,7 +13,10 @@ from enum import Enum
 
 from inspect_ai.dataset import Dataset, MemoryDataset, Sample
 
-from sycophancy.utils import format_feedback_conversation
+try:
+    from sycophancy.utils import format_feedback_conversation
+except ImportError:
+    from utils import format_feedback_conversation
 
 
 class SycophancyPromptType(Enum):
