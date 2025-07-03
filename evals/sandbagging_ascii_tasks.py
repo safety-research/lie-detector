@@ -9,9 +9,9 @@ from inspect_ai.solver import chain, system_message
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sandbagging.ascii.dataset import create_ascii_multiple_choice_dataset
-from sandbagging.ascii.scorers import ascii_multiple_choice_sandbagging_scorer
-from sandbagging.ascii.solvers import ascii_multiple_choice_sandbagging_solver
+from sandbagging.capabilities.dataset import create_ascii_multiple_choice_dataset
+from sandbagging.capabilities.scorers import ascii_multiple_choice_sandbagging_scorer
+from sandbagging.capabilities.solvers import ascii_multiple_choice_sandbagging_solver
 
 
 @task
@@ -55,7 +55,7 @@ def ascii_sandbagging_task(
 
     return Task(
         dataset=create_ascii_multiple_choice_dataset(
-            csv_path="../sandbagging/ascii/subjects.csv",
+            csv_path="../sandbagging/capabilities/subjects.csv",
             categories=categories,
             shuffle=shuffle,
             seed=seed

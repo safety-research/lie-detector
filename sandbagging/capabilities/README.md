@@ -206,7 +206,7 @@ solver = ascii_multi_turn_solver(
 ### Analysis Utilities
 
 ```python
-from sandbagging.ascii.utils import (
+from sandbagging.capabilities.utils import (
     calculate_sandbagging_statistics,
     format_sandbagging_report,
     extract_subject_relationships

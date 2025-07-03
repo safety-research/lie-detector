@@ -8,13 +8,13 @@ sandbagging behavior in language models.
 
 import argparse
 from inspect_ai import eval
-from sandbagging.ascii import (
+from sandbagging.capabilities import (
     ascii_sandbagging_task,
     ascii_quick_test_task,
     ascii_comprehensive_test_task,
     ascii_category_specific_task
 )
-from sandbagging.ascii.utils import format_sandbagging_report
+from sandbagging.capabilities.utils import format_sandbagging_report
 
 
 def run_quick_demo():
