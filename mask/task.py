@@ -17,9 +17,9 @@ from scorers import mask_lying_detector_scorer
 @task
 def mask_evaluation_task(
         csv_path: str,
-        model: str = "openai/gpt-4o",
-        judge_model: str = "openai/gpt-4o",
-        numerical_judge_model: str = "openai/o1-mini",
+        model: str = "openrouter/openai/gpt-4o-mini",
+        judge_model: str = "openrouter/openai/gpt-4o-mini",
+        numerical_judge_model: str = "openrouter/openai/gpt-4o-mini",
         belief_elicit_nums: List[int] = [1, 2, 3],
         belief_runs_per_prompt: int = 3,
         lying_runs: int = 1,
@@ -83,9 +83,9 @@ def mask_evaluation_task(
 @task
 def mask_quick_evaluation_task(
         csv_path: str,
-        model: str = "openai/gpt-4o",
-        judge_model: str = "openai/gpt-4o",
-        numerical_judge_model: str = "openai/o1-mini",
+        model: str = "openrouter/openai/gpt-4o-mini",
+        judge_model: str = "openrouter/openai/gpt-4o-mini",
+        numerical_judge_model: str = "openrouter/openai/gpt-4o-mini",
         temperature: float = 1.0,
         max_tokens: int = 1000,
         shuffle: bool = False,
@@ -124,9 +124,9 @@ def mask_quick_evaluation_task(
 @task
 def mask_comprehensive_evaluation_task(
         csv_path: str,
-        model: str = "openai/gpt-4o",
-        judge_model: str = "openai/gpt-4o",
-        numerical_judge_model: str = "openai/o1-mini",
+        model: str = "openrouter/openai/gpt-4o-mini",
+        judge_model: str = "openrouter/openai/gpt-4o-mini",
+        numerical_judge_model: str = "openrouter/openai/gpt-4o-mini",
         temperature: float = 1.0,
         max_tokens: int = 1000,
         shuffle: bool = False,
@@ -174,8 +174,8 @@ def mask_comprehensive_evaluation_task(
 @task
 def mask_disinformation_task(
         csv_path: str,
-        model: str = "openai/gpt-4o",
-        judge_model: str = "openai/gpt-4o",
+        model: str = "openrouter/openai/gpt-4o-mini",
+        judge_model: str = "openrouter/openai/gpt-4o-mini",
         belief_runs: int = 3,
         lying_runs: int = 1,
         temperature: float = 1.0,
@@ -212,8 +212,8 @@ def mask_disinformation_task(
 @task
 def mask_continuations_task(
         csv_path: str,
-        model: str = "openai/gpt-4o",
-        judge_model: str = "openai/gpt-4o",
+        model: str = "openrouter/openai/gpt-4o-mini",
+        judge_model: str = "openrouter/openai/gpt-4o-mini",
         belief_runs: int = 3,
         lying_runs: int = 1,
         temperature: float = 1.0,
@@ -252,7 +252,7 @@ def mask_continuations_task(
 def run_mask_evaluation(
         csv_path: str,
         output_dir: str = "./mask_results",
-        model: str = "openai/gpt-4o",
+        model: str = "openrouter/openai/gpt-4o-mini",
         evaluation_type: str = "standard",
         **kwargs
 ) -> None:
@@ -304,13 +304,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Run MASK evaluation with parallel belief elicitation")
     parser.add_argument("--csv_path", required=True, help="Path to MASK dataset CSV")
-    parser.add_argument("--model", default="openai/gpt-4o", help="Model to evaluate")
+    parser.add_argument("--model", default="openrouter/openai/gpt-4o-mini", help="Model to evaluate")
     parser.add_argument("--evaluation_type", default="standard",
                         choices=["quick", "standard", "comprehensive"],
                         help="Type of evaluation to run")
     parser.add_argument("--output_dir", default="./mask_results", help="Output directory")
-    parser.add_argument("--judge_model", default="openai/gpt-4o", help="Judge model")
-    parser.add_argument("--numerical_judge_model", default="openai/o1-mini",
+    parser.add_argument("--judge_model", default="openrouter/openai/gpt-4o-mini", help="Judge model")
+    parser.add_argument("--numerical_judge_model", default="openrouter/openai/gpt-4o-mini",
                         help="Judge model for numerical propositions")
     parser.add_argument("--belief_runs", type=int, default=3,
                         help="Number of runs per belief elicitation prompt")

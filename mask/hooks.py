@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from inspect_ai.hooks import Hooks, hooks, RunEnd
 from inspect_ai.scorer import CORRECT
+from common.utils import write_to_s3
 
 
 @hooks(
@@ -43,15 +44,33 @@ class MaskHook(Hooks):
                 output_filename = f"parsed_{task_name}_{task_id}.jsonl"
 
                 samples = eval_log.samples
+                
+                if samples is None:
+                    print(f"[LogParserHook] Warning: No samples found in log")
+                    continue
 
-                with open(filepath.as_posix() + '/' + output_filename, 'w') as output_file:
-                    for sample in samples:
-                        parsed_entry = self._parse_sample(sample, task_name, task_id, timestamp, eval_log)
-                        if parsed_entry:
-                            json_entry = json.dumps(parsed_entry)
-                            output_file.write(json_entry + '\n')
+                # Collect all parsed entries
+                all_entries = []
+                for sample in samples:
+                    parsed_entry = self._parse_sample(sample, task_name, task_id, timestamp, eval_log)
+                    if parsed_entry:
+                        all_entries.append(parsed_entry)
 
-                print(f"[LogParserHook] Successfully created: {output_filename} with {len(samples)} entries")
+                # Create JSONL content
+                jsonl_content = '\n'.join([json.dumps(entry) for entry in all_entries])
+                
+                # Write to local data folder
+                local_file_path = filepath.as_posix() + '/' + output_filename
+                with open(local_file_path, 'w') as output_file:
+                    output_file.write(jsonl_content)
+                print(f"[LogParserHook] Created local file: {local_file_path} with {len(all_entries)} entries")
+                
+                # Also write to S3
+                s3_success = write_to_s3(jsonl_content, output_filename)
+                if s3_success:
+                    print(f"[LogParserHook] Successfully uploaded: {output_filename} with {len(all_entries)} entries to S3")
+                else:
+                    print(f"[LogParserHook] Warning: Failed to upload to S3, but local file was created")
 
             except Exception as e:
                 print(f"[LogParserHook] Error processing log file: {e}")

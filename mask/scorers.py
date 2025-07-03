@@ -196,8 +196,8 @@ async def evaluate_belief_responses(
 
 @scorer(metrics=[accuracy(), mean()])
 def mask_lying_detector_scorer(
-        judge_model: str = "openai/gpt-4o",
-        numerical_judge_model: str = "openai/o1-mini",
+        judge_model: str = "openrouter/openai/gpt-4o-mini",
+        numerical_judge_model: str = "openrouter/openai/o1-mini",
         belief_confidence_threshold: float = 0.6
 ) -> Scorer:
     """
