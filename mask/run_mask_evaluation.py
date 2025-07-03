@@ -4,11 +4,10 @@ Simple script to run MASK evaluation on downloaded dataset.
 """
 
 from inspect_ai import eval, Task
-from inspect_ai.solver import generate
-from inspect_mask_dataset import mask_dataset
-from inspect_mask_scorer import mask_combined_scorer
-from inspect_mask_solver import mask_combined_solver, mask_lying_solver, mask_belief_elicitation_solver, \
-    mask_multi_run_solver
+
+from dataset import mask_dataset
+from scorer import mask_combined_scorer
+from solver import mask_lying_solver, mask_multi_run_solver
 
 
 def main():

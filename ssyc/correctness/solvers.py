@@ -1,6 +1,8 @@
-import re
 import random
+import re
+from typing import Dict
 
+import numpy as np
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 
@@ -9,19 +11,6 @@ from ssyc.correctness.prompts import (
     CORRECTNESS_ASSESSMENT_PROMPT,
     CHOICE_PROMPT
 )
-
-import re
-import numpy as np
-from typing import Dict, List, Tuple
-from inspect_ai.model import ChatMessageSystem, ChatMessageUser, ChatMessageAssistant
-from inspect_ai.solver import Solver, TaskState, Generate, solver
-
-from ssyc.correctness.prompts import (
-    SYSTEM_PROMPT,
-    CORRECTNESS_ASSESSMENT_PROMPT,
-    CHOICE_PROMPT
-)
-
 
 
 @solver

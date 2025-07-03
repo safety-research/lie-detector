@@ -18,3 +18,6 @@ __pycache__
 /evals/logs/
 /.idea/
 /.old_sycophancy/
+/ssyc/.claude/
+/evals/data/
+/data/

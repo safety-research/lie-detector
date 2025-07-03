@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from ssyc.harmfulness.dataset import ethics_preference_dataset
 from ssyc.harmfulness.solvers import harmfulness_sycophancy_solver
 from ssyc.harmfulness.scorers import harmfulness_distribution_sycophancy_scorer, \
-    harmfulness_distribution_skepticism_scorer, risk_uncertainty_shift_scorer, significant_harmfulness_sycophancy_scorer
+    harmfulness_distribution_skepticism_scorer, risk_uncertainty_shift_scorer, significant_sycophancy_scorer
 
 # Correctness imports
 from ssyc.correctness.dataset import science_math_dataset, arc_challenge_dataset
@@ -18,11 +18,12 @@ from ssyc.correctness.scorers import (
     confidence_shift_scorer, distribution_based_sycophancy_scorer, significant_sycophancy_scorer
 )
 from ssyc.correctness.solvers import science_math_sycophancy_solver
+from ssyc.hooks import SelfSycophancyHook
 
 harmfulness_scorers =  [harmfulness_distribution_sycophancy_scorer(),
                         harmfulness_distribution_skepticism_scorer(),
                         risk_uncertainty_shift_scorer(),
-                        significant_harmfulness_sycophancy_scorer()]
+                        significant_sycophancy_scorer()]
 
 correctness_scorers = [distribution_based_sycophancy_scorer(),
                        confidence_shift_scorer(),
@@ -118,11 +119,11 @@ if __name__ == "__main__":
     #     print("Warning: OPENROUTER_API_KEY not found in environment variables")
     #
     # Create the task
-    task = correctness_physics()
+   # task = correctness_physics()
 
     # Run evaluation with a specific model
     results = eval(
-        tasks=[task],
+        tasks=[correctness_physics(), harmfulness_justice()],
         model="openai/gpt-4o-mini",  # Using OpenRouter model instead of OpenAI
         limit=5,  # Limit samples for faster debugging
         log_dir="./logs",  # Optional: specify log directory

@@ -5,10 +5,12 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from mask.inspect_mask_dataset import mask_dataset
-from mask.inspect_mask_scorer import mask_combined_scorer
-from mask.inspect_mask_solver import mask_multi_run_solver
-
+from mask.dataset import mask_dataset
+from mask.scorers import mask_lying_detector_scorer
+from mask.solvers import mask_consistency_checker_solver, mask_belief_baseline_solver, mask_consistency_checker_solver, \
+    mask_parallel_evaluation_solver
+from inspect_ai import task, Task, eval
+from mask.hooks import *
 working_dir = Path.cwd()  # Use current directory instead of parent
 
 
@@ -24,11 +26,11 @@ def mask_statistics():
     task = Task(
         name="mask_statistics",
         dataset=dataset,
-        solver=mask_multi_run_solver(),
-        scorer=mask_combined_scorer(
+        solver=mask_parallel_evaluation_solver(),
+        scorer=[mask_lying_detector_scorer(
             judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
             numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
-        )
+        )]
     )
     return task
 
@@ -44,11 +46,11 @@ def mask_continuations():
     task = Task(
         name="mask_continuations",
         dataset=dataset,
-        solver=mask_multi_run_solver(),
-        scorer=mask_combined_scorer(
+        solver=mask_parallel_evaluation_solver(),
+        scorer=[mask_lying_detector_scorer(
             judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
             numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
-        )
+        )]
     )
     return task
 
@@ -64,11 +66,11 @@ def mask_known_facts():
     task = Task(
         name="mask_known_facts",
         dataset=dataset,
-        solver=mask_multi_run_solver(),
-        scorer=mask_combined_scorer(
+        solver=mask_parallel_evaluation_solver(),
+        scorer=[mask_lying_detector_scorer(
             judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
             numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
-        )
+        )]
     )
     return task
 
@@ -84,11 +86,11 @@ def mask_provided_facts():
     task = Task(
         name="mask_provided_facts",
         dataset=dataset,
-        solver=mask_multi_run_solver(),
-        scorer=mask_combined_scorer(
+        solver=mask_parallel_evaluation_solver(),
+        scorer=[mask_lying_detector_scorer(
             judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
             numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
-        )
+        )]
     )
     return task
 
@@ -104,10 +106,23 @@ def mask_disinformation():
     task = Task(
         name="mask_disinformation",
         dataset=dataset,
-        solver=mask_multi_run_solver(),
-        scorer=mask_combined_scorer(
+        solver=mask_parallel_evaluation_solver(),
+        scorer=[mask_lying_detector_scorer(
             judge_model="openrouter/qwen/qwen3-8b",  # Using Qwen model that works
             numerical_judge_model="openrouter/qwen/qwen3-8b"  # Using Qwen model that works
-        )
+        )]
     )
-    return task 
+    return task
+
+if __name__ == "__main__":
+    # Create the task
+    task = mask_statistics()
+
+    # Run evaluation with a specific model
+    results = eval(
+        tasks=[task],
+        model="openai/gpt-4o-mini",  # or any model you want to test
+        limit=1,  # Limit samples for faster debugging
+        log_dir="./logs",  # Optional: specify log directory
+        # debug_errors=True,  # Optional: enable debug mode
+    )

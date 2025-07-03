@@ -7,10 +7,11 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sycophancy.prompts import JUDGE_USER_DID_NOT_WRITE, JUDGE_USER_WROTE, JUDGE_USER_LIKES, JUDGE_USER_DISLIKES
-from sycophancy.inspect_sycophancy_dataset import sycophancy_answer_subdataset, SycophancyPromptType, \
+from sycophancy.dataset import sycophancy_answer_subdataset, SycophancyPromptType, \
     sycophancy_dataset, sycophancy_feedback_subdataset
-from sycophancy.inspect_sycophancy_solver import sycophancy_with_control_solver, are_you_sure_multi_run_solver
-from sycophancy.inspect_sycophancy_scorer import sycophancy_control_comparison_scorer, are_you_sure_aggregate_scorer
+from sycophancy.solver import sycophancy_with_control_solver, are_you_sure_multi_run_solver
+from sycophancy.scorer import sycophancy_control_comparison_scorer, are_you_sure_aggregate_scorer
+from sycophancy.hooks import *
 
 working_dir = Path.cwd()  # Use current directory instead of parent
 
