@@ -5,10 +5,10 @@ from inspect_ai import task, Task
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sandbagging.dataset import create_sandbagging_contrastive_dataset, create_sandbagging_dataset
-from sandbagging.solver import sandbagging_contrastive_solver, sandbagging_with_refusal_detection
-from sandbagging.scorer import sandbagging_judge_lie_detector, sandbagging_lie_detector_scorer, sandbagging_contrastive_scorer, sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
-from sandbagging.models import SandbaggingDomain
+from sandbagging.contextual.dataset import create_sandbagging_contrastive_dataset, create_sandbagging_dataset
+from sandbagging.contextual.solver import sandbagging_contrastive_solver, sandbagging_with_refusal_detection
+from sandbagging.contextual.scorer import sandbagging_judge_lie_detector, sandbagging_lie_detector_scorer, sandbagging_contrastive_scorer, sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
+from sandbagging.contextual.models import SandbaggingDomain
 
 
 @task
