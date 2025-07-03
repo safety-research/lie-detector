@@ -13,7 +13,7 @@ from solver import mask_lying_solver, mask_multi_run_solver
 def main():
     # Configuration
     dataset_path = "data/provided_facts.csv"  # Update this path
-    model = "openai/gpt-4o-mini"  # or "openai/gpt-4o" or "anthropic/claude-3-sonnet-20240229"
+    model = "openrouter/openai/gpt-4o-mini"  # or "openrouter/openai/gpt-4o" or "openrouter/anthropic/claude-3-sonnet-20240229"
     output_dir = "./logs"
     limit = 20  # Set to None for full dataset, or a number like 10 for testing
     
@@ -36,8 +36,8 @@ def main():
             base_solver=mask_lying_solver(request_logprobs=False)
         ),
         scorer=mask_combined_scorer(
-            judge_model="openai/gpt-4o",  # Model for judging responses
-            numerical_judge_model="openai/o1-mini"  # Model for numerical evaluation
+            judge_model="openrouter/openai/gpt-4o-mini",  # Model for judging responses
+            numerical_judge_model="openrouter/openai/gpt-4o-mini"  # Model for numerical evaluation
         )
     )
     

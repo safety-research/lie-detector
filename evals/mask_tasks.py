@@ -1,5 +1,6 @@
 import os
 import sys
+from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -9,7 +10,7 @@ from mask.solvers import mask_parallel_evaluation_solver
 from inspect_ai import task, Task, eval
 from mask.hooks import *
 working_dir = Path.cwd()  # Use current directory instead of parent
-
+load_dotenv()
 
 @task
 def mask_statistics():
@@ -118,7 +119,7 @@ if __name__ == "__main__":
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
+        model="openrouter/openai/gpt-4o-mini",  # or any model you want to test
         limit=1,  # Limit samples for faster debugging
         log_dir="./logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
