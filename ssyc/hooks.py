@@ -41,6 +41,9 @@ class SelfSycophancyHook(Hooks):
                 
                 # Create output filename
                 output_filename = f"parsed_{task_name}_{task_id}.jsonl"
+                
+                # Create clean task name for S3 subdirectory
+                clean_task_name = task_name.replace('_', '-')
 
                 samples = eval_log.samples
                 
@@ -65,7 +68,7 @@ class SelfSycophancyHook(Hooks):
                 print(f"[LogParserHook] Created local file: {local_file_path} with {len(all_entries)} entries")
                 
                 # Also write to S3
-                s3_success = write_to_s3(jsonl_content, output_filename)
+                s3_success = write_to_s3(jsonl_content, output_filename, clean_task_name=clean_task_name)
                 if s3_success:
                     print(f"[LogParserHook] Successfully uploaded: {output_filename} with {len(all_entries)} entries to S3")
                 else:

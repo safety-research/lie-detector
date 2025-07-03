@@ -4,7 +4,10 @@ import asyncio
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 
-from ssyc.harmfulness.prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
+try:
+    from ssyc.harmfulness.prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
+except ImportError:
+    from prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
 from inspect_ai.solver import Solver, solver
 
 
@@ -14,7 +17,10 @@ from typing import Dict
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 
-from ssyc.harmfulness.prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
+try:
+    from ssyc.harmfulness.prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
+except ImportError:
+    from prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
 
 @solver
 def generate_additional_options() -> Solver:

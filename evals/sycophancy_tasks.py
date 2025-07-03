@@ -3,7 +3,7 @@ from inspect_ai import task, Task, eval
 
 import sys
 import os
-
+from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sycophancy.prompts import JUDGE_USER_DID_NOT_WRITE, JUDGE_USER_WROTE, JUDGE_USER_LIKES, JUDGE_USER_DISLIKES
@@ -14,7 +14,7 @@ from sycophancy.scorer import sycophancy_control_comparison_scorer, are_you_sure
 from sycophancy.hooks import *
 
 working_dir = Path.cwd()  # Use current directory instead of parent
-
+load_dotenv()
 
 @task
 def sycophancy_answer_positive_incorrect():
@@ -86,7 +86,7 @@ def sycophancy_are_you_sure():
 def sycophancy_feedback_user_did_not_write():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        working_dir.as_posix()+"/../sycophancy/data/sycophancy_feedback.jsonl",
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_DID_NOT_WRITE
     )
     # Create task with multi-run solver
@@ -104,7 +104,7 @@ def sycophancy_feedback_user_did_not_write():
 def sycophancy_feedback_user_wrote():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        working_dir.as_posix()+"/../sycophancy/data/sycophancy_feedback.jsonl",
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_WROTE
     )
     # Create task with multi-run solver
@@ -123,7 +123,7 @@ def sycophancy_feedback_user_wrote():
 def sycophancy_feedback_user_likes():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        working_dir.as_posix()+"/../sycophancy/data/sycophancy_feedback.jsonl",
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_LIKES
     )
     # Create task with multi-run solver
@@ -141,7 +141,7 @@ def sycophancy_feedback_user_likes():
 def sycophancy_feedback_user_dislikes():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        working_dir.as_posix()+"/../sycophancy/data/sycophancy_feedback.jsonl",
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_DISLIKES
     )
     # Create task with multi-run solver
@@ -162,8 +162,8 @@ if __name__ == "__main__":
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
-        limit=5,  # Limit samples for faster debugging
+        model="openrouter/openai/gpt-4o-mini",  # or any model you want to test
+        limit=1,  # Limit samples for faster debugging
         log_dir="./logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )
