@@ -1,14 +1,11 @@
-from pathlib import Path
-from inspect_ai import task, Task
-
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from mask.dataset import mask_dataset
 from mask.scorers import mask_lying_detector_scorer
-from mask.solvers import mask_consistency_checker_solver, mask_belief_baseline_solver, mask_consistency_checker_solver, \
-    mask_parallel_evaluation_solver
+from mask.solvers import mask_parallel_evaluation_solver
 from inspect_ai import task, Task, eval
 from mask.hooks import *
 working_dir = Path.cwd()  # Use current directory instead of parent

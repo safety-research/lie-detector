@@ -1,6 +1,11 @@
 import random
+<<<<<<< HEAD
 import re
 from typing import Dict
+=======
+import asyncio
+from typing import Optional
+>>>>>>> feature/sandbagging
 
 import numpy as np
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser

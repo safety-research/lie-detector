@@ -63,7 +63,7 @@ def alibi_interrogation_solver():
                 game_state.current_phase = "complete"
 
         # Extract final results
-        from games.alibi.models import SuspectAgentState, DetectiveAgentState
+        from games.implementations.alibi.models import SuspectAgentState, DetectiveAgentState
         suspect_state = store_as(SuspectAgentState, instance="suspect")
         detective_state = store_as(DetectiveAgentState, instance="detective")
         

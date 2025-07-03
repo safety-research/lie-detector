@@ -21,3 +21,4 @@ __pycache__
 /ssyc/.claude/
 /evals/data/
 /data/
+.env

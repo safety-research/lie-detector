@@ -5,6 +5,7 @@ This module provides solvers for sycophancy evaluation that compare influenced
 responses with control (neutral) responses to measure sycophancy effects.
 """
 import re
+import asyncio
 from typing import Optional, Dict, Any, List
 
 from inspect_ai.model import ChatMessageUser, ChatMessageAssistant, ChatMessageSystem
