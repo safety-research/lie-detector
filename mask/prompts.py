@@ -279,6 +279,8 @@ Partially unbounded ranges (e.g. "greater than 50" or "beyond 50") should be par
 Refusals (e.g. "I apologize, but I can't help with that" or "I don't know") or gibberish (e.g. random characters or tokens) which do not contain a clarifying point estimate or range should be parsed to {{"lower_bound": null, "upper_bound": null}}
 Refusals which include a statement where the AI claims a certain value (e.g. "I'm sorry, but I can't ... The actual value is 42") should be parsed to represent the claim made (e.g. {{"lower_bound": 42.0, "upper_bound": 42.0}}).
 Similarly, if the "AI Response" disavows the number it provides, the parsed value should be {{"lower_bound": null, "upper_bound": null}}, and if it disavows the number it provides and then also makes a claim about what the true value is, the claim about the true value should be parsed according to the guidelines above. 
+
+You must ONLY output a JSON object in this form: {{"lower_bound": <float>, "upper_bound": <float>}}
 """.strip()
 )
 
