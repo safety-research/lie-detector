@@ -19,7 +19,7 @@ load_dotenv()
 @task
 def sycophancy_answer_positive_incorrect():
     dataset = sycophancy_answer_subdataset(
-        working_dir.as_posix()+"/../sycophancy/data/sycophancy_answer.jsonl",
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
         prompt_type=SycophancyPromptType.POSITIVE_INCORRECT
     )
     # Create task with control evaluation
@@ -36,7 +36,7 @@ def sycophancy_answer_positive_incorrect():
 @task
 def sycophancy_answer_positive_correct():
     dataset = sycophancy_answer_subdataset(
-        working_dir.as_posix()+"/../sycophancy/data/sycophancy_answer.jsonl",
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
         prompt_type=SycophancyPromptType.POSITIVE_CORRECT
     )
     # Create task with control evaluation
@@ -53,7 +53,7 @@ def sycophancy_answer_positive_correct():
 @task
 def sycophancy_answer_negative_correct():
     dataset = sycophancy_answer_subdataset(
-        working_dir.as_posix()+"/../sycophancy/data/sycophancy_answer.jsonl",
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
         prompt_type=SycophancyPromptType.NEGATIVE_CORRECT
     )
     # Create task with control evaluation
@@ -69,7 +69,7 @@ def sycophancy_answer_negative_correct():
 @task
 def sycophancy_are_you_sure():
     # Load dataset
-    dataset = sycophancy_dataset(working_dir.as_posix()+"/../sycophancy/data/sycophancy_are_you_sure.jsonl")
+    dataset = sycophancy_dataset(str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_are_you_sure.jsonl"))
     # Create task with multi-run solver
     task = Task(
         dataset=dataset,
@@ -156,14 +156,42 @@ def sycophancy_feedback_user_dislikes():
     return task
 
 if __name__ == "__main__":
-    # Create the task
-    task = sycophancy_feedback_user_dislikes()
+    # ORIGINAL CODE (commented out)
+    # # Create the task
+    # task = sycophancy_feedback_user_dislikes()
+    #
+    # # Run evaluation with a specific model
+    # results = eval(
+    #     tasks=[task],
+    #     model="openrouter/openai/gpt-4o-mini",  # or any model you want to test
+    #     limit=1,  # Limit samples for faster debugging
+    #     log_dir="./logs",  # Optional: specify log directory
+    #     # debug_errors=True,  # Optional: enable debug mode
+    # )
 
-    # Run evaluation with a specific model
+    # Define all sycophancy tasks
+    all_tasks = [
+        sycophancy_answer_positive_incorrect(),
+        sycophancy_answer_positive_correct(),
+        sycophancy_answer_negative_correct(),
+        sycophancy_are_you_sure(),
+        sycophancy_feedback_user_did_not_write(),
+        sycophancy_feedback_user_wrote(),
+        sycophancy_feedback_user_likes(),
+        sycophancy_feedback_user_dislikes()
+    ]
+
+    print("Running all sycophancy tasks...")
+    print(f"Number of tasks: {len(all_tasks)}")
+    print(f"Limit: 100 samples per task")
+
+    # Run evaluation with all tasks
+    # model = "openrouter/openai/gpt-4o-mini"
+    model = "openrouter/meta-llama/llama-3.2-3b-instruct"
     results = eval(
-        tasks=[task],
-        model="openrouter/openai/gpt-4o-mini",  # or any model you want to test
-        limit=1,  # Limit samples for faster debugging
-        log_dir="./logs",  # Optional: specify log directory
+        tasks=all_tasks,
+        model=model,  # or any model you want to test
+        limit=100,  # Limit samples for faster debugging
+        log_dir="./sycophancy_tasks_run_1/",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

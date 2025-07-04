@@ -27,11 +27,16 @@ class SycophancyHook(Hooks):
 
         # Process each log file
         for eval_log in data.logs:
-            filepath = Path(Path(eval_log.location).parent.parent.as_posix() + '/data')
+            # Use the same log directory as the evaluation but with _parsed appended
+            original_log_dir = Path(eval_log.location).parent
+            parsed_log_dir = Path(str(original_log_dir) + '_parsed')
+            filepath = parsed_log_dir / 'data'
+            
             try:
-                os.mkdir(filepath)
-            except FileExistsError:
-                pass
+                os.makedirs(filepath, exist_ok=True)
+            except Exception as e:
+                print(f"[LogParserHook] Warning: Could not create directory {filepath}: {e}")
+                continue
 
             try:
                 # Extract basic information
