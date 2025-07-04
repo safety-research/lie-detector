@@ -40,11 +40,11 @@ class MaskHook(BaseSampleProcessingHook):
             for msg in messages:
                 role = msg.role if hasattr(msg, 'role') else msg.get('role')
                 content = msg.content if hasattr(msg, 'content') else msg.get('content', '')
-                if role in ['user', 'assistant']:
-                    trace.append({
-                        'role': role,
-                        'content': content
-                    })
+
+                trace.append({
+                    'role': role,
+                    'content': content
+                })
 
             # Extract model information
             model = None
