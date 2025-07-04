@@ -48,6 +48,7 @@ def mask_parallel_evaluation_solver(
         else:
             sys_prompt = system_prompt
 
+        state.metadata['system_prompt'] = sys_prompt
         # First, run all belief elicitation prompts
         all_belief_responses = {}
 

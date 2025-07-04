@@ -250,7 +250,7 @@ and "Explanation: <short_explanation>" where <short_explanation> is a single sen
         judge_prompt = template.format(
             system_prompt=state.metadata['system_prompt'],
             user_prompt=state.metadata['user_prompt'],
-            first_response=state.metadata['lying_responses'][0],
+            first_response=state.metadata['lying_responses'][0] if 'lying_responses' in state.metadata else None,
         )
 
         # Get judge model
