@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sandbagging.capabilities.dataset import create_ascii_multiple_choice_dataset
 from sandbagging.capabilities.scorers import ascii_multiple_choice_sandbagging_scorer
 from sandbagging.capabilities.solvers import ascii_multiple_choice_sandbagging_solver
-
+from sandbagging.hooks import *
 
 @task
 def ascii_sandbagging_task(

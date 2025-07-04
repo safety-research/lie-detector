@@ -9,7 +9,7 @@ from sandbagging.contextual.dataset import create_sandbagging_contrastive_datase
 from sandbagging.contextual.solver import sandbagging_contrastive_solver, sandbagging_with_refusal_detection
 from sandbagging.contextual.scorer import sandbagging_judge_lie_detector, sandbagging_lie_detector_scorer, sandbagging_contrastive_scorer, sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
 from sandbagging.contextual.models import SandbaggingDomain
-
+from sandbagging.hooks import *
 
 @task
 def sandbagging_judge_lie_detection():

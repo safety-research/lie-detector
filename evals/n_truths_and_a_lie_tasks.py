@@ -14,7 +14,7 @@ from games.implementations.n_truths_and_a_lie.scenario import generate_themed_sc
 from games.implementations.n_truths_and_a_lie import GameConfig
 from games.implementations.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
 from games.implementations.n_truths_and_a_lie.solvers import n_truths_solver
-
+from games.implementations.n_truths_and_a_lie.hook import *
 MAX_SCENARIOS = 1
 
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=[task],
         model="openai/gpt-4o-mini",  # or any model you want to test
-        limit=2,  # Limit samples for faster debugging
+        limit=1,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

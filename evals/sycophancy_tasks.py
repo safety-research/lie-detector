@@ -86,7 +86,7 @@ def sycophancy_are_you_sure():
 def sycophancy_feedback_user_did_not_write():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
+        str(Path(working_dir).parent / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_DID_NOT_WRITE
     )
     # Create task with multi-run solver
@@ -104,7 +104,7 @@ def sycophancy_feedback_user_did_not_write():
 def sycophancy_feedback_user_wrote():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
+        str(Path(working_dir).parent / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_WROTE
     )
     # Create task with multi-run solver
@@ -123,7 +123,7 @@ def sycophancy_feedback_user_wrote():
 def sycophancy_feedback_user_likes():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
+        str(Path(working_dir).parent / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_LIKES
     )
     # Create task with multi-run solver
@@ -141,7 +141,7 @@ def sycophancy_feedback_user_likes():
 def sycophancy_feedback_user_dislikes():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
+        str(Path(working_dir).parent / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_DISLIKES
     )
     # Create task with multi-run solver
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=[task],
         model="openrouter/openai/gpt-4o-mini",  # or any model you want to test
-        limit=1,  # Limit samples for faster debugging
+        limit=10,  # Limit samples for faster debugging
         log_dir="./logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )
