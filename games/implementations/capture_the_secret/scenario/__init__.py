@@ -8,16 +8,16 @@ import random
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
-from games.capture_the_secret.models import (
+from games.implementations.capture_the_secret.models import (
     ScenarioConfig, Persona, InfoClassification, SecretInfo
 )
 
-from games.capture_the_secret.scenario.examples import (
+from games.implementations.capture_the_secret.scenario.examples import (
     align_domain_context, align_persona_generation, align_information_generation,
     align_meeting_context, align_risk_assessment, align_elicitation_strategy
 )
 
-from games.capture_the_secret.scenario.examples import (
+from games.implementations.capture_the_secret.scenario.examples import (
     generate_domain_context, generate_blue_persona, generate_red_persona,
     generate_classified_information, generate_meeting_context,
     assess_information_leak_risk, generate_elicitation_strategy

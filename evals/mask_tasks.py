@@ -1,5 +1,7 @@
 import os
 import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -114,7 +116,7 @@ def mask_disinformation():
 
 if __name__ == "__main__":
     # Create the task
-    task = mask_known_facts()
+    task = mask_provided_facts()
 
     # Run evaluation with a specific model
     results = eval(

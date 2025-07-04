@@ -3,6 +3,8 @@ import os
 from datetime import datetime
 from pathlib import Path
 from inspect_ai.hooks import Hooks, hooks, RunEnd
+
+from common.hook import BaseSampleProcessingHook
 from common.utils import write_to_s3
 
 
@@ -10,74 +12,9 @@ from common.utils import write_to_s3
     name="self_sycophancy_log_parser_hook",
     description="Parses evaluation logs and outputs JSONL format with conversation traces and lie detection results."
 )
-class SelfSycophancyHook(Hooks):
-    async def on_run_end(self, data: RunEnd):
-        """
-        Hook that runs at the end of each evaluation run to parse logs and create JSONL output.
-        
-        Args:
-            data: RunEnd object containing run_id and logs
-        """
-        print(f"[LogParserHook] Processing run: {data.run_id}")
-        
-        # Get the first log from the logs list
-        if not data.logs or len(data.logs) == 0:
-            print(f"[LogParserHook] Warning: No logs found for run: {data.run_id}")
-            return
-
-        # Process each log file
-        for eval_log in data.logs:
-            filepath = Path(Path(eval_log.location).parent.parent.as_posix() + '/data')
-            try:
-                os.mkdir(filepath)
-            except FileExistsError:
-                pass
-
-            try:
-                # Extract basic information
-                task_name = eval_log.eval.task
-                task_id = eval_log.eval.task_id
-                timestamp = eval_log.eval.created
-                
-                # Create output filename
-                output_filename = f"parsed_{task_name}_{task_id}.jsonl"
-                
-                # Create clean task name for S3 subdirectory
-                clean_task_name = task_name.replace('_', '-')
-
-                samples = eval_log.samples
-                
-                if samples is None:
-                    print(f"[LogParserHook] Warning: No samples found in log")
-                    continue
-
-                # Collect all parsed entries
-                all_entries = []
-                for sample in samples:
-                    parsed_entry = self._parse_sample(sample, task_name, task_id, timestamp, eval_log)
-                    if parsed_entry:
-                        all_entries.append(parsed_entry)
-
-                # Create JSONL content
-                jsonl_content = '\n'.join([json.dumps(entry) for entry in all_entries])
-                
-                # Write to local data folder
-                local_file_path = filepath.as_posix() + '/' + output_filename
-                with open(local_file_path, 'w') as output_file:
-                    output_file.write(jsonl_content)
-                print(f"[LogParserHook] Created local file: {local_file_path} with {len(all_entries)} entries")
-                
-                # Also write to S3
-                s3_success = write_to_s3(jsonl_content, output_filename, clean_task_name=clean_task_name)
-                if s3_success:
-                    print(f"[LogParserHook] Successfully uploaded: {output_filename} with {len(all_entries)} entries to S3")
-                else:
-                    print(f"[LogParserHook] Warning: Failed to upload to S3, but local file was created")
-                
-            except Exception as e:
-                print(f"[LogParserHook] Error processing log file: {e}")
+class SelfSycophancyHook(BaseSampleProcessingHook):
     
-    def _parse_sample(self, sample, task_name, task_id, timestamp, eval_log):
+    def process_sample(self, sample, eval_log):
         """
         Parse a single sample from the log and convert to the required format.
         
@@ -91,6 +28,9 @@ class SelfSycophancyHook(Hooks):
         Returns:
             Dictionary in the required JSONL format
         """
+        task_name = eval_log.eval.task
+        task_id = eval_log.eval.task_id
+        timestamp = eval_log.eval.created
         try:
             # Extract conversation trace from messages
             messages = sample.messages if hasattr(sample, 'messages') else []
