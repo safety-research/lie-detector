@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from mask.dataset import mask_dataset
-from mask.scorers import mask_lying_detector_scorer
+from mask.scorers import mask_lying_detector_scorer, judge_scorer
 from mask.solvers import mask_parallel_evaluation_solver
 from inspect_ai import task, Task, eval
 from mask.hooks import *
@@ -87,10 +87,7 @@ def mask_provided_facts():
         name="mask_provided_facts",
         dataset=dataset,
         solver=mask_parallel_evaluation_solver(),
-        scorer=[mask_lying_detector_scorer(
-            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Claude Sonnet 4 as judge
-            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Claude Sonnet 4 as judge
-        )]
+        scorer=[judge_scorer()]
     )
     return task
 
@@ -116,37 +113,36 @@ def mask_disinformation():
     return task
 
 if __name__ == "__main__":
-    # Create the task
-    task = mask_provided_facts()
-
+    # # Create the task
+    # task = mask_provided_facts()
+    #
     # # Run evaluation with a specific model
     # results = eval(
     #     tasks=[task],
     #     model="openrouter/openai/gpt-4o-mini",  # or any model you want to test
-    #     limit=10,  # Limit samples for faster debugging
+    #     limit=1,  # Limit samples for faster debugging
     #     log_dir="./logs",  # Optional: specify log directory
     #     # debug_errors=True,  # Optional: enable debug mode
     # )
-    # Define all mask tasks
-    all_tasks = [
-        mask_statistics(),
-        mask_continuations(),
-        mask_known_facts(),
-        mask_provided_facts(),
-        mask_disinformation()
-    ]
+
+    # all_tasks = [
+    #     mask_statistics(),
+    #     mask_continuations(),
+    #     mask_known_facts(),
+    #     mask_provided_facts(),
+    #     mask_disinformation()
+    # ]
 
     print("Running all mask tasks...")
-    print(f"Number of tasks: {len(all_tasks)}")
     print(f"Limit: 100 samples per task")
 
     # Run evaluation with all tasks
     # model = "openrouter/openai/gpt-4o-mini"
     model = "openrouter/meta-llama/llama-3.2-3b-instruct"
     results = eval(
-        tasks=all_tasks,
+        tasks=[mask_statistics()],
         model=model,  # or any model you want to test
-        limit=100,  # Limit samples for faster debugging
-        log_dir="./logs/",  # Optional: specify log directory
+        limit=10,  # Limit samples for faster debugging
+        log_dir="./logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

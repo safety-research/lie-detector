@@ -36,6 +36,8 @@ class MaskHook(BaseSampleProcessingHook):
             messages = sample.messages if hasattr(sample, 'messages') else []
             trace = []
 
+            trace.append({"role": "system", "content": sample.metadata['system_prompt']})
+
             # Filter out system messages and format the conversation
             for msg in messages:
                 role = msg.role if hasattr(msg, 'role') else msg.get('role')
