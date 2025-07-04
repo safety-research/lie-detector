@@ -1,5 +1,7 @@
 import os
 import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -106,6 +108,7 @@ def mask_disinformation():
         dataset=dataset,
         solver=mask_parallel_evaluation_solver(),
         scorer=[mask_lying_detector_scorer(
+
             judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Claude Sonnet 4 as judge
             numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Claude Sonnet 4 as judge
         )]
@@ -113,8 +116,8 @@ def mask_disinformation():
     return task
 
 if __name__ == "__main__":
-    # DEBUGGING
-    # task = mask_known_facts()
+    # Create the task
+    task = mask_provided_facts()
 
     # # Run evaluation with a specific model
     # results = eval(

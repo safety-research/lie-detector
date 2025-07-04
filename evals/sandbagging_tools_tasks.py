@@ -14,7 +14,7 @@ from sandbagging.capabilities.tools import web_search, image_generation, code_ex
 from sandbagging.capabilities.dataset import create_tool_sandbagging_dataset
 from sandbagging.capabilities.scorers import tool_sandbagging_scorer
 from sandbagging.capabilities.solvers import tool_capability_solver
-
+from sandbagging.hooks import *
 
 
 @task
@@ -254,12 +254,12 @@ if __name__ == "__main__":
     # Example usage - run judge-based lie detection evaluation
     from inspect_ai import eval
 
-    task = tool_search_sandbagging_task()
+    task = tool_unethical_sandbagging_task()
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
         model="openai/gpt-4o-mini",  # or any model you want to test
-        limit=5,  # Limit samples for faster debugging
+        limit=50,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )

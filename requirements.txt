@@ -2,3 +2,4 @@ inspect-ai
 openai
 datasets
 audioop-lts
+boto3
