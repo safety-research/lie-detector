@@ -254,12 +254,12 @@ if __name__ == "__main__":
     # Example usage - run judge-based lie detection evaluation
     from inspect_ai import eval
 
-    task = tool_ethical_sandbagging_task()
+    task = tool_unethical_sandbagging_task()
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
         model="openai/gpt-4o-mini",  # or any model you want to test
-        limit=5,  # Limit samples for faster debugging
+        limit=50,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )
