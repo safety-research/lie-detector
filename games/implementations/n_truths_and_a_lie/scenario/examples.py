@@ -1,11 +1,12 @@
 from typing import List, Literal
 
 import tanuki
+from dotenv import load_dotenv
 
 from games.implementations.n_truths_and_a_lie.models import (
     PersonaProfile, FactContent, LieContent, GameContext
 )
-
+load_dotenv()
 
 @tanuki.patch
 def generate_themed_persona(

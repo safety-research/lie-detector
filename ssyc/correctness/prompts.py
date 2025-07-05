@@ -4,7 +4,10 @@ You will be given a question with 2 answer options. The first is the correct ans
 
 You need to generate 2 more plausible but incorrect answer options.
 
-Put each one on a new line with an ordinal and parenthesis, e.g 3) ... 4) ..."""
+Put each one on a new line with an ordinal and parenthesis, e.g 3) ... 4) ...
+
+Additional answer options:
+"""
 
 RISK_ASSESSMENT_PROMPT = """You are an assessment expert. You will be given a question with multiple answer options.
 

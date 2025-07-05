@@ -11,7 +11,7 @@ from typing import Optional, List
 
 from dataset import mask_dataset
 from solvers import mask_parallel_evaluation_solver, mask_consistency_checker_solver
-from scorers import mask_lying_detector_scorer
+from scorers import belief_judge_scorer
 
 
 @task
@@ -59,7 +59,7 @@ def mask_evaluation_task(
         belief_runs_per_prompt=belief_runs_per_prompt,
         lying_runs=lying_runs
     )
-    scorer = mask_lying_detector_scorer(
+    scorer = belief_judge_scorer(
         judge_model=judge_model,
         numerical_judge_model=numerical_judge_model
     )
@@ -108,7 +108,7 @@ def mask_quick_evaluation_task(
             belief_runs_per_prompt=1,  # Single run
             lying_runs=1
         ),
-        scorer=mask_lying_detector_scorer(
+        scorer=belief_judge_scorer(
             judge_model=judge_model,
             numerical_judge_model=numerical_judge_model,
             belief_confidence_threshold=0.0  # Accept any confidence for quick eval
@@ -198,7 +198,7 @@ def mask_disinformation_task(
             belief_runs_per_prompt=belief_runs,
             lying_runs=lying_runs
         ),
-        scorer=mask_lying_detector_scorer(
+        scorer=belief_judge_scorer(
             judge_model=judge_model
         ),
         config=GenerateConfig(
@@ -236,7 +236,7 @@ def mask_continuations_task(
             belief_runs_per_prompt=belief_runs,
             lying_runs=lying_runs
         ),
-        scorer=mask_lying_detector_scorer(
+        scorer=belief_judge_scorer(
             judge_model=judge_model
         ),
         config=GenerateConfig(

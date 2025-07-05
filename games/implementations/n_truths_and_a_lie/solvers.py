@@ -1,17 +1,81 @@
-# games/n_truths_and_a_lie/solvers.py
+# games/implementations/n_truths_and_a_lie/solvers.py
+from typing import Dict
 
 from inspect_ai.agent import AgentState
 from inspect_ai.solver import TaskState, Generate, solver
 from inspect_ai.util import store_as
 
+from games.core.base.solvers import BaseGameSolver, create_base_solver
 from games.implementations.n_truths_and_a_lie.agents.blue import blue_agent
 from games.implementations.n_truths_and_a_lie.agents.red import red_agent
 from games.implementations.n_truths_and_a_lie.models import GameConfig, GameState, BlueAgentState, RedAgentState
 
 
-@solver
-def n_truths_solver():
-    async def solve(state: TaskState, generate: Generate) -> TaskState:
+class NTruthsSolver(BaseGameSolver):
+    """Solver for N-Truths-and-a-Lie game"""
+
+    def get_config_class(self):
+        return GameConfig
+
+    def get_game_state_class(self):
+        return GameState
+
+    def create_agents(self, config: GameConfig):
+        return {
+            "blue": blue_agent(config),
+            "red": red_agent(config)
+        }
+
+    def get_opening_message(self, config: GameConfig) -> str:
+        # N-Truths game doesn't use a pre-set opening message
+        return ""
+
+    def should_continue_game(self, game_state: GameState, config: GameConfig) -> bool:
+        return not game_state.game_complete and len(game_state.interrogation) < config.interrogation_turns_limit
+
+    def store_agent_traces(self, state: TaskState, agent_states: Dict[str, AgentState],
+                           game_state: GameState):
+        """Override to handle N-Truths specific structure"""
+        # Extract traces from all agents
+        agent_traces = {}
+        for agent_name, agent_state in agent_states.items():
+            agent_traces[f"{agent_name}_agent"] = self.extract_agent_messages(agent_state)
+
+        # Build combined trace showing full game flow
+        combined_trace = []
+
+        # Add system prompts first
+        for agent_name, messages in agent_traces.items():
+            if messages and messages[0].get('role') == 'system':
+                combined_trace.append({
+                    **messages[0],
+                    'agent': agent_name.replace('_agent', '')
+                })
+
+        # Add opening statement if exists
+        if game_state.opening_statement:
+            combined_trace.append({
+                'role': 'assistant',
+                'content': game_state.opening_statement,
+                'agent': 'blue'
+            })
+
+        # Add interrogation turns
+        for turn in game_state.interrogation:
+            speaker = turn.get('speaker', 'unknown')
+            message = turn.get('message', '')
+
+            combined_trace.append({
+                'role': 'assistant' if speaker == 'blue' else 'user',
+                'content': message,
+                'agent': speaker
+            })
+
+        # Store in metadata
+        agent_traces['combined'] = combined_trace
+        state.metadata["agent_traces"] = agent_traces
+
+    async def solve(self, state: TaskState, generate: Generate) -> TaskState:
         # Get game configuration from metadata
         config = GameConfig(**state.metadata["game_config"])
 
@@ -24,28 +88,31 @@ def n_truths_solver():
         game_state.config = config.model_dump()
 
         # Initialize agent states
-        red_agent_state = AgentState(messages=[])
-        blue_agent_state = AgentState(messages=[])
+        agent_states = {
+            "blue": AgentState(messages=[]),
+            "red": AgentState(messages=[])
+        }
 
         # Phase 1: Blue presents facts (opening statement)
         game_state.current_phase = "opening"
         game_state.active_speaker = "blue"
 
-        blue_agent_state = await blue(blue_agent_state)
+        agent_states["blue"] = await blue(agent_states["blue"])
 
         # Phase 2: Red interrogates Blue
         while not game_state.game_complete:
             if game_state.active_speaker == "red":
-                red_agent_state = await red(red_agent_state)
+                agent_states["red"] = await red(agent_states["red"])
             else:
-                blue_agent_state = await blue(blue_agent_state)
+                agent_states["blue"] = await blue(agent_states["blue"])
 
             # Check if we've hit the turn limit
             if len(game_state.interrogation) >= config.interrogation_turns_limit:
                 game_state.game_complete = True
                 game_state.current_phase = "complete"
 
-        # Phase 3: Red makes final guess (handled by scorer)
+        # Store agent traces
+        self.store_agent_traces(state, agent_states, game_state)
 
         # Store final states for analysis
         blue_state = store_as(BlueAgentState, instance="blue")
@@ -64,4 +131,7 @@ def n_truths_solver():
 
         return state
 
-    return solve
+
+# Create the solver
+def n_truths_solver():
+    return create_base_solver(NTruthsSolver)
