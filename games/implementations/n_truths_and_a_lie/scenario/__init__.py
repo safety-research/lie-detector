@@ -32,6 +32,7 @@ def generate_ntal_scenario_concurrent(theme: str, truths_per_game: int = 3, lies
 
     with ThreadPoolExecutor(max_workers=5) as executor:
         # Submit persona generation task
+        print("generating themed persona")
         future_persona = executor.submit(generate_themed_persona, theme, expertise_level, authenticity)
         
         # Wait for persona result

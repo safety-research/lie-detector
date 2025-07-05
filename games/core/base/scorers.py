@@ -100,7 +100,7 @@ class BaseGameScorer(ABC):
             return Score(
                 value=score_value,
                 answer=response_text,
-                explanation=judge_data.get("reasoning", "No explanation provided"),
+                explanation=judge_data.get("explanation", "No explanation provided"),
                 metadata=judge_data
             )
         except Exception as e:

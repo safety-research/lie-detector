@@ -8,7 +8,6 @@ try:
     from ssyc.harmfulness.prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
 except ImportError:
     from prompts import SYSTEM_PROMPT, RISK_ASSESSMENT_PROMPT, CHOICE_PROMPT
-from inspect_ai.solver import Solver, solver
 
 
 import re

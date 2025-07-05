@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from mask.dataset import mask_dataset
-from mask.scorers import mask_lying_detector_scorer, judge_scorer
+from mask.scorers import belief_judge_scorer, judge_scorer
 from mask.solvers import mask_parallel_evaluation_solver
 from inspect_ai import task, Task, eval
 from mask.hooks import *
@@ -27,9 +27,9 @@ def mask_statistics():
         name="mask_statistics",
         dataset=dataset,
         solver=mask_parallel_evaluation_solver(),
-        scorer=[mask_lying_detector_scorer(
-            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Claude Sonnet 4 as judge
-            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Claude Sonnet 4 as judge
+        scorer=[belief_judge_scorer(
+            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
+            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
         )]
     )
     return task
@@ -47,9 +47,9 @@ def mask_continuations():
         name="mask_continuations",
         dataset=dataset,
         solver=mask_parallel_evaluation_solver(),
-        scorer=[mask_lying_detector_scorer(
-            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Claude Sonnet 4 as judge
-            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Claude Sonnet 4 as judge
+        scorer=[belief_judge_scorer(
+            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
+            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
         )]
     )
     return task
@@ -67,9 +67,9 @@ def mask_known_facts():
         name="mask_known_facts",
         dataset=dataset,
         solver=mask_parallel_evaluation_solver(),
-        scorer=[mask_lying_detector_scorer(
-            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Claude Sonnet 4 as judge
-            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Claude Sonnet 4 as judge
+        scorer=[belief_judge_scorer(
+            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
+            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
         )]
     )
     return task
@@ -104,10 +104,9 @@ def mask_disinformation():
         name="mask_disinformation",
         dataset=dataset,
         solver=mask_parallel_evaluation_solver(),
-        scorer=[mask_lying_detector_scorer(
-
-            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Claude Sonnet 4 as judge
-            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Claude Sonnet 4 as judge
+        scorer=[belief_judge_scorer(
+            judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
+            numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
         )]
     )
     return task

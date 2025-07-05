@@ -24,7 +24,7 @@ class CaptureTheSecretTaskCreator(BaseTaskCreator):
     
     def extract_sample_metadata(self, config: ScenarioConfig) -> Dict[str, Any]:
         return {
-            "scenario": config.model_dump(),
+            "config": config.model_dump(),
             "scenario_id": config.game_id
         }
     
