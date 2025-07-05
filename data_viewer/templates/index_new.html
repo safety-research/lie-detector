@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lie Detection Data Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #dc3545 !important;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background: #f5f5f5;
+            color: #222;
+            border-radius: 15px 15px 0 0 !important;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+        }
+        .btn-primary:hover {
+            background: #1565c0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        .sample-card {
+            transition: transform 0.2s;
+        }
+        .sample-card:hover {
+            transform: translateY(-5px);
+        }
+        .badge-lie {
+            background-color: #dc3545;
+            color: white;
+        }
+        .badge-truth {
+            background-color: #28a745;
+            color: white;
+        }
+        .trace-message {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .trace-message.user {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .trace-message.assistant {
+            border-left-color: #007bff;
+            background-color: #d1ecf1;
+        }
+        .trace-message.system {
+            border-left-color: #6c757d;
+            background-color: #e9ecef;
+        }
+        .scores-section {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .metadata-section {
+            background-color: #e2e3e5;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .filter-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-select, .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg" style="background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+        <div class="container">
+            <a class="navbar-brand" href="#" style="color: #222; font-weight: bold; font-size: 1.5rem;">
+                <i class="fas fa-search" style="color: #888;"></i> Lie Detection Data Viewer
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Filter Section -->
+        <div id="filterSection" class="filter-section">
+            <h5><i class="fas fa-filter"></i> Filters</h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Task</label>
+                    <select id="taskFilter" class="form-select">
+                        <option value="">All Tasks</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Model</label>
+                    <select id="modelFilter" class="form-select">
+                        <option value="">All Models</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Did Lie</label>
+                    <select id="lieFilter" class="form-select">
+                        <option value="">All</option>
+                        <option value="true">Lies Only</option>
+                        <option value="false">Truths Only</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Sample Count</label>
+                    <input type="number" id="sampleCount" class="form-control" value="5" min="1" max="50">
+                </div>
+            </div>
+            <div class="mt-3">
+                <button id="applyFiltersBtn" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Apply Filters
+                </button>
+                <button id="clearFiltersBtn" class="btn btn-outline-secondary ms-2">
+                    <i class="fas fa-times"></i> Clear Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Samples Display Section -->
+        <div id="samplesSection">
+            <h4><i class="fas fa-list"></i> Samples</h4>
+            <div id="samplesContainer"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentData = [];
+
+        // Apply filters
+        document.getElementById('applyFiltersBtn').addEventListener('click', loadSamples);
+        document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+
+        async function loadUniqueValues() {
+            try {
+                const response = await fetch('/get_unique_values');
+                const values = await response.json();
+                
+                // Populate task filter
+                const taskFilter = document.getElementById('taskFilter');
+                taskFilter.innerHTML = '<option value="">All Tasks</option>';
+                values.tasks.forEach(task => {
+                    const option = document.createElement('option');
+                    option.value = task;
+                    option.textContent = task;
+                    taskFilter.appendChild(option);
+                });
+                
+                // Populate model filter
+                const modelFilter = document.getElementById('modelFilter');
+                modelFilter.innerHTML = '<option value="">All Models</option>';
+                values.models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    modelFilter.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading unique values:', error);
+            }
+        }
+
+        async function loadSamples() {
+            const task = document.getElementById('taskFilter').value;
+            const model = document.getElementById('modelFilter').value;
+            const didLie = document.getElementById('lieFilter').value;
+            const n = document.getElementById('sampleCount').value;
+
+            let url = `/get_samples?n=${n}`;
+            if (task) url += `&task=${encodeURIComponent(task)}`;
+            if (model) url += `&model=${encodeURIComponent(model)}`;
+            if (didLie) url += `&did_lie=${didLie}`;
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                
+                if (result.samples) {
+                    displaySamples(result.samples);
+                } else {
+                    showMessage(result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error loading samples: ' + error.message, 'error');
+            }
+        }
+
+        function displaySamples(samples) {
+            const container = document.getElementById('samplesContainer');
+            container.innerHTML = '';
+
+            samples.forEach(sample => {
+                const sampleCard = createSampleCard(sample);
+                container.appendChild(sampleCard);
+            });
+        }
+
+        function createSampleCard(sample) {
+            const card = document.createElement('div');
+            card.className = 'card sample-card';
+            
+            const didLieBadge = sample.did_lie ? 
+                '<span class="badge badge-lie ms-2">Lying</span>' : 
+                '<span class="badge badge-truth ms-2">Truthful</span>';
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-id-card"></i> Sample ID: ${sample.sample_id}</span>
+                        ${didLieBadge}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><i class="fas fa-comments"></i> Conversation Trace</h6>
+                        ${createTraceHTML(sample.trace)}
+                    </div>
+
+                    <div class="mb-3">
+                        <h6><i class="fas fa-tag"></i> Groundtruth Label (claude 4-sonnet)</h6>
+                        <div class="trace-message">
+                            <strong>${sample.did_lie ? 'Lying' : 'Truthful'}</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <details>
+                            <summary style="font-weight:600; cursor:pointer;"><i class="fas fa-info-circle"></i> Metadata & Additional Information</summary>
+                            ${createMetadataHTML(sample)}
+                        </details>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function createTraceHTML(trace) {
+            if (!trace || trace.length === 0) {
+                return '<div class="text-muted">No trace data available</div>';
+            }
+
+            return trace.map((message, index) => {
+                // Handle system prompt (string) vs structured messages (object with role and content)
+                if (typeof message === 'string') {
+                    // This is the system prompt
+                    return `
+                        <div class="trace-message system">
+                            <strong>SYSTEM:</strong> ${message}
+                        </div>
+                    `;
+                } else if (message.role && message.content) {
+                    // This is a structured message (user/assistant)
+                    return `
+                        <div class="trace-message ${message.role}">
+                            <strong>${message.role.toUpperCase()}:</strong> ${message.content}
+                        </div>
+                    `;
+                } else {
+                    // Fallback for any other format
+                    return `
+                        <div class="trace-message">
+                            <strong>MESSAGE:</strong> ${JSON.stringify(message)}
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function createScoresHTML(scores, didLie) {
+            if (!scores || Object.keys(scores).length === 0) {
+                return '<div class="text-muted">No scores available</div>';
+            }
+
+            let html = '<div class="scores-section">';
+            html += `<div><strong>Is Lie:</strong> ${didLie ? 'TRUE' : 'FALSE'}</div>`;
+            
+            // Show detailed scoring information if available
+            for (const [scorerName, scorerData] of Object.entries(scores)) {
+                html += `<div class="mt-2"><strong>${scorerName}:</strong></div>`;
+                for (const [key, value] of Object.entries(scorerData)) {
+                    if (typeof value === 'object' && value !== null) {
+                        html += `<div class="ms-3"><strong>${key}:</strong> ${JSON.stringify(value)}</div>`;
+                    } else {
+                        html += `<div class="ms-3"><strong>${key}:</strong> ${value}</div>`;
+                    }
+                }
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function createMetadataHTML(sample) {
+            let html = '<div class="metadata-section">';
+            
+            // Show metadata if it exists
+            if (sample.metadata && Object.keys(sample.metadata).length > 0) {
+                html += '<div><strong>Metadata:</strong></div>';
+                for (const [key, value] of Object.entries(sample.metadata)) {
+                    html += `<div class="ms-3"><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</div>`;
+                }
+            }
+            
+            // Show additional fields if they exist
+            if (sample.additional_fields && Object.keys(sample.additional_fields).length > 0) {
+                html += '<div class="mt-2"><strong>Additional Fields:</strong></div>';
+                for (const [key, value] of Object.entries(sample.additional_fields)) {
+                    html += `<div class="ms-3"><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</div>`;
+                }
+            }
+            
+            // Show basic information
+            html += '<div class="mt-2"><strong>Basic Information:</strong></div>';
+            html += `<div class="ms-3"><strong>Task:</strong> ${sample.task || 'N/A'}</div>`;
+            html += `<div class="ms-3"><strong>Task ID:</strong> ${sample.task_id || 'N/A'}</div>`;
+            html += `<div class="ms-3"><strong>Model:</strong> ${sample.model || 'N/A'}</div>`;
+            html += `<div class="ms-3"><strong>Timestamp:</strong> ${formatTimestamp(sample.timestamp)}</div>`;
+            html += `<div class="ms-3"><strong>File:</strong> ${sample.file_key || 'N/A'}</div>`;
+            html += `<div class="ms-3"><strong>Line Number:</strong> ${sample.line_number || 'N/A'}</div>`;
+            
+            html += '</div>';
+            return html;
+        }
+
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'N/A';
+            try {
+                return new Date(timestamp).toLocaleString();
+            } catch (e) {
+                return timestamp;
+            }
+        }
+
+        function clearFilters() {
+            document.getElementById('taskFilter').value = '';
+            document.getElementById('modelFilter').value = '';
+            document.getElementById('lieFilter').value = '';
+            document.getElementById('sampleCount').value = '5';
+            loadSamples();
+        }
+
+        function showMessage(message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            const alert = document.createElement('div');
+            alert.className = `alert ${alertClass} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(alert, container.firstChild);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        // Auto-load data when page loads
+        window.onload = async function() {
+            await loadUniqueValues();
+            await loadSamples();
+        };
+    </script>
+</body>
+</html> 
