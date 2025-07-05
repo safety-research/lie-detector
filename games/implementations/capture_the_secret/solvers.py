@@ -5,7 +5,6 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from inspect_ai.agent import AgentState
 from inspect_ai.solver import TaskState, Generate, solver
 from inspect_ai.util import store_as
 
@@ -33,7 +32,7 @@ class CaptureTheSecretSolver(BaseGameSolver):
         }
 
     def get_opening_message(self, config: ScenarioConfig) -> str:
-        return f"Hi {config.blue_persona.name}, let's talk."
+        return f"Hi {config.red_persona.name}, let's talk."
 
     def should_continue_game(self, game_state: GameState, config: ScenarioConfig) -> bool:
         return not game_state.game_complete and game_state.turn_count < config.conversation_limit
