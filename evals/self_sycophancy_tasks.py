@@ -123,9 +123,9 @@ if __name__ == "__main__":
 
     # Run evaluation with a specific model
     results = eval(
-        tasks=[correctness_physics(), harmfulness_justice()],
+        tasks=[harmfulness_common_sense()],
         model="openai/gpt-4o-mini",  # Using OpenRouter model instead of OpenAI
-        limit=5,  # Limit samples for faster debugging
+        limit=25,  # Limit samples for faster debugging
         log_dir="./logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )
