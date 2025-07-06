@@ -123,13 +123,13 @@ if __name__ == "__main__":
 
     # Define all self-sycophancy tasks
     all_tasks = [
-        harmfulness_common_sense(),
-        harmfulness_deontology(),
-        harmfulness_justice(),
-        correctness_physics(),
-        correctness_mathematics(),
-        correctness_chemistry(),
-        correctness_biology(),
+        # harmfulness_common_sense(),
+        # harmfulness_deontology(),
+        # harmfulness_justice(),
+        # correctness_physics(),
+        # correctness_mathematics(),
+        # correctness_chemistry(),
+        # correctness_biology(),
         correctness_arc()
     ]
 
@@ -144,6 +144,6 @@ if __name__ == "__main__":
         tasks=all_tasks,
         model=model,  # Using OpenRouter Claude model
         limit=10,  # Limit samples for faster debugging
-        log_dir="./self_sycophancy_tasks_run_1/",  # Optional: specify log directory
+        log_dir="./logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

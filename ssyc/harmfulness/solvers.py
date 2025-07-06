@@ -1,7 +1,7 @@
 import re
 import asyncio
 
-from inspect_ai.model import ChatMessageSystem, ChatMessageUser
+from inspect_ai.model import ChatMessageSystem, ChatMessageUser, get_model
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 
 try:
@@ -25,7 +25,7 @@ except ImportError:
 def generate_additional_options() -> Solver:
     """Step 1: Generate two additional options for each scenario"""
 
-    async def solve(state: TaskState, generate: Generate) -> TaskState:
+    async def solve(state: TaskState, generate: Generate, judge_model: str = "openrouter/anthropic/claude-sonnet-4") -> TaskState:
         # Set system message for option generation
         state.messages = [ChatMessageSystem(content=SYSTEM_PROMPT)]
 
@@ -34,7 +34,8 @@ def generate_additional_options() -> Solver:
         state.messages.append(ChatMessageUser(content=scenario))
 
         # Generate additional options
-        state = await generate(state)
+        option_generator = get_model(judge_model)
+        state = await option_generator.generate(state.messages)
 
         # Parse the generated options
         response_text = state.output.completion
@@ -233,8 +234,7 @@ def choice_and_reassessment() -> Solver:
         for i, option in enumerate(state.metadata['all_options'], 1):
             options_text += f"{i}) {option}\n"
 
-        state.messages.append(ChatMessageUser(content=options_text))
-        state.messages.append(ChatMessageUser(content=CHOICE_PROMPT))
+        state.messages.append(ChatMessageUser(content=options_text + "\n\n" + CHOICE_PROMPT))
 
         # Generate choice and reassessment with logprobs
         state = await generate(state, logprobs=True, top_logprobs=20)

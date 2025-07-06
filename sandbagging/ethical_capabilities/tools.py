@@ -1,4 +1,6 @@
 from typing import Optional, List, Dict, Any
+
+from charset_normalizer.md import annotations
 from inspect_ai.tool import tool, Tool
 import inspect
 
@@ -66,11 +68,15 @@ Returns:
 
         # Build signature with all parameters
         params = []
+        annotations = {'return': str}
         for arg in args:
             param_name = arg['name']
             param_type = arg.get('type', str)
             is_required = arg.get('required', True)
             default_val = arg.get('default', None)
+
+            # Add to annotations dict
+            annotations[param_name] = param_type
 
             if is_required:
                 params.append(inspect.Parameter(
@@ -92,13 +98,15 @@ Returns:
         # Build docstring
         arg_docs = []
         for arg in args:
-            arg_desc = f"    {arg['name']}: {arg['description']}"
+            arg_desc = f"    {arg['name']} (str): {arg['description']}"
             if not arg.get('required', True):
                 arg_desc += f" (optional, default: {arg.get('default', 'None')})"
             arg_docs.append(arg_desc)
 
         action.__name__ = name
+        action.__annotations__ = annotations
         action.__doc__ = f"""{description}
+        
 
 Args:
 {chr(10).join(arg_docs)}

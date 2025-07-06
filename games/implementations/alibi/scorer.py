@@ -139,7 +139,7 @@ Respond in JSON format with:
     "key_topics_covered": ["list of important topics covered"],
     "missed_opportunities": ["list of missed questioning opportunities"],
     "effective_questions": ["list of particularly effective questions"],
-    "reasoning": "detailed explanation of your evaluation"
+    "reasoning": "detailed explanation of your evaluation",
 }"""
 
     def render_judge_prompt(self, game_state: GameState, config, **kwargs) -> str:

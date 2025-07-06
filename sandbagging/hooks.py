@@ -1,3 +1,4 @@
+import traceback
 from abc import abstractmethod
 from datetime import datetime
 
@@ -155,4 +156,5 @@ class SandbaggingHook(BaseSampleProcessingHook):
 
         except Exception as e:
             print(f"[LogParserHook] Error parsing sample {sample_id}: {e}")
+            traceback.print_exc()
             return None

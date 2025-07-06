@@ -43,7 +43,9 @@ class BaseGameScorer(ABC):
         """Get the game state class - can be overridden"""
         return BaseGameState
     
-    def render_judge_prompt(self, game_state: BaseGameState, config: BaseGameConfig, **kwargs) -> str:
+    def render_judge_prompt(self, game_state: BaseGameState,
+                            config: BaseGameConfig,
+                            **kwargs) -> str:
         """Render the judge prompt using Jinja2 template"""
         template_path = self.get_template_path()
         
@@ -61,7 +63,7 @@ class BaseGameScorer(ABC):
             **kwargs
         )
     
-    async def score(self, state: TaskState, target: Target) -> Score:
+    async def score(self, state: TaskState, target: Target, judge_model: str = "openrouter/anthropic/claude-sonnet-4",) -> Score:
         """Main scoring logic - template method"""
         # Get game state
         game_state_class = self.get_game_state_class()
@@ -80,7 +82,7 @@ class BaseGameScorer(ABC):
         judge_prompt = self.render_judge_prompt(game_state, config)
         
         # Get judge model
-        judge_model = get_model()
+        judge_model = get_model(judge_model)
         
         # Create messages for judge
         messages = [
@@ -99,8 +101,8 @@ class BaseGameScorer(ABC):
             
             return Score(
                 value=score_value,
-                answer=response_text,
-                explanation=judge_data.get("explanation", "No explanation provided"),
+                answer=judge_data.get("explanation", "No answer provided"),
+                explanation=judge_data.get("analysis", "No explanation provided"),
                 metadata=judge_data
             )
         except Exception as e:
