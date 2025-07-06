@@ -15,6 +15,10 @@ processed_data = []
 S3_BUCKET = "dipika-lie-detection-data"
 S3_PREFIX = "processed-data/"
 
+# Local data configuration for testing
+USE_LOCAL_DATA = True  # Set to False to use S3
+LOCAL_DATA_PATH = "./test_data"  # Change this to your local data directory
+
 def get_s3_client():
     """Get S3 client with error handling"""
     try:
@@ -82,7 +86,130 @@ def download_s3_file(file_key):
         print(f"Error downloading file {file_key}: {e}")
         return None
 
+def list_local_files():
+    """List all JSON files in the local data directory and its subfolders"""
+    if not os.path.exists(LOCAL_DATA_PATH):
+        print(f"Local data path does not exist: {LOCAL_DATA_PATH}")
+        return []
+    
+    all_files = []
+    
+    # Walk through the directory and find all JSON files
+    for root, dirs, files in os.walk(LOCAL_DATA_PATH):
+        for file in files:
+            if file.endswith('.json') or file.endswith('.jsonl'):
+                # Get relative path from LOCAL_DATA_PATH
+                rel_path = os.path.relpath(os.path.join(root, file), LOCAL_DATA_PATH)
+                all_files.append(rel_path)
+    
+    return all_files
+
+def read_local_file(file_path):
+    """Read a file from local filesystem and return its content"""
+    full_path = os.path.join(LOCAL_DATA_PATH, file_path)
+    try:
+        with open(full_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        print(f"Error reading file {full_path}: {e}")
+        return None
+
 def load_and_process_data_from_s3():
+    """Load and process data from S3 or local files"""
+    global processed_data
+    
+    if USE_LOCAL_DATA:
+        print("Loading fresh data from local files...")
+        return load_and_process_data_from_local()
+    else:
+        print("Loading fresh data from S3...")
+        return load_and_process_data_from_s3_only()
+
+def load_and_process_data_from_local():
+    """Load and process data from local files"""
+    global processed_data
+    
+    try:
+        files = list_local_files()
+        
+        if not files:
+            print("No files found in local directory")
+            return 0, "No files found in local directory"
+        
+        all_processed_samples = []
+        
+        for file_path in files:
+            print(f"Processing file: {file_path}")
+            file_content = read_local_file(file_path)
+            
+            if file_content:
+                try:
+                    # Handle JSONL format - each line is a separate JSON object
+                    lines = file_content.strip().split('\n')
+                    
+                    for line_num, line in enumerate(lines):
+                        if line.strip():  # Skip empty lines
+                            try:
+                                sample = json.loads(line.strip())
+                                
+                                # Create processed sample object with all the fields
+                                processed_sample = {
+                                    "id": len(all_processed_samples),
+                                    "file_key": file_path,
+                                    "line_number": line_num + 1,
+                                    "sample_id": sample.get("sample_id", ""),
+                                    "task": sample.get("task", ""),
+                                    "task_id": sample.get("task_id", ""),
+                                    "timestamp": sample.get("timestamp", ""),
+                                    "model": sample.get("model", ""),
+                                    "trace": sample.get("trace", []),
+                                    "did_lie": sample.get("did_lie", False),
+                                    "metadata": sample.get("metadata", {}),
+                                    "scores": sample.get("scores", {})
+                                }
+                                
+                                # Capture any additional fields that might be metadata
+                                additional_fields = {}
+                                for key, value in sample.items():
+                                    if key not in ["sample_id", "task", "task_id", "timestamp", "model", "trace", "did_lie", "metadata", "scores"]:
+                                        additional_fields[key] = value
+                                
+                                if additional_fields:
+                                    processed_sample["additional_fields"] = additional_fields
+                                
+                                # Extract task name from folder path if not already set
+                                if not processed_sample["task"]:
+                                    # Extract folder name from file path
+                                    # e.g., mask-statistics/file.json -> mask-statistics
+                                    path_parts = file_path.split('/')
+                                    if len(path_parts) > 1:
+                                        folder_name = path_parts[0]  # [folder_name]/file.json
+                                        # Replace hyphens with spaces for display
+                                        processed_sample["task"] = folder_name.replace('-', ' ')
+                                
+                                # Always format task name for display (replace underscores with spaces)
+                                if processed_sample["task"]:
+                                    processed_sample["task"] = processed_sample["task"].replace('_', ' ')
+                                
+                                all_processed_samples.append(processed_sample)
+                            
+                            except json.JSONDecodeError as e:
+                                print(f"Error parsing JSON on line {line_num + 1} in file {file_path}: {e}")
+                                continue
+                
+                except Exception as e:
+                    print(f"Error processing file {file_path}: {e}")
+                    continue
+        
+        processed_data = all_processed_samples
+        print(f"Successfully loaded {len(all_processed_samples)} samples from local files")
+        return len(all_processed_samples), f"Loaded {len(all_processed_samples)} samples from local files"
+        
+    except Exception as e:
+        print(f"Error loading data from local files: {e}")
+        return 0, f"Error: {str(e)}"
+
+def load_and_process_data_from_s3_only():
     """Load and process data from S3"""
     global processed_data
     
@@ -259,7 +386,10 @@ def get_unique_values():
 
 # Auto-load data when the app starts
 print("Starting Lie Detection Data Viewer...")
-print("Auto-loading data from S3...")
+if USE_LOCAL_DATA:
+    print(f"Auto-loading data from local path: {LOCAL_DATA_PATH}")
+else:
+    print("Auto-loading data from S3...")
 load_and_process_data_from_s3()
 
 if __name__ == '__main__':
