@@ -26,7 +26,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=[task],
         model=model,  # or any model you want to test
-        limit=10,  # Limit samples for faster debugging
-        # log_dir="./logs/capture_the_secret",  # Specify log directory
+        limit=1,  # Limit samples for faster debugging
+        log_dir="./logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

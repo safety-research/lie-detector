@@ -37,45 +37,45 @@ class GameHook(BaseSampleProcessingHook):
             print(f"[GameHook] Found agent_traces in metadata with keys: {list(agent_traces.keys())}")
 
             # Use the combined trace if available (has full conversation flow)
-            if 'combined' in agent_traces:
-                combined_trace = agent_traces['combined']
-                print(f"[GameHook] Using combined trace with {len(combined_trace)} messages")
-
-                # Extract messages relevant to the lying agent
-                for i, msg in enumerate(combined_trace):
-                    agent = msg.get('agent', '')
-                    role = msg.get('role', 'assistant')
-                    content = msg.get('content', '')
-
-                    # Include system prompt for lying agent
-                    if role == 'system' and agent == lying_agent:
-                        trace.append({
-                            'role': role,
-                            'content': content
-                        })
-                        print(f"[GameHook] Added system message for {lying_agent}")
-
-                    # Include all conversation messages (both assistant and user)
-                    elif role in ['assistant', 'user'] and agent != 'system':
-                        # For the lying agent's perspective:
-                        # - Their messages are 'assistant'
-                        # - Other agent's messages are 'user'
-                        if agent == lying_agent:
-                            trace.append({
-                                'role': 'assistant',
-                                'content': content
-                            })
-                        else:
-                            trace.append({
-                                'role': 'user',
-                                'content': content
-                            })
-                        print(
-                            f"[GameHook] Added message {i}: agent={agent}, role={role}, trace_role={trace[-1]['role']}")
-
-                print(f"[GameHook] Extracted {len(trace)} messages from combined trace")
-                if trace:
-                    return trace
+            # if 'combined' in agent_traces:
+            #     combined_trace = agent_traces['combined']
+            #     print(f"[GameHook] Using combined trace with {len(combined_trace)} messages")
+            #
+            #     # Extract messages relevant to the lying agent
+            #     for i, msg in enumerate(combined_trace):
+            #         agent = msg.get('agent', '')
+            #         role = msg.get('role', 'assistant')
+            #         content = msg.get('content', '')
+            #
+            #         # Include system prompt for lying agent
+            #         if role == 'system' and agent == lying_agent:
+            #             trace.append({
+            #                 'role': role,
+            #                 'content': content
+            #             })
+            #             print(f"[GameHook] Added system message for {lying_agent}")
+            #
+            #         # Include all conversation messages (both assistant and user)
+            #         elif role in ['assistant', 'user'] and agent != 'system':
+            #             # For the lying agent's perspective:
+            #             # - Their messages are 'assistant'
+            #             # - Other agent's messages are 'user'
+            #             if agent == lying_agent:
+            #                 trace.append({
+            #                     'role': 'assistant',
+            #                     'content': content
+            #                 })
+            #             else:
+            #                 trace.append({
+            #                     'role': 'user',
+            #                     'content': content
+            #                 })
+            #             print(
+            #                 f"[GameHook] Added message {i}: agent={agent}, role={role}, trace_role={trace[-1]['role']}")
+            #
+            #     print(f"[GameHook] Extracted {len(trace)} messages from combined trace")
+            #     if trace:
+            #         return trace
 
             # FALLBACK: Get the lying agent's messages directly
             lying_agent_key = f"{lying_agent}_agent"
@@ -89,13 +89,11 @@ class GameHook(BaseSampleProcessingHook):
                     role = msg.get('role', 'assistant')
                     content = msg.get('content', '')
 
-                    # Include system prompts and assistant messages (Blue's responses)
-                    if role in ['system', 'assistant']:
-                        trace.append({
-                            'role': role,
-                            'content': content
-                        })
-                        print(f"[GameHook] Added message {i}: role={role}, content_length={len(content)}")
+                    trace.append({
+                        'role': role,
+                        'content': content
+                    })
+                    print(f"[GameHook] Added message {i}: role={role}, content_length={len(content)}")
 
                 print(f"[GameHook] Extracted {len(trace)} messages from agent traces")
                 if trace:
