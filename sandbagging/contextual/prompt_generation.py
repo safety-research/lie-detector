@@ -3,7 +3,7 @@ Prompt generation system for sandbagging detection.
 """
 
 from typing import List, Dict, Any
-from sandbagging.contextual.models import SandbaggingPromptPair, SandbaggingDomain
+from sandbagging.contextual.models import SandbaggingPromptPair, SandbaggingDomai
 
 
 class DomainPromptTemplates:

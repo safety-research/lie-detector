@@ -87,10 +87,6 @@ def mask_provided_facts():
         name="mask_provided_facts",
         dataset=dataset,
         solver=mask_parallel_evaluation_solver(),
-        # scorer=[mask_lying_detector_scorer(
-        #     judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
-        #     numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
-        # )]
         scorer=[judge_scorer()]
     )
     return task
@@ -116,34 +112,34 @@ def mask_disinformation():
     return task
 
 if __name__ == "__main__":
-    # # Create the task
-    # task = mask_provided_facts()
-    #
-    # # Run evaluation with a specific model
-    # results = eval(
-    #     tasks=[task],
-    #     model="openrouter/openai/gpt-4o-mini",  # or any model you want to test
-    #     limit=1,  # Limit samples for faster debugging
-    #     log_dir="./logs",  # Optional: specify log directory
-    #     # debug_errors=True,  # Optional: enable debug mode
-    # )
+    # Create the task
+    task = mask_provided_facts()
+    
+    # Run evaluation with a specific model
+    results = eval(
+        tasks=[task],
+        model="openrouter/openai/gpt-4o-mini",  # or any model you want to test
+        limit=1,  # Limit samples for faster debugging
+        log_dir="./logs",  # Optional: specify log directory
+        # debug_errors=True,  # Optional: enable debug mode
+    )
 
-    # all_tasks = [
-    #     mask_statistics(),
-    #     mask_continuations(),
-    #     mask_known_facts(),
-    #     mask_provided_facts(),
-    #     mask_disinformation()
-    # ]
+    all_tasks = [
+        mask_statistics(),
+        mask_continuations(),
+        mask_known_facts(),
+        mask_provided_facts(),
+        mask_disinformation()
+    ]
 
     print("Running all mask tasks...")
     print(f"Limit: 100 samples per task")
 
     # Run evaluation with all tasks
     # model = "openrouter/openai/gpt-4o-mini"
-    model = "openrouter/meta-llama/llama-3.2-3b-instruct"
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     results = eval(
-        tasks=[mask_provided_facts()],
+        tasks=all_tasks,
         model=model,  # or any model you want to test
         limit=10,  # Limit samples for faster debugging
         log_dir="./logs",  # Optional: specify log directory

@@ -73,9 +73,12 @@ class SycophancyHook(BaseSampleProcessingHook):
             }
 
             # Add metadata if available
-            metadata = None#sample.metadata if hasattr(sample, 'metadata') else {}
+            metadata = sample.metadata if hasattr(sample, 'metadata') else {}
             if metadata:
                 parsed_entry['metadata'] = metadata
+                # Extract system prompt if available
+                if 'system_prompt' in metadata:
+                    parsed_entry['system_prompt'] = metadata['system_prompt']
             else:
                 parsed_entry['metadata'] = {}
 

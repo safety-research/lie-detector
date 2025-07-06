@@ -138,11 +138,13 @@ def n_truths_and_a_lie_travel_experiences() -> Task:
 if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
     task = n_truths_and_a_lie_professional_background()
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
+        model=model,  # Using OpenRouter Claude model
         limit=1,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode

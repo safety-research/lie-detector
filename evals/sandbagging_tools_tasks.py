@@ -1,21 +1,29 @@
 import os
 import sys
-from typing import Optional, List
+from pathlib import Path
 
-from inspect_ai import task, Task
+from dotenv import load_dotenv
+from inspect_ai import task, Task, eval
 from inspect_ai.model import GenerateConfig
 from inspect_ai.solver import chain, system_message, use_tools
+from typing import Optional, List
 
-# Add the project root to path to import sandbagging module
+# Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sandbagging.ethical_capabilities.tasks import ethical_tool_sandbagging_task
-from sandbagging.capabilities.tools import web_search, image_generation, code_execution
 from sandbagging.capabilities.dataset import create_tool_sandbagging_dataset
-from sandbagging.capabilities.scorers import tool_sandbagging_scorer
 from sandbagging.capabilities.solvers import tool_capability_solver
+from sandbagging.capabilities.scorers import tool_sandbagging_scorer
+from sandbagging.capabilities.tools import web_search, image_generation, code_execution
+from sandbagging.ethical_capabilities.tasks import ethical_tool_sandbagging_task
 from sandbagging.hooks import *
 
+# Get the project root directory
+PROJECT_ROOT = Path(__file__).parent.parent
+SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "sandbagging" / "capabilities"
+SANDBAGGING_ETHICAL_PATH = PROJECT_ROOT / "sandbagging" / "ethical_capabilities"
+
+load_dotenv()
 
 @task
 def tool_search_sandbagging_task(
@@ -58,7 +66,7 @@ def tool_search_sandbagging_task(
 
     return Task(
         dataset=create_tool_sandbagging_dataset(
-            csv_path="../sandbagging/capabilities/subjects.csv",
+            csv_path=str(SANDBAGGING_CAPABILITIES_PATH / "subjects.csv"),
             tool_name='web_search',
             tool_description='search the web',
             num_subjects=num_subjects,
@@ -117,7 +125,7 @@ def tool_image_gen_sandbagging_task(
 
     return Task(
         dataset=create_tool_sandbagging_dataset(
-            csv_path="../sandbagging/capabilities/subjects.csv",
+            csv_path=str(SANDBAGGING_CAPABILITIES_PATH / "subjects.csv"),
             tool_name='image_generation',
             tool_description='generate an image',
             num_subjects=num_subjects,
@@ -175,7 +183,7 @@ def tool_code_sandbagging_task(
 
     return Task(
         dataset=create_tool_sandbagging_dataset(
-            csv_path="../sandbagging/capabilities/subjects.csv",
+            csv_path=str(SANDBAGGING_CAPABILITIES_PATH / "subjects.csv"),
             tool_name='code_execution',
             tool_description='write and execute a python program',
             num_subjects=num_subjects,
@@ -217,7 +225,7 @@ def tool_ethical_sandbagging_task(
         max_tokens=50,
         shuffle=True,
         seed=42,  # Fixed seed for consistency
-        csv_path="../sandbagging/ethical_capabilities/scenarios.csv"
+        csv_path=str(SANDBAGGING_ETHICAL_PATH / "scenarios.csv")
     )
 
 @task
@@ -245,21 +253,20 @@ def tool_unethical_sandbagging_task(
         max_tokens=50,
         shuffle=True,
         seed=42,  # Fixed seed for consistency
-        csv_path="../sandbagging/ethical_capabilities/harmful_scenarios.csv"
+        csv_path=str(SANDBAGGING_ETHICAL_PATH / "harmful_scenarios.csv")
     )
 
 
 
 if __name__ == "__main__":
     # Example usage - run judge-based lie detection evaluation
-    from inspect_ai import eval
-
     task = tool_unethical_sandbagging_task()
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
-        limit=50,  # Limit samples for faster debugging
+        model=model,  # or any model you want to test
+        limit=10,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )

@@ -20,12 +20,13 @@ def alibi_theft_task():
 if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
     task = create_theft_alibi_task()
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
-        limit=1,  # Limit samples for faster debugging
+        model=model,  # or any model you want to test
+        limit=10,  # Limit samples for faster debugging
         # log_dir="./logs/capture_the_secret",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )
