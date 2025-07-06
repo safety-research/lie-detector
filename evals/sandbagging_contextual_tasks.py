@@ -301,11 +301,13 @@ if __name__ == "__main__":
     from inspect_ai import eval
     
     task = sandbagging_judge_lie_detection()
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+
     
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
+        model=model,  # or any model you want to test
         limit=5,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )

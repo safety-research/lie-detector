@@ -6,10 +6,16 @@ from typing import List, Optional
 from inspect_ai import Task
 from inspect_ai.dataset import Dataset
 
-from dataset import create_sandbagging_dataset, sandbagging_dataset_factory
-from solver import sandbagging_solver, sandbagging_with_refusal_detection
-from scorer import sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
-from models import SandbaggingPromptPair, SandbaggingDomain
+try:
+    from .dataset import create_sandbagging_dataset, sandbagging_dataset_factory
+    from .solver import sandbagging_solver, sandbagging_with_refusal_detection
+    from .scorer import sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
+    from .models import SandbaggingPromptPair, SandbaggingDomain
+except ImportError:
+    from sandbagging.contextual.dataset import create_sandbagging_dataset, sandbagging_dataset_factory
+    from sandbagging.contextual.solver import sandbagging_solver, sandbagging_with_refusal_detection
+    from sandbagging.contextual.scorer import sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
+    from sandbagging.contextual.models import SandbaggingPromptPair, SandbaggingDomain
 
 
 def sandbagging_task(

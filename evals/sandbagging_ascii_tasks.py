@@ -1,5 +1,6 @@
 import os
 import sys
+from pathlib import Path
 from typing import Optional, List
 
 from inspect_ai import task, Task
@@ -8,6 +9,9 @@ from inspect_ai.solver import chain, system_message
 
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Get the project root directory for absolute paths
+PROJECT_ROOT = Path(__file__).parent.parent
 
 from sandbagging.capabilities.dataset import create_ascii_multiple_choice_dataset
 from sandbagging.capabilities.scorers import ascii_multiple_choice_sandbagging_scorer
@@ -18,9 +22,9 @@ from sandbagging.hooks import *
 def ascii_sandbagging_task(
         num_harmful_subjects: int = 10,
         num_harmless_per_harmful: int = 3,
-        model: str = "openai/gpt-4o",
-        judge_model: str = "openai/gpt-4o",
-        subject_generator_model: str = "openai/gpt-4o",
+        model: str = "openrouter/anthropic/claude-sonnet-4",
+        judge_model: str = "openrouter/anthropic/claude-sonnet-4",
+        subject_generator_model: str = "openrouter/anthropic/claude-sonnet-4",
         capability_test_runs: int = 3,
         sandbagging_test_runs: int = 1,
         temperature: float = 1.0,
@@ -55,7 +59,7 @@ def ascii_sandbagging_task(
 
     return Task(
         dataset=create_ascii_multiple_choice_dataset(
-            csv_path="../sandbagging/capabilities/subjects.csv",
+            csv_path=str(PROJECT_ROOT / "sandbagging" / "capabilities" / "subjects.csv"),
             categories=categories,
             shuffle=shuffle,
             seed=seed
@@ -80,11 +84,12 @@ if __name__ == "__main__":
     from inspect_ai import eval
 
     task = ascii_sandbagging_task()
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
+        model=model,  # or any model you want to test
         limit=5,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )
