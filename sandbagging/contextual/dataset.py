@@ -7,8 +7,8 @@ import json
 from typing import List, Optional, Dict, Any
 from inspect_ai.dataset import Dataset, MemoryDataset, Sample
 
-from sandbagging.models import SandbaggingPromptPair, PromptVariant, SandbaggingDomain
-from sandbagging.prompt_generation import generate_sandbagging_prompts, get_prompt_by_variant
+from sandbagging.contextual.models import SandbaggingPromptPair, PromptVariant, SandbaggingDomain
+from sandbagging.contextual.prompt_generation import generate_sandbagging_prompts, get_prompt_by_variant
 
 
 def create_sandbagging_contrastive_dataset(

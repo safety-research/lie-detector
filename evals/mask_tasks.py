@@ -143,7 +143,7 @@ if __name__ == "__main__":
     # model = "openrouter/openai/gpt-4o-mini"
     model = "openrouter/meta-llama/llama-3.2-3b-instruct"
     results = eval(
-        tasks=[mask_statistics()],
+        tasks=[mask_provided_facts()],
         model=model,  # or any model you want to test
         limit=10,  # Limit samples for faster debugging
         log_dir="./logs",  # Optional: specify log directory

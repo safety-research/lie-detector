@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser, GenerateConfig
 
-from sandbagging.prompt_generation import format_control_prompt, format_sandbagging_prompt
+from sandbagging.contextual.prompt_generation import format_control_prompt, format_sandbagging_prompt
 
 
 def extract_answer_letter(text: str) -> Optional[str]:
@@ -81,7 +81,8 @@ def sandbagging_contrastive_solver(
         # Get the prompt pair from metadata
         prompt_pair_dict = state.metadata.get('prompt_pair')
         if not prompt_pair_dict:
-            raise ValueError("No prompt pair found in metadata")
+            return state
+            #raise ValueError("No prompt pair found in metadata")
         
         # Import here to avoid circular imports
         from .models import SandbaggingPromptPair
