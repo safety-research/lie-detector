@@ -63,13 +63,13 @@ aws configure
 Run the sync script in a separate terminal to keep local data fresh:
 
 ```bash
-cd /home/ec2-user/lie-detector
+cd /home/ec2-user/lie-detector/data_viewer
 python sync_s3_data.py
 ```
 
 This script will:
 - Download all data from S3 bucket `dipika-lie-detection-data` under prefix `processed-data/`
-- Store files in `../local_data/` (sibling to data_viewer directory)
+- Store files in `./local_data/` (within data_viewer directory)
 - Sync every 10 seconds automatically
 - Show sync progress and timestamps
 
@@ -145,13 +145,16 @@ python app.py
 lie-detector/
 ├── data_viewer/
 │   ├── app.py              # Flask web application
+│   ├── sync_s3_data.py     # S3 sync script
 │   ├── templates/
 │   │   └── index_new.html  # Web interface
+│   ├── local_data/         # Local cache (created by sync script)
+│   │   ├── task1/
+│   │   ├── task2/
+│   │   └── ...
 │   └── README.md
-├── sync_s3_data.py         # S3 sync script
-└── local_data/             # Local cache (created by sync script)
-    ├── task1/
-    ├── task2/
+└── local_data/             # Local test data (for local testing mode)
+    ├── test-task/
     └── ...
 ```
 
@@ -160,13 +163,13 @@ lie-detector/
 lie-detector/
 ├── data_viewer/
 │   ├── app.py              # Flask web application
+│   ├── sync_s3_data.py     # S3 sync script (not used)
 │   ├── templates/
 │   │   └── index_new.html  # Web interface
-│   ├── local_data/         # Local test data
-│   │   ├── task1/
-│   │   └── task2/
 │   └── README.md
-└── sync_s3_data.py         # S3 sync script (not used)
+└── local_data/             # Local test data
+    ├── test-task/
+    └── ...
 ```
 
 ## Configuration
