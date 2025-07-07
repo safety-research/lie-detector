@@ -6,7 +6,7 @@ from inspect_ai import task, Task
 from inspect_ai.model import GenerateConfig
 from inspect_ai.solver import chain, system_message
 
-from sandbagging.tool_results import tool_results_sandbagging_task
+from sandbagging.selective_compliance.content_filtering import tool_results_sandbagging_task
 
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
