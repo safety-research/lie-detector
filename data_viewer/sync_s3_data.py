@@ -15,7 +15,7 @@ from botocore.exceptions import ClientError, NoCredentialsError
 # Configuration
 S3_BUCKET = "dipika-lie-detection-data"
 S3_PREFIX = "processed-data/"
-LOCAL_DATA_PATH = "../local_data"  # One level up from data_viewer
+LOCAL_DATA_PATH = "./local_data"  # Local cache in the data_viewer directory
 SYNC_INTERVAL = 10  # Sync every 10 seconds
 
 def get_s3_client():

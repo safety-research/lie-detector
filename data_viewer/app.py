@@ -12,13 +12,13 @@ last_load_time = None
 CACHE_DURATION = 300  # 5 minutes cache
 
 # Configuration - set to True to use local test data instead of S3-synced data
-USE_LOCAL_DATA = False  # Set to True for local testing without S3
+USE_LOCAL_DATA = True  # Set to True for local testing without S3
 
 # Local data configuration
 if USE_LOCAL_DATA:
-    LOCAL_DATA_PATH = "./local_data"  # Local test data within data_viewer
+    LOCAL_DATA_PATH = "/home/ec2-user/lie-detector/local_data"  # Local test data in root directory
 else:
-    LOCAL_DATA_PATH = "../local_data"  # S3-synced data (sibling to data_viewer)
+    LOCAL_DATA_PATH = "./local_data"  # S3-synced data (created by sync script in data_viewer)
 
 def list_local_files():
     """List all JSON files in the local data directory and its subfolders"""
