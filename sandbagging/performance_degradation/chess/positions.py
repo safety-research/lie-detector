@@ -78,7 +78,7 @@ class ChessPositionGenerator:
                     "turn": "white" if board.turn else "black",
                     "move_number": board.fullmove_number
                 }
-
+                print(position)
                 positions.append(position)
 
         self.positions = positions

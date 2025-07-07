@@ -89,6 +89,6 @@ if __name__ == "__main__":
     results = eval(
         tasks=task,
         model=model,  # or any model you want to test
-        limit=10,  # Limit samples for faster debugging
+        limit=20,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )

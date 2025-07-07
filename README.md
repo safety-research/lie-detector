@@ -4,3 +4,5 @@ inspect eval evals/self_sycophancy_tasks.py --limit 25 --model openrouter/openai
 
 
 inspect eval evals/self_sycophancy_tasks.py --limit 25 --model openrouter/anthropic/claude-3-opus-20240229 --retry-on-error=3 --fail-on-error=.1
+
+inspect eval evals/sycophancy_tasks.py --limit 25 --model openrouter/meta-llama/llama-3.2-3b-instruct

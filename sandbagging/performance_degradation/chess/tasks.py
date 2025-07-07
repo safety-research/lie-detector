@@ -11,7 +11,7 @@ from sandbagging.performance_degradation.chess.solver import chess_sandbagging_s
 
 
 def chess_sandbagging_task(
-        num_samples: int = 10,
+        num_samples: int = 100,
         elo_threshold: int = 1200,
         positions_file: str = None
 ) -> Task:

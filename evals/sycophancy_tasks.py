@@ -13,7 +13,7 @@ from sycophancy.solver import sycophancy_with_control_solver, are_you_sure_multi
 from sycophancy.scorer import sycophancy_control_comparison_scorer, are_you_sure_aggregate_scorer
 from sycophancy.hooks import *
 
-working_dir = Path.cwd()  # Use current directory instead of parent
+working_dir = Path.cwd().parent  # Use current directory instead of parent
 load_dotenv()
 
 @task
@@ -187,11 +187,11 @@ if __name__ == "__main__":
 
     # Run evaluation with all tasks
     # model = "openrouter/openai/gpt-4o-mini"
-    model = "openrouter/meta-llama/llama-3.2-3b-instruct"
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=10,  # Limit samples for faster debugging
+        limit=20,  # Limit samples for faster debugging
         log_dir="./sycophancy_tasks_run_1/",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

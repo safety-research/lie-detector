@@ -145,7 +145,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=[task],
         model=model,  # Using OpenRouter Claude model
-        limit=1,  # Limit samples for faster debugging
+        limit=10,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

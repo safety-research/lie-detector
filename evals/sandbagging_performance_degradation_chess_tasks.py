@@ -6,11 +6,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 from inspect_ai import task, Task, eval, eval_async
 
-from sandbagging.performance_degradation.chess.tasks import chess_sandbagging_task
 
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from sandbagging.performance_degradation.chess.tasks import chess_sandbagging_task
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -43,7 +43,7 @@ async def run():
 
     # task = [tool_code_sandbagging_task()]
 
-    model = "openrouter/openai/gpt-4o-mini"#"openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/openai/gpt-4o"#"openrouter/meta-llama/llama-3.1-8b-instruct"
 
     # Run evaluation with a specific model
     results = await eval_async(
