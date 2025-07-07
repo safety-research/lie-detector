@@ -23,4 +23,5 @@ __pycache__
 /data/
 .env
 *.jsonl
+*.txt
 /parquet_output/
