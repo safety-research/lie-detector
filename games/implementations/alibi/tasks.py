@@ -49,7 +49,7 @@ def create_theft_alibi_task(num_scenarios: int = 5) -> Task:
     """Create task focused on theft alibis"""
     from games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.THEFT], num_scenarios=num_scenarios)
-    return create_alibi_task(configs, f"alibi-theft-investigation")
+    return create_alibi_task(configs, f"alibi_theft_investigation")
 
 
 def create_fraud_alibi_task(num_scenarios: int = 5) -> Task:

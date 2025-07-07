@@ -119,13 +119,31 @@ if __name__ == "__main__":
     #     print("Warning: OPENROUTER_API_KEY not found in environment variables")
     #
     # Create the task
-   # task = correctness_physics()
+    # task = correctness_physics()
 
-    # Run evaluation with a specific model
+    # Define all self-sycophancy tasks
+    all_tasks = [
+        harmfulness_common_sense(),
+        harmfulness_deontology(),
+        harmfulness_justice(),
+        correctness_physics(),
+        correctness_mathematics(),
+        correctness_chemistry(),
+        correctness_biology(),
+        correctness_arc()
+    ]
+
+    print("Running all self-sycophancy tasks...")
+    print(f"Number of tasks: {len(all_tasks)}")
+    print(f"Limit: 100 samples per task")
+
+    # Run evaluation with all tasks
+    model = "openrouter/meta-llama/llama-3.2-3b-instruct"
+
     results = eval(
-        tasks=[correctness_physics(), harmfulness_justice()],
-        model="openai/gpt-4o-mini",  # Using OpenRouter model instead of OpenAI
-        limit=5,  # Limit samples for faster debugging
+        tasks=all_tasks,
+        model=model,  # Using OpenRouter Claude model
+        limit=20,  # Limit samples for faster debugging
         log_dir="./logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

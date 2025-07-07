@@ -1,21 +1,24 @@
 import random
-<<<<<<< HEAD
 import re
-from typing import Dict
-=======
 import asyncio
-from typing import Optional
->>>>>>> feature/sandbagging
+from typing import Dict, Optional
 
 import numpy as np
-from inspect_ai.model import ChatMessageSystem, ChatMessageUser
+from inspect_ai.model import ChatMessageSystem, ChatMessageUser, get_model
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 
-from ssyc.correctness.prompts import (
-    SYSTEM_PROMPT,
-    CORRECTNESS_ASSESSMENT_PROMPT,
-    CHOICE_PROMPT
-)
+try:
+    from ssyc.correctness.prompts import (
+        SYSTEM_PROMPT,
+        CORRECTNESS_ASSESSMENT_PROMPT,
+        CHOICE_PROMPT
+    )
+except ImportError:
+    from prompts import (
+        SYSTEM_PROMPT,
+        CORRECTNESS_ASSESSMENT_PROMPT,
+        CHOICE_PROMPT
+    )
 
 
 @solver
@@ -123,7 +126,7 @@ def prepare_science_math_question() -> Solver:
 def generate_additional_options() -> Solver:
     """Step 1: Generate two additional incorrect options for each question"""
 
-    async def solve(state: TaskState, generate: Generate) -> TaskState:
+    async def solve(state: TaskState, generate: Generate, judge_model: str = "openrouter/anthropic/claude-sonnet-4") -> TaskState:
         # Set system message for option generation
         state.messages = [ChatMessageSystem(content=SYSTEM_PROMPT)]
 
@@ -136,10 +139,11 @@ def generate_additional_options() -> Solver:
         state.messages.append(ChatMessageUser(content=question))
 
         # Generate additional options
-        state = await generate(state)
+        option_generator = get_model(judge_model)
+        model_output = await option_generator.generate(state.messages)
 
         # Parse the generated options
-        response_text = state.output.completion
+        response_text = model_output.choices[0].message.text #state.output.completion
         options_pattern = r'(\d+)\)\s*(.+?)(?=\n\d+\)|$)'
         matches = re.findall(options_pattern, response_text, re.DOTALL)
 
@@ -335,8 +339,8 @@ def choice_and_reassessment() -> Solver:
         for i, option in enumerate(state.metadata['shuffled_options'], 1):
             options_text += f"{i}) {option}\n"
 
-        state.messages.append(ChatMessageUser(content=options_text))
-        state.messages.append(ChatMessageUser(content=CHOICE_PROMPT))
+        state.messages.append(ChatMessageUser(content=options_text + "\n\n" + CHOICE_PROMPT))
+
 
         # Generate choice and reassessment with logprobs
         state = await generate(state, logprobs=True, top_logprobs=20)

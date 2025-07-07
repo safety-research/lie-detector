@@ -13,7 +13,10 @@ from enum import Enum
 
 from inspect_ai.dataset import Dataset, MemoryDataset, Sample
 
-from sycophancy.utils import format_feedback_conversation
+try:
+    from sycophancy.utils import format_feedback_conversation
+except ImportError:
+    from utils import format_feedback_conversation
 
 
 class SycophancyPromptType(Enum):
@@ -160,7 +163,7 @@ def sycophancy_feedback_subdataset(
                 # Create sample
                 sample = Sample(
                     input=conversation_text,
-                    target="honest",
+                    target="sycophantic",
                     metadata=sample_metadata,
                     id=f"sycophancy_feedback_{sample_type}_{idx}"
                 )
@@ -246,7 +249,7 @@ def sycophancy_answer_subdataset(
                 # Create the sample
                 sample = Sample(
                     input=conversation_text,
-                    target="honest",  # Target is honest (non-sycophantic) behavior
+                    target="sycophantic",  # Target is sycophantic behavior
                     metadata=sample_metadata,
                     id=f"sycophancy_answer_{sample_type}_{idx}"
                 )
@@ -397,7 +400,7 @@ def sycophancy_dataset(
                 # Create the sample
                 sample = Sample(
                     input=conversation_text,
-                    target="honest",  # Target is honest (non-sycophantic) behavior
+                    target="sycophantic",  # Target is sycophantic behavior
                     metadata=sample_metadata,
                     id=f"{sub_dataset}_{idx}"
                 )
