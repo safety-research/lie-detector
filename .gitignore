@@ -22,3 +22,5 @@ __pycache__
 /evals/data/
 /data/
 .env
+*.jsonl
+*.txt
