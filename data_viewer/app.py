@@ -11,8 +11,14 @@ processed_data = []
 last_load_time = None
 CACHE_DURATION = 300  # 5 minutes cache
 
-# Local data configuration - reads from sibling directory
-LOCAL_DATA_PATH = "../local_data"  # One level up from data_viewer
+# Configuration - set to True to use local test data instead of S3-synced data
+USE_LOCAL_DATA = False  # Set to True for local testing without S3
+
+# Local data configuration
+if USE_LOCAL_DATA:
+    LOCAL_DATA_PATH = "./local_data"  # Local test data within data_viewer
+else:
+    LOCAL_DATA_PATH = "../local_data"  # S3-synced data (sibling to data_viewer)
 
 def list_local_files():
     """List all JSON files in the local data directory and its subfolders"""
@@ -230,6 +236,7 @@ def refresh_data():
 # Auto-load data when the app starts
 print("Starting Lie Detection Data Viewer...")
 print(f"Local data path: {LOCAL_DATA_PATH}")
+print(f"Using local test data: {USE_LOCAL_DATA}")
 
 # Load data from local files
 load_and_process_data()
