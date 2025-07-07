@@ -35,10 +35,10 @@ def generate_additional_options() -> Solver:
 
         # Generate additional options
         option_generator = get_model(judge_model)
-        state = await option_generator.generate(state.messages)
+        model_output = await option_generator.generate(state.messages)
 
         # Parse the generated options
-        response_text = state.output.completion
+        response_text = model_output.choices[0].message.text
         options_pattern = r'(\d+)\)\s*(.+?)(?=\n\d+\)|$)'
         matches = re.findall(options_pattern, response_text, re.DOTALL)
 
