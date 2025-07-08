@@ -16,7 +16,7 @@ USE_LOCAL_DATA = True  # Set to True for local testing without S3
 
 # Local data configuration
 if USE_LOCAL_DATA:
-    LOCAL_DATA_PATH = "/home/ec2-user/lie-detector/local_data"  # Local test data in root directory
+    LOCAL_DATA_PATH = "../data"  # Local test data in root directory
 else:
     LOCAL_DATA_PATH = "./local_data"  # S3-synced data (created by sync script in data_viewer)
 

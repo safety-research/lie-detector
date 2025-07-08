@@ -342,5 +342,5 @@ def align_elicitation_strategy():
            ]
 
 
-load_dotenv()
-align_elicitation_strategy()
+#load_dotenv()
+#align_elicitation_strategy()
