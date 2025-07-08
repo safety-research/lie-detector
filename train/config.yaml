@@ -1,0 +1,52 @@
+defaults:
+  - _self_
+
+model:
+  model_name: "unsloth/Meta-Llama-3.1-70B"
+  use_4bit: true
+  use_nested_quant: true
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true
+  bnb_4bit_quant_type: "nf4"
+  max_length: 2048
+  trust_remote_code: true
+  use_peft: true
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.1
+  target_modules: "q_proj,v_proj,k_proj,o_proj,gate_proj,up_proj,down_proj"
+
+data:
+  train_file: "../lie_detection_training.jsonl"
+  validation_split: 0.1
+  max_samples: 26
+  prompt_template: "### Human: {prompt}\n\n### Assistant: {completion}"
+
+training:
+  output_dir: "../focused_sweep_results"
+  num_train_epochs: 2
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  warmup_steps: 100
+  logging_steps: 10
+  save_steps: 100
+  eval_steps: 100
+  eval_strategy: "steps"
+  save_strategy: "steps"
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  fp16: true
+  dataloader_pin_memory: false
+  remove_unused_columns: false
+  report_to: "wandb"
+  run_name: "focused-hyperparameter-sweep"
+  # Early stopping configuration
+  early_stopping_patience: 2
+  early_stopping_threshold: 0.001
+
+seed: 42
+use_wandb: true 
