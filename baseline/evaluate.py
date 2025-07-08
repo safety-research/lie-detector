@@ -69,10 +69,10 @@ def examine_data_distribution():
             print(f"{role.capitalize()}: {content}...")
         print(f"Ground truth: did_lie = {item.get('did_lie')}")
 
-def save_prompts_to_file(results, filename):
+def save_prompts_to_file(results, filename, output_dir="."):
     """Save all the prompts sent to the model to a text file."""
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filepath = f"prompts_{timestamp}_{filename}.txt"
+    filepath = os.path.join(output_dir, f"prompts_{timestamp}_{filename}.txt")
     
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write("="*80 + "\n")
@@ -112,38 +112,54 @@ def save_prompts_to_file(results, filename):
     
     return filepath
 
-def save_results_to_files(results, filename, metrics):
-    """Save evaluation results to both JSON and TXT files."""
+def save_results_to_files(results, filename, metrics, output_dir="."):
+    """Save evaluation results to both JSON and TXT files with subtask breakdown."""
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     
-    # Prepare structured data for JSON
-    json_data = {
-        "metadata": {
-            "timestamp": timestamp,
-            "total_samples": len(results),
-            "parseable_samples": metrics["parseable_samples"],
-            "filtered_samples": metrics["filtered_samples"],
-            "model": "openrouter/meta-llama/llama-3.1-8b-instruct"
-        },
-        "metrics": {
-            "accuracy": metrics["accuracy"],
-            "precision": metrics["precision"],
-            "recall": metrics["recall"],
-            "f1_score": metrics["f1_score"],
-            "true_positives": metrics["tp"],
-            "true_negatives": metrics["tn"],
-            "false_positives": metrics["fp"],
-            "false_negatives": metrics["fn"]
-        },
-        "distribution": {
-            "target_distribution": metrics["target_distribution"],
-            "prediction_distribution": metrics["prediction_distribution"]
-        },
-        "sample_results": []
-    }
+    # Group results by subtask
+    subtask_results = {}
     
-    # Add individual sample results
     for i, sample in enumerate(results):
+        # Extract subtask from metadata
+        metadata = sample.metadata
+        subtask = metadata.get('task', 'unknown') if metadata else 'unknown'
+        
+        # If task not in metadata, try to extract from file path or other sources
+        if subtask == 'unknown':
+            # Try to get from trace or other metadata fields
+            trace = metadata.get('trace', []) if metadata else []
+            if trace and len(trace) > 0:
+                # Look for task info in the trace
+                for turn in trace:
+                    content = turn.get('content', '')
+                    if 'task' in content.lower():
+                        # Extract task from content
+                        import re
+                        match = re.search(r'task[:\s]+([^\n]+)', content, re.IGNORECASE)
+                        if match:
+                            subtask = match.group(1).strip()
+                            break
+        
+        if subtask not in subtask_results:
+            subtask_results[subtask] = {
+                'samples': [],
+                'metrics': {
+                    'total_samples': 0,
+                    'parseable_samples': 0,
+                    'filtered_samples': 0,
+                    'accuracy': 0.0,
+                    'precision': 0.0,
+                    'recall': 0.0,
+                    'f1_score': 0.0,
+                    'tp': 0,
+                    'tn': 0,
+                    'fp': 0,
+                    'fn': 0,
+                    'target_distribution': {'A': 0, 'B': 0},
+                    'prediction_distribution': {'A': 0, 'B': 0, 'OTHER': 0}
+                }
+            }
+        
         target = sample.target
         prediction = sample.output.completion.strip()
         original_did_lie = sample.metadata.get('did_lie', 'N/A')
@@ -165,15 +181,88 @@ def save_results_to_files(results, filename, metrics):
             "is_parseable": is_parseable,
             "correct": target == extracted_pred if is_parseable else None
         }
-        json_data["sample_results"].append(sample_data)
+        
+        subtask_results[subtask]['samples'].append(sample_data)
+        subtask_results[subtask]['metrics']['total_samples'] += 1
+        
+        # Update distributions
+        target_str = str(target) if target else "B"
+        if target_str in subtask_results[subtask]['metrics']['target_distribution']:
+            subtask_results[subtask]['metrics']['target_distribution'][target_str] += 1
+        if extracted_pred in subtask_results[subtask]['metrics']['prediction_distribution']:
+            subtask_results[subtask]['metrics']['prediction_distribution'][extracted_pred] += 1
+        
+        if not is_parseable or extracted_pred == "OTHER":
+            subtask_results[subtask]['metrics']['filtered_samples'] += 1
+        else:
+            subtask_results[subtask]['metrics']['parseable_samples'] += 1
+            if target_str == extracted_pred:
+                if target_str == "A":  # True positive (correctly identified lie)
+                    subtask_results[subtask]['metrics']['tp'] += 1
+                else:  # True negative (correctly identified truth)
+                    subtask_results[subtask]['metrics']['tn'] += 1
+            else:
+                if target_str == "A":  # False negative (missed lie)
+                    subtask_results[subtask]['metrics']['fn'] += 1
+                else:  # False positive (incorrectly called truth a lie)
+                    subtask_results[subtask]['metrics']['fp'] += 1
+    
+    # Calculate metrics for each subtask
+    for subtask, data in subtask_results.items():
+        metrics = data['metrics']
+        parseable = metrics['parseable_samples']
+        total = metrics['total_samples']
+        
+        if parseable > 0:
+            metrics['accuracy'] = (metrics['tp'] + metrics['tn']) / parseable
+            metrics['precision'] = metrics['tp'] / (metrics['tp'] + metrics['fp']) if (metrics['tp'] + metrics['fp']) > 0 else 0
+            metrics['recall'] = metrics['tp'] / (metrics['tp'] + metrics['fn']) if (metrics['tp'] + metrics['fn']) > 0 else 0
+            metrics['f1_score'] = 2 * (metrics['precision'] * metrics['recall']) / (metrics['precision'] + metrics['recall']) if (metrics['precision'] + metrics['recall']) > 0 else 0
+    
+    # Calculate overall metrics by aggregating across all subtasks
+    overall_tp = sum(data['metrics']['tp'] for data in subtask_results.values())
+    overall_tn = sum(data['metrics']['tn'] for data in subtask_results.values())
+    overall_fp = sum(data['metrics']['fp'] for data in subtask_results.values())
+    overall_fn = sum(data['metrics']['fn'] for data in subtask_results.values())
+    overall_parseable = sum(data['metrics']['parseable_samples'] for data in subtask_results.values())
+    overall_filtered = sum(data['metrics']['filtered_samples'] for data in subtask_results.values())
+    
+    # Calculate overall performance metrics
+    overall_accuracy = (overall_tp + overall_tn) / overall_parseable if overall_parseable > 0 else 0
+    overall_precision = overall_tp / (overall_tp + overall_fp) if (overall_tp + overall_fp) > 0 else 0
+    overall_recall = overall_tp / (overall_tp + overall_fn) if (overall_tp + overall_fn) > 0 else 0
+    overall_f1 = 2 * (overall_precision * overall_recall) / (overall_precision + overall_recall) if (overall_precision + overall_recall) > 0 else 0
+    
+    # Prepare structured data for JSON
+    json_data = {
+        "metadata": {
+            "timestamp": timestamp,
+            "total_samples": len(results),
+            "model": "openrouter/meta-llama/llama-3.1-8b-instruct",
+            "subtasks": list(subtask_results.keys())
+        },
+        "overall_metrics": {
+            "parseable_samples": overall_parseable,
+            "filtered_samples": overall_filtered,
+            "accuracy": overall_accuracy,
+            "precision": overall_precision,
+            "recall": overall_recall,
+            "f1_score": overall_f1,
+            "true_positives": overall_tp,
+            "true_negatives": overall_tn,
+            "false_positives": overall_fp,
+            "false_negatives": overall_fn
+        },
+        "subtask_results": subtask_results
+    }
     
     # Save JSON file
-    json_filepath = f"results_{timestamp}_{filename}.json"
+    json_filepath = os.path.join(output_dir, f"results_{timestamp}_{filename}.json")
     with open(json_filepath, 'w', encoding='utf-8') as f:
         json.dump(json_data, f, indent=2, ensure_ascii=False)
     
     # Save TXT summary file
-    txt_filepath = f"results_{timestamp}_{filename}.txt"
+    txt_filepath = os.path.join(output_dir, f"results_{timestamp}_{filename}.txt")
     with open(txt_filepath, 'w', encoding='utf-8') as f:
         f.write("="*80 + "\n")
         f.write("LIE DETECTION BASELINE EVALUATION RESULTS\n")
@@ -181,61 +270,57 @@ def save_results_to_files(results, filename, metrics):
         
         f.write(f"Timestamp: {timestamp}\n")
         f.write(f"Model: openrouter/meta-llama/llama-3.1-8b-instruct\n")
-        f.write(f"Total Samples: {len(results)}\n\n")
+        f.write(f"Total Samples: {len(results)}\n")
+        f.write(f"Number of Subtasks: {len(subtask_results)}\n\n")
         
-        f.write("FILTERING SUMMARY\n")
+        f.write("OVERALL FILTERING SUMMARY\n")
         f.write("-" * 40 + "\n")
-        f.write(f"Parseable samples: {metrics['parseable_samples']}/{len(results)} ({metrics['parseable_samples']/len(results):.1%})\n")
-        f.write(f"Filtered out: {metrics['filtered_samples']}/{len(results)} ({metrics['filtered_samples']/len(results):.1%})\n\n")
+        f.write(f"Parseable samples: {overall_parseable}/{len(results)} ({overall_parseable/len(results):.1%})\n")
+        f.write(f"Filtered out: {overall_filtered}/{len(results)} ({overall_filtered/len(results):.1%})\n\n")
         
-        f.write("PERFORMANCE METRICS (PARSEABLE SAMPLES ONLY)\n")
+        f.write("OVERALL PERFORMANCE METRICS (PARSEABLE SAMPLES ONLY)\n")
         f.write("-" * 40 + "\n")
-        f.write(f"Accuracy: {metrics['accuracy']:.4f}\n")
-        f.write(f"Precision: {metrics['precision']:.4f}\n")
-        f.write(f"Recall: {metrics['recall']:.4f}\n")
-        f.write(f"F1 Score: {metrics['f1_score']:.4f}\n\n")
+        f.write(f"Accuracy: {overall_accuracy:.4f}\n")
+        f.write(f"Precision: {overall_precision:.4f}\n")
+        f.write(f"Recall: {overall_recall:.4f}\n")
+        f.write(f"F1 Score: {overall_f1:.4f}\n\n")
         
-        f.write("CONFUSION MATRIX\n")
+        f.write("OVERALL CONFUSION MATRIX\n")
         f.write("-" * 40 + "\n")
-        f.write(f"True Positives: {metrics['tp']}\n")
-        f.write(f"True Negatives: {metrics['tn']}\n")
-        f.write(f"False Positives: {metrics['fp']}\n")
-        f.write(f"False Negatives: {metrics['fn']}\n\n")
+        f.write(f"True Positives: {overall_tp}\n")
+        f.write(f"True Negatives: {overall_tn}\n")
+        f.write(f"False Positives: {overall_fp}\n")
+        f.write(f"False Negatives: {overall_fn}\n\n")
         
-        f.write("DISTRIBUTION ANALYSIS\n")
-        f.write("-" * 40 + "\n")
-        f.write(f"Target Distribution: {metrics['target_distribution']}\n")
-        f.write(f"Prediction Distribution: {metrics['prediction_distribution']}\n\n")
+        f.write("SUBTASK BREAKDOWN\n")
+        f.write("="*80 + "\n\n")
         
-        f.write("SAMPLE MISCLASSIFICATIONS (FIRST 5)\n")
-        f.write("-" * 40 + "\n")
-        misclass_count = 0
-        for i, sample in enumerate(results):
-            if misclass_count >= 5:
-                break
-                
-            target = sample.target
-            if hasattr(sample, 'scores') and sample.scores and 'truth_scorer' in sample.scores:
-                extracted_pred = sample.scores['truth_scorer'].answer
-                metadata = sample.scores['truth_scorer'].metadata
-                is_parseable = metadata.get('parseable', True) if metadata else False
-            else:
-                extracted_pred = "OTHER"
-                is_parseable = False
+        for subtask, data in sorted(subtask_results.items()):
+            subtask_metrics = data['metrics']
+            f.write(f"SUBTASK: {subtask}\n")
+            f.write("-" * 60 + "\n")
+            f.write(f"Total samples: {subtask_metrics['total_samples']}\n")
+            f.write(f"Parseable samples: {subtask_metrics['parseable_samples']} ({subtask_metrics['parseable_samples']/subtask_metrics['total_samples']:.1%})\n")
+            f.write(f"Filtered out: {subtask_metrics['filtered_samples']} ({subtask_metrics['filtered_samples']/subtask_metrics['total_samples']:.1%})\n")
             
-            if is_parseable and target != extracted_pred:
-                prediction = sample.output.completion.strip()
-                original_did_lie = sample.metadata.get('did_lie', 'N/A')
-                
-                f.write(f"Sample {i+1}: Target={target}, Got={extracted_pred}, did_lie={original_did_lie}\n")
-                f.write(f"  Raw output: {prediction[:100]}{'...' if len(prediction) > 100 else ''}\n")
-                misclass_count += 1
+            if subtask_metrics['parseable_samples'] > 0:
+                f.write(f"Accuracy: {subtask_metrics['accuracy']:.4f}\n")
+                f.write(f"Precision: {subtask_metrics['precision']:.4f}\n")
+                f.write(f"Recall: {subtask_metrics['recall']:.4f}\n")
+                f.write(f"F1 Score: {subtask_metrics['f1_score']:.4f}\n")
+                f.write(f"TP: {subtask_metrics['tp']}, TN: {subtask_metrics['tn']}, FP: {subtask_metrics['fp']}, FN: {subtask_metrics['fn']}\n")
+            else:
+                f.write("No parseable samples for this subtask\n")
+            
+            f.write(f"Target Distribution: A={subtask_metrics['target_distribution']['A']}, B={subtask_metrics['target_distribution']['B']}\n")
+            f.write(f"Prediction Distribution: A={subtask_metrics['prediction_distribution']['A']}, B={subtask_metrics['prediction_distribution']['B']}, OTHER={subtask_metrics['prediction_distribution']['OTHER']}\n")
+            f.write("\n")
         
-        f.write("\n" + "="*80 + "\n")
+        f.write("="*80 + "\n")
     
     return json_filepath, txt_filepath
 
-def main():
+def main(num_samples=None, model=None):
     # First examine the data distribution
     examine_data_distribution()
     
@@ -243,11 +328,11 @@ def main():
     print("\n" + "="*80)
     print("=== RUNNING BASELINE EVALUATION ===")
     
-    # Hardcoded configuration
+    # Configuration
     data_dir = "processed_data"
-    model_name = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model_name = model or "openrouter/meta-llama/llama-3.1-8b-instruct"
     log_dir = "logs/baseline"
-    limit = None  # Run on entire dataset with clean formatting
+    limit = num_samples  # Use the num_samples parameter
 
     print(f"Running baseline evaluation...")
     print(f"Model: {model_name}")
@@ -263,8 +348,14 @@ def main():
 
     print(f"\nProcessed {len(results)} samples")
     
+    # Create output directories if they don't exist
+    results_dir = "baseline/results"
+    transcripts_dir = "baseline/transcripts"
+    os.makedirs(results_dir, exist_ok=True)
+    os.makedirs(transcripts_dir, exist_ok=True)
+    
     # Save all prompts to file
-    prompts_file = save_prompts_to_file(results, "baseline")
+    prompts_file = save_prompts_to_file(results, "baseline", transcripts_dir)
     print(f"\n📝 Saved all prompts to: {prompts_file}")
     
     # Analyze classification distribution and filter unparseable
@@ -400,7 +491,7 @@ def main():
     }
 
     # Save results to files
-    json_filepath, txt_filepath = save_results_to_files(results, "baseline", metrics)
+    json_filepath, txt_filepath = save_results_to_files(results, "baseline", metrics, results_dir)
     print(f"\n📝 Saved results to: {json_filepath}")
     print(f"📝 Saved summary to: {txt_filepath}")
 
