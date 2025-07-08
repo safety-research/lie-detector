@@ -1,0 +1,8 @@
+{"time":"2025-07-07T15:45:09.51406153-07:00","level":"INFO","msg":"stream: starting","core version":"0.20.1","symlink path":"/mnt/nvme3/dipika/lie-detector/train/wandb/run-20250707_154509-3swajdyb/logs/debug-core.log"}
+{"time":"2025-07-07T15:45:14.531119684-07:00","level":"ERROR","msg":"monitor: failed to initialize GPU asset: monitor: could not get GPU binary port: timeout reading portfile /tmp/.system-monitor-portfile3925970157"}
+{"time":"2025-07-07T15:45:14.59289471-07:00","level":"INFO","msg":"stream: created new stream","id":"3swajdyb"}
+{"time":"2025-07-07T15:45:14.592926088-07:00","level":"INFO","msg":"stream: started","id":"3swajdyb"}
+{"time":"2025-07-07T15:45:14.59293095-07:00","level":"INFO","msg":"handler: started","stream_id":"3swajdyb"}
+{"time":"2025-07-07T15:45:14.592935978-07:00","level":"INFO","msg":"sender: started","stream_id":"3swajdyb"}
+{"time":"2025-07-07T15:45:14.592950432-07:00","level":"INFO","msg":"writer: Do: started","stream_id":"3swajdyb"}
+{"time":"2025-07-07T15:45:14.778151187-07:00","level":"INFO","msg":"Starting system monitor"}
