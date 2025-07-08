@@ -191,7 +191,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=20,  # Limit samples for faster debugging
-        log_dir="./sycophancy_tasks_run_1/",  # Optional: specify log directory
+        limit=5,  # Limit samples for faster debugging
+        log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

@@ -4,6 +4,7 @@ from datetime import datetime
 
 from inspect_ai.dataset import Sample
 from inspect_ai.hooks import hooks
+from inspect_ai.scorer import NOANSWER
 
 from common.hook import BaseSampleProcessingHook
 
@@ -118,6 +119,9 @@ class SandbaggingHook(BaseSampleProcessingHook):
 
             # Build the parsed entry
             sample_id = sample.id if hasattr(sample, 'id') else sample.get('id', 'unknown')
+
+            if all([v.value == NOANSWER for k, v in sample.scores.items()]):
+                return None
 
             parsed_entry = {
                 'sample_id': f"conv_{datetime.now().strftime('%Y%m%d')}_{sample_id}",

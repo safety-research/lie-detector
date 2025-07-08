@@ -5,6 +5,7 @@ from typing import List, Dict, Any
 
 from inspect_ai.dataset import Sample
 from inspect_ai.hooks import hooks
+from inspect_ai.scorer import NOANSWER
 
 from common.hook import BaseSampleProcessingHook
 
@@ -220,6 +221,9 @@ class SandbaggingCapabilitiesHook(BaseSampleProcessingHook):
                     elif hasattr(score, 'metadata') and score.metadata.get('interpretation'):
                         evidence = score.metadata['interpretation']
                         break
+
+            if all([v.value == NOANSWER for k, v in sample.scores.items()]):
+                return None
 
             parsed_entry = {
                 'sample_id': f"conv_{datetime.now().strftime('%Y%m%d')}_{sample_id}",

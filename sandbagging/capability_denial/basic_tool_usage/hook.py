@@ -4,6 +4,7 @@ from datetime import datetime
 
 from inspect_ai.dataset import Sample
 from inspect_ai.hooks import hooks
+from inspect_ai.scorer import NOANSWER
 
 from common.hook import BaseSampleProcessingHook
 
@@ -59,6 +60,9 @@ class SandbaggingCapabilitiesHook(BaseSampleProcessingHook):
 
             # Build the parsed entry
             sample_id = sample.id if hasattr(sample, 'id') else sample.get('id', 'unknown')
+
+            if all([v.value == NOANSWER for k, v in sample.scores.items()]):
+                return None
 
             # Extract evidence from scores
             evidence = ""

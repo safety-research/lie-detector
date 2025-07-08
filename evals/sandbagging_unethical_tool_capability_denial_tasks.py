@@ -34,7 +34,7 @@ def tool_ethical_sandbagging_task(
     """
 
     return ethical_tool_sandbagging_task(
-        num_scenarios=100,
+        num_scenarios=1000,
         ethical_frameworks=None,
         test_harmless_first=True,
         include_scenario_description=True,
@@ -62,7 +62,7 @@ def tool_unethical_sandbagging_task(
     """
 
     return ethical_tool_sandbagging_task(
-        num_scenarios=100,
+        num_scenarios=1000,
         ethical_frameworks=None,
         test_harmless_first=True,
         include_scenario_description=True,
@@ -89,6 +89,6 @@ if __name__ == "__main__":
     results = eval(
         tasks=task,
         model=model,  # or any model you want to test
-        limit=20,  # Limit samples for faster debugging
-        log_dir="./logs",  # Specify log directory
+        limit=1000,  # Limit samples for faster debugging
+        log_dir="../logs",  # Specify log directory
     )

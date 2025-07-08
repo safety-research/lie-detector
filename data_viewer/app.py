@@ -96,6 +96,7 @@ def load_and_process_data(force_reload=False):
                                     "model": sample.get("model", ""),
                                     "trace": sample.get("trace", []),
                                     "did_lie": sample.get("did_lie", False),
+                                    "evidence": sample.get("evidence", sample.get("explanation", "")),
                                     "metadata": sample.get("metadata", {}),
                                     "scores": sample.get("scores", {})
                                 }
