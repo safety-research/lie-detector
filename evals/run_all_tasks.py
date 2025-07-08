@@ -10,11 +10,13 @@ from pathlib import Path
 from datetime import datetime
 from inspect_ai import eval
 
-# Add the parent directory to Python path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
+# # Add the parent directory to Python path
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# parent_dir = os.path.dirname(current_dir)
+# if parent_dir not in sys.path:
+#     sys.path.insert(0, parent_dir)
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import all task modules
 from evals.mask_tasks import (
@@ -122,26 +124,26 @@ def get_all_tasks():
             tool_search_sandbagging_task,
             tool_ethical_sandbagging_task,
             tool_unethical_sandbagging_task,
-            chess_sandbagging_task,
-            sandbagging_judge_lie_detection,
-            sandbagging_lie_detection,
-            sandbagging_contrastive,
-            sandbagging_detection,
-            sandbagging_control,
-            sandbagging_harmful,
-            sandbagging_physical_security_contrastive,
-            sandbagging_physical_security,
-            sandbagging_digital_security_contrastive,
-            sandbagging_digital_security,
-            sandbagging_chemistry_biology_contrastive,
-            sandbagging_chemistry_biology,
-            sandbagging_automotive_mechanical_contrastive,
-            sandbagging_automotive_mechanical,
-            sandbagging_medical_pharmaceutical_contrastive,
-            sandbagging_medical_pharmaceutical,
-            sandbagging_financial_systems_contrastive,
-            sandbagging_financial_systems,
-            sandbagging_tool_results_tasks
+            # chess_sandbagging_task,
+            # sandbagging_judge_lie_detection,
+            # sandbagging_lie_detection,
+            # sandbagging_contrastive,
+            # sandbagging_detection,
+            # sandbagging_control,
+            # sandbagging_harmful,
+            # sandbagging_physical_security_contrastive,
+            # sandbagging_physical_security,
+            # sandbagging_digital_security_contrastive,
+            # sandbagging_digital_security,
+            # sandbagging_chemistry_biology_contrastive,
+            # sandbagging_chemistry_biology,
+            # sandbagging_automotive_mechanical_contrastive,
+            # sandbagging_automotive_mechanical,
+            # sandbagging_medical_pharmaceutical_contrastive,
+            # sandbagging_medical_pharmaceutical,
+            # sandbagging_financial_systems_contrastive,
+            # sandbagging_financial_systems,
+            # sandbagging_tool_results_tasks
         ]
     }
     return tasks
@@ -179,7 +181,7 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
         return
     
     print(f"\nRunning {len(all_tasks)} tasks with model: {model}")
-    print(f"Sample limit per task: {limit if limit else 'All'}")
+    print(f"Sample limit per task: {limit if limit else 1000}")
     
     # Create timestamp for log directory
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -216,14 +218,14 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
 def main():
     # Configuration variables - modify these as needed
     MODEL = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    LIMIT = None  # Set to a number (e.g., 10) to limit samples per task, or None for all
+    LIMIT = 200  # Set to a number (e.g., 10) to limit samples per task, or None for all
     CATEGORIES = None  # Set to a list like ["mask", "sycophancy"] or None for all categories
-    LOG_DIR = None  # Set to a path or None for auto-generated timestamp directory
+    LOG_DIR = "../logs"  # Set to a path or None for auto-generated timestamp directory
     
     print("LIE DETECTOR - ALL TASKS EVALUATION")
     print("=" * 50)
     print(f"Model: {MODEL}")
-    print(f"Limit: {LIMIT if LIMIT else 'All'}")
+    print(f"Limit: {LIMIT if LIMIT else 1000}")
     print(f"Categories: {CATEGORIES if CATEGORIES else 'All'}")
     print("=" * 50)
     

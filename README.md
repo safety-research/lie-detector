@@ -1,8 +1,12 @@
+Run everything:
 ```
-inspect eval evals/self_sycophancy_tasks.py --limit 25 --model openrouter/openai/gpt-4o-mini-2024-07-18,openrouter/anthropic/claude-3-opus-20240229,openrouter/meta-llama/llama-3.3-70b-instruct --retry-on-error=3 --fail-on-error=.1
+inspect eval evals/sycophancy_tasks.py --limit 200 --model openrouter/meta-llama/llama-3.1-8b-instruct
+inspect eval evals/self_sycophancy_tasks.py --limit 200 --model openrouter/meta-llama/llama-3.1-8b-instruct
+inspect eval evals/mask_tasks.py --limit 200 --model openrouter/meta-llama/llama-3.1-8b-instruct
+inspect eval evals/n_truths_and_a_lie_tasks.py --limit 20 --model openrouter/meta-llama/llama-3.1-8b-instruct
+inspect eval evals/capture_the_secret_tasks.py --limit 20 --model openrouter/meta-llama/llama-3.1-8b-instruct
+inspect eval evals/alibi_tasks.py --limit 20 --model openrouter/meta-llama/llama-3.1-8b-instruct
+inspect eval evals/sandbagging_ascii_capability_denial_tasks.py --limit 200 --model openrouter/meta-llama/llama-3.1-8b-instruct
+inspect eval evals/sandbagging_basic_tool_capability_denial_tasks.py --limit 200 --model openrouter/meta-llama/llama-3.1-8b-instruct
+inspect eval evals/sandbagging_unethical_tool_capability_denial_tasks.py --limit 200 --model openrouter/meta-llama/llama-3.1-8b-instruct
 ```
-
-
-inspect eval evals/self_sycophancy_tasks.py --limit 25 --model openrouter/anthropic/claude-3-opus-20240229 --retry-on-error=3 --fail-on-error=.1
-
-inspect eval evals/sycophancy_tasks.py --limit 25 --model openrouter/meta-llama/llama-3.2-3b-instruct

@@ -11,7 +11,7 @@ from sandbagging.selective_compliance.content_filtering import tool_results_sand
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sandbagging.hooks import *
+from sandbagging.selective_compliance.content_filtering.hook import *
 
 @task
 def sandbagging_tool_results_tasks():
