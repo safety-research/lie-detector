@@ -1,7 +1,0 @@
-[2025-07-07 15:45:14,906][__main__][INFO] - Loading model and tokenizer...
-[2025-07-07 15:45:24,158][__main__][INFO] - Found 8 GPUs
-[2025-07-07 15:45:24,159][__main__][INFO] - Using balanced_low_0 device mapping for optimal 8-GPU distribution
-[2025-07-07 15:45:27,520][accelerate.utils.modeling][INFO] - Based on the current allocation process, no modules could be assigned to the following devices due to insufficient memory:
-  - 0: 2626682880.0 bytes required
-These minimum requirements are specific to this allocation attempt and may vary. Consider increasing the available memory for these devices to at least the specified minimum, or adjusting the model config.
-Loading checkpoint shards:  43%|███████████████████                         | 13/30 [00:23<00:31,  1.84s/it]
