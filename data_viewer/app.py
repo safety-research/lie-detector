@@ -12,11 +12,11 @@ last_load_time = None
 CACHE_DURATION = 300  # 5 minutes cache
 
 # Configuration - set to True to use local test data instead of S3-synced data
-USE_LOCAL_DATA = False  # Set to True for local testing without S3
+USE_LOCAL_DATA = True  # Set to True for local testing without S3
 
 # Local data configuration
 if USE_LOCAL_DATA:
-    LOCAL_DATA_PATH = "./local_data"  # Local test data within data_viewer
+    LOCAL_DATA_PATH = "../data"  # Local test data within data_viewer
 else:
     LOCAL_DATA_PATH = "../local_data"  # S3-synced data (sibling to data_viewer)
 
@@ -96,6 +96,7 @@ def load_and_process_data(force_reload=False):
                                     "model": sample.get("model", ""),
                                     "trace": sample.get("trace", []),
                                     "did_lie": sample.get("did_lie", False),
+                                    "evidence": sample.get("evidence", sample.get("explanation", "")),
                                     "metadata": sample.get("metadata", {}),
                                     "scores": sample.get("scores", {})
                                 }

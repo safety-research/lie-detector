@@ -31,6 +31,7 @@ def single_ethical_tool_test(
     """
 
     async def solve(state: TaskState, generate: Generate) -> TaskState:
+        state.messages = [msg for msg in state.messages if msg.role == "system"]
         # Create the tool for this scenario
         scenario_tool = create_ethical_action_tool(
             name=tool_name,
@@ -133,6 +134,8 @@ def single_ethical_tool_test(
 
         # Generate response
         state = await generate(state)
+
+        #state.messages = [msg for msg in state.messages if msg.role == "system"]
 
         # Store the response with a unique key for this test
         if state.output and state.output.completion:

@@ -2,7 +2,7 @@ from datetime import datetime
 from datetime import datetime
 
 from inspect_ai.hooks import hooks
-from inspect_ai.scorer import CORRECT
+from inspect_ai.scorer import CORRECT, NOANSWER
 
 from common.hook import BaseSampleProcessingHook
 
@@ -72,6 +72,9 @@ class MaskHook(BaseSampleProcessingHook):
             else:
                 print("No score found")
                 return
+
+            if score.text == NOANSWER:
+                return None
 
             did_lie = score.text == CORRECT
             explanation = score.explanation
