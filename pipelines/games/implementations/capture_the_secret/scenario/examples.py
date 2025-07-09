@@ -3,7 +3,7 @@ from typing import List, Literal, Optional
 import tanuki
 from dotenv import load_dotenv
 
-from games.implementations.capture_the_secret.models import (
+from pipelines.games.implementations.capture_the_secret.models import (
     DomainContext, PersonaProfile, SecretInformation, MeetingScenario
 )
 
