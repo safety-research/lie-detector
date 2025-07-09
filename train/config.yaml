@@ -1,52 +1,56 @@
-defaults:
-  - _self_
+# Configuration for Llama 8B Lie Detection SFT Training - Optimized for 4x H100 GPUs
 
+# Model configuration
 model:
-  model_name: "unsloth/Meta-Llama-3.1-70B"
-  use_4bit: true
-  use_nested_quant: true
-  bnb_4bit_compute_dtype: "float16"
-  bnb_4bit_use_double_quant: true
-  bnb_4bit_quant_type: "nf4"
-  max_length: 2048
+  model_name: "meta-llama/Meta-Llama-3-8B"  # Using 8B model
+  max_length: 4096
   trust_remote_code: true
-  use_peft: true
+  
+  # PEFT/LoRA configuration - Optional for 8B model
+  use_peft: false  # Can set to false for full parameter fine-tuning
   lora_r: 16
   lora_alpha: 32
   lora_dropout: 0.1
   target_modules: "q_proj,v_proj,k_proj,o_proj,gate_proj,up_proj,down_proj"
 
+# Data configuration
 data:
-  train_file: "../lie_detection_training.jsonl"
+  # train_file: "/root/lie-detector/lie_detection_training2.jsonl"
+  train_file: "/root/lie-detector/lie_detection_training_100.jsonl"
   validation_split: 0.1
-  max_samples: 26
-  prompt_template: "### Human: {prompt}\n\n### Assistant: {completion}"
+  max_samples: null
+  prompt_template: "{prompt}{completion}"
 
+# Training configuration - Optimized for 8B model on 4x H100 GPUs
 training:
-  output_dir: "../focused_sweep_results"
-  num_train_epochs: 2
-  per_device_train_batch_size: 1
+  output_dir: "./dipika/outputs/llama-8b-lie-detection-sft"
+  num_train_epochs: 3
+  per_device_train_batch_size: 8  # Larger batch size for 8B model
   per_device_eval_batch_size: 1
-  gradient_accumulation_steps: 4
-  learning_rate: 2e-5
+  gradient_accumulation_steps: 1  # Effective batch size: 8 * 2 * 4 = 64
+  learning_rate: 1e-6
+
   weight_decay: 0.01
   warmup_steps: 100
   logging_steps: 10
-  save_steps: 100
-  eval_steps: 100
+  save_steps: 200
+  eval_steps: 20
   eval_strategy: "steps"
   save_strategy: "steps"
   load_best_model_at_end: true
   metric_for_best_model: "eval_loss"
   greater_is_better: false
-  fp16: true
+  fp16: false  # Enable fp16 for better performance # DEBUGGING
+  bf16: true   # Enable bfloat16
   dataloader_pin_memory: false
   remove_unused_columns: false
   report_to: "wandb"
-  run_name: "focused-hyperparameter-sweep"
+  run_name: "llama-8b-lie-detection-sft-4xh100"
+  
   # Early stopping configuration
-  early_stopping_patience: 2
+  early_stopping_patience: 3
   early_stopping_threshold: 0.001
 
+# General configuration
 seed: 42
-use_wandb: true 
+use_wandb: false 
