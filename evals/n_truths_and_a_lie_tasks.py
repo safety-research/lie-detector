@@ -10,11 +10,11 @@ from inspect_ai.dataset import Sample, MemoryDataset
 load_dotenv()
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from games.implementations.n_truths_and_a_lie.scenario import generate_themed_scenarios
-from games.implementations.n_truths_and_a_lie import GameConfig
-from games.implementations.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
-from games.implementations.n_truths_and_a_lie.solvers import n_truths_solver
-from games.implementations.n_truths_and_a_lie.hook import *
+from pipelines.games.implementations.n_truths_and_a_lie.scenario import generate_themed_scenarios
+from pipelines.games.implementations.n_truths_and_a_lie import GameConfig
+from pipelines.games.implementations.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
+from pipelines.games.implementations.n_truths_and_a_lie.solvers import n_truths_solver
+from pipelines.games.implementations.n_truths_and_a_lie.hook import *
 MAX_SCENARIOS = 1
 
 
@@ -137,15 +137,21 @@ def n_truths_and_a_lie_travel_experiences() -> Task:
 
 if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
-    task = n_truths_and_a_lie_professional_background()
+    task = [
+        n_truths_and_a_lie_professional_background(),
+        n_truths_and_a_lie_hidden_talents(),
+        n_truths_and_a_lie_family_history(),
+        n_truths_and_a_lie_travel_experiences(),
+        n_truths_and_a_lie_personal_quirks()
+    ]
     model = "openrouter/meta-llama/llama-3.1-8b-instruct"
 
 
     # Run evaluation with a specific model
     results = eval(
-        tasks=[task],
+        tasks=task,
         model=model,  # Using OpenRouter Claude model
         limit=10,  # Limit samples for faster debugging
-        log_dir="./logs",  # Specify log directory
+        log_dir="../logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

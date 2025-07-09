@@ -5,11 +5,11 @@ from inspect_ai import task, Task
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sandbagging.selective_compliance.answer_accuracy.dataset import create_sandbagging_contrastive_dataset, create_sandbagging_dataset
-from sandbagging.selective_compliance.answer_accuracy.solver import sandbagging_contrastive_solver, sandbagging_with_refusal_detection
-from sandbagging.selective_compliance.answer_accuracy.scorer import sandbagging_judge_lie_detector, sandbagging_lie_detector_scorer, sandbagging_contrastive_scorer, sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
-from sandbagging.selective_compliance.answer_accuracy.models import SandbaggingDomain
-from sandbagging.selective_compliance.answer_accuracy.hooks import *
+from pipelines.sandbagging.selective_compliance.answer_accuracy.dataset import create_sandbagging_contrastive_dataset, create_sandbagging_dataset
+from pipelines.sandbagging.selective_compliance.answer_accuracy.solver import sandbagging_contrastive_solver, sandbagging_with_refusal_detection
+from pipelines.sandbagging.selective_compliance.answer_accuracy.scorer import sandbagging_judge_lie_detector, sandbagging_lie_detector_scorer, sandbagging_contrastive_scorer, sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
+from pipelines.sandbagging.selective_compliance.answer_accuracy.models import SandbaggingDomain
+from pipelines.sandbagging.selective_compliance.answer_accuracy.hooks import *
 
 @task
 def sandbagging_judge_lie_detection():

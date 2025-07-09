@@ -1,7 +1,0 @@
-pandas
-openai
-tqdm
-pydantic
-python-dotenv
-anthropic
-datasets

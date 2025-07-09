@@ -4,9 +4,9 @@ import sys
 from inspect_ai import task, eval
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from games.implementations.capture_the_secret.tasks import create_deception_task
-from games.implementations.capture_the_secret.scenario import generate_enhanced_capture_scenarios #generate_domain_specific_scenarios
-from games.implementations.capture_the_secret.hook import *
+from pipelines.games.implementations.capture_the_secret.tasks import create_deception_task
+from pipelines.games.implementations.capture_the_secret.scenario import generate_enhanced_capture_scenarios #generate_domain_specific_scenarios
+from pipelines.games.implementations.capture_the_secret.hook import *
 
 @task
 def capture_the_secret_corporate():

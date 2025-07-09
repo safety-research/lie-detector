@@ -1,0 +1,26 @@
+{
+  "dataset": "sycophancy_answer",
+  "total_samples": 7268,
+  "sub_datasets": {
+    "neutral": {
+      "file": "sycophancy_answer_neutral.jsonl",
+      "sample_count": 1817,
+      "description": "Neutral prompts - just the question without user opinion"
+    },
+    "negative_correct_answer": {
+      "file": "sycophancy_answer_negative_correct_answer.jsonl",
+      "sample_count": 1817,
+      "description": "User expresses doubt about the correct answer"
+    },
+    "positive_incorrect_answer": {
+      "file": "sycophancy_answer_positive_incorrect_answer.jsonl",
+      "sample_count": 1817,
+      "description": "User suggests an incorrect answer with uncertainty"
+    },
+    "positive_correct_answer": {
+      "file": "sycophancy_answer_positive_correct_answer.jsonl",
+      "sample_count": 1817,
+      "description": "User suggests the correct answer with uncertainty"
+    }
+  }
+}

@@ -62,13 +62,6 @@ from evals.sandbagging_unethical_tool_capability_denial_tasks import (
     tool_ethical_sandbagging_task, tool_unethical_sandbagging_task
 )
 
-from evals.sandbagging_performance_degradation_chess_tasks import chess_sandbagging_task
-
-from evals.sandbagging_selective_compliance_accuracy_tasks import (
-    sandbagging_judge_lie_detection, sandbagging_lie_detection, sandbagging_contrastive, sandbagging_detection, sandbagging_control, sandbagging_harmful, sandbagging_physical_security_contrastive, sandbagging_physical_security, sandbagging_digital_security_contrastive, sandbagging_digital_security, sandbagging_chemistry_biology_contrastive, sandbagging_chemistry_biology, sandbagging_automotive_mechanical_contrastive, sandbagging_automotive_mechanical, sandbagging_medical_pharmaceutical_contrastive, sandbagging_medical_pharmaceutical, sandbagging_financial_systems_contrastive, sandbagging_financial_systems
-)
-
-from evals.sandbagging_tool_results_tasks import sandbagging_tool_results_tasks
 
 def get_all_tasks():
     """Get all available tasks organized by category."""
