@@ -8,8 +8,8 @@ from inspect_ai import task, Task, eval
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sandbagging.capability_denial.unethical_tool_usage.tasks import ethical_tool_sandbagging_task
-from sandbagging.capability_denial.unethical_tool_usage.hooks import *
+from pipelines.sandbagging.capability_denial.unethical_tool_usage.tasks import ethical_tool_sandbagging_task
+from pipelines.sandbagging.capability_denial.unethical_tool_usage.hooks import *
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent

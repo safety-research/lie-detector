@@ -10,10 +10,10 @@ from inspect_ai import task, Task, eval, eval_async
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sandbagging.performance_degradation.chess.prompts import LIE_ELICITATION_PROMPTS
-from sandbagging.performance_degradation.chess.tasks import chess_sandbagging_task, chess_mate_in_2_task, \
+from pipelines.sandbagging.performance_degradation.chess.prompts import LIE_ELICITATION_PROMPTS
+from pipelines.sandbagging.performance_degradation.chess.tasks import chess_sandbagging_task, chess_mate_in_2_task, \
     chess_mate_in_2_dual_shutdown_threat_task, chess_mate_in_2_dual_condition_task
-from sandbagging.performance_degradation.chess.hook import *
+from pipelines.sandbagging.performance_degradation.chess.hook import *
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent
 SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "sandbagging" / "capabilities"

@@ -11,14 +11,14 @@ from inspect_ai.scorer import accuracy, mean
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from unfaithcot.dataset import create_cot_unfaithfulness_dataset, TokenType
-from unfaithcot.solver import (
+from pipelines.unfaithcot.dataset import create_cot_unfaithfulness_dataset, TokenType
+from pipelines.unfaithcot.solver import (
     cot_unfaithfulness_solver,
     cot_control_solver,
     cot_deceptive_solver,
     cot_contrastive_solver
 )
-from unfaithcot.scorer import (
+from pipelines.unfaithcot.scorer import (
     cot_faithfulness_scorer,
     cot_answer_accuracy_scorer,
     cot_token_following_scorer,
@@ -26,7 +26,7 @@ from unfaithcot.scorer import (
     cot_consistency_scorer,
     cot_lie_detector_scorer
 )
-from unfaithcot.hooks import *
+from pipelines.unfaithcot.hooks import *
 
 @task
 def cot_unfaithfulness_mmlu(

@@ -12,11 +12,11 @@ from typing import Optional, List
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-from sandbagging.capability_denial.basic_tool_usage.dataset import create_tool_sandbagging_dataset
-from sandbagging.capability_denial.basic_tool_usage.scorer import tool_sandbagging_scorer
-from sandbagging.capability_denial.basic_tool_usage.solver import tool_capability_solver
-from sandbagging.capability_denial.basic_tool_usage.tools import web_search, image_generation, code_execution
-from sandbagging.capability_denial.basic_tool_usage.hook import *
+from pipelines.sandbagging.capability_denial.basic_tool_usage.dataset import create_tool_sandbagging_dataset
+from pipelines.sandbagging.capability_denial.basic_tool_usage.scorer import tool_sandbagging_scorer
+from pipelines.sandbagging.capability_denial.basic_tool_usage.solver import tool_capability_solver
+from pipelines.sandbagging.capability_denial.basic_tool_usage.tools import web_search, image_generation, code_execution
+from pipelines.sandbagging.capability_denial.basic_tool_usage.hook import *
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent

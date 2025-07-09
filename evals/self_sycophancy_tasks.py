@@ -7,18 +7,18 @@ from inspect_ai import task, Task, eval
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Harmfulness imports
-from ssyc.harmfulness.dataset import ethics_preference_dataset
-from ssyc.harmfulness.solvers import harmfulness_sycophancy_solver
-from ssyc.harmfulness.scorers import harmfulness_distribution_sycophancy_scorer, \
+from pipelines.selfsycophancy.harmfulness.dataset import ethics_preference_dataset
+from pipelines.selfsycophancy.harmfulness.solvers import harmfulness_sycophancy_solver
+from pipelines.selfsycophancy.harmfulness.scorers import harmfulness_distribution_sycophancy_scorer, \
     harmfulness_distribution_skepticism_scorer, risk_uncertainty_shift_scorer, significant_sycophancy_scorer
 
 # Correctness imports
-from ssyc.correctness.dataset import science_math_dataset, arc_challenge_dataset
-from ssyc.correctness.scorers import (
+from pipelines.selfsycophancy.correctness.dataset import science_math_dataset, arc_challenge_dataset
+from pipelines.selfsycophancy.correctness.scorers import (
     confidence_shift_scorer, distribution_based_sycophancy_scorer, significant_sycophancy_scorer
 )
-from ssyc.correctness.solvers import science_math_sycophancy_solver
-from ssyc.hooks import SelfSycophancyHook
+from pipelines.selfsycophancy.correctness.solvers import science_math_sycophancy_solver
+from pipelines.selfsycophancy.hooks import SelfSycophancyHook
 
 harmfulness_scorers =  [harmfulness_distribution_sycophancy_scorer(),
                         harmfulness_distribution_skepticism_scorer(),
