@@ -320,7 +320,7 @@ def save_results_to_files(results, filename, metrics, output_dir="."):
     
     return json_filepath, txt_filepath
 
-def main(num_samples=None, model=None):
+def main(num_samples=None, model=None, data_dir="processed_data"):
     # First examine the data distribution
     examine_data_distribution()
     
@@ -329,7 +329,6 @@ def main(num_samples=None, model=None):
     print("=== RUNNING BASELINE EVALUATION ===")
     
     # Configuration
-    data_dir = "processed_data"
     model_name = model or "openrouter/meta-llama/llama-3.1-8b-instruct"
     log_dir = "logs/baseline"
     limit = num_samples  # Use the num_samples parameter
