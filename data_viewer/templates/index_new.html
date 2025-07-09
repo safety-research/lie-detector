@@ -8,70 +8,116 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #000000;
         }
         .navbar-brand {
-            font-weight: bold;
-            color: #dc3545 !important;
+            font-weight: 600;
+            color: #000000 !important;
+            letter-spacing: -0.5px;
         }
         .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #000000;
+            border-radius: 0;
+            box-shadow: none;
             margin-bottom: 20px;
+            background-color: #ffffff;
         }
         .card-header {
-            background: #f5f5f5;
-            color: #222;
-            border-radius: 15px 15px 0 0 !important;
-            font-weight: bold;
+            background: #000000;
+            color: #ffffff;
+            border-radius: 0 !important;
+            font-weight: 500;
+            border-bottom: none;
+            padding: 12px 20px;
         }
         .btn-primary {
-            background: #1976d2;
-            color: #fff;
-            border: none;
-            border-radius: 25px;
-            padding: 10px 25px;
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #000000;
+            border-radius: 0;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
         .btn-primary:hover {
-            background: #1565c0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            background: #ffffff;
+            color: #000000;
+            border-color: #000000;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-outline-secondary {
+            background: #ffffff;
+            color: #666666;
+            border: 1px solid #666666;
+            border-radius: 0;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .btn-outline-secondary:hover {
+            background: #666666;
+            color: #ffffff;
+            border-color: #666666;
+        }
+        .btn-outline-info {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #000000;
+            border-radius: 0;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .btn-outline-info:hover {
+            background: #000000;
+            color: #ffffff;
+            border-color: #000000;
         }
         .sample-card {
-            transition: transform 0.2s;
+            transition: box-shadow 0.2s;
         }
         .sample-card:hover {
-            transform: translateY(-5px);
+            transform: none;
+            box-shadow: 4px 4px 0 #000000;
         }
         .badge-lie {
             background-color: #dc3545;
-            color: white;
+            color: #ffffff;
+            border: 1px solid #dc3545;
+            font-weight: 500;
+            padding: 4px 8px;
         }
         .badge-truth {
             background-color: #28a745;
-            color: white;
+            color: #ffffff;
+            border: 1px solid #28a745;
+            font-weight: 500;
+            padding: 4px 8px;
         }
         .trace-message {
-            background-color: #f8f9fa;
-            border-left: 4px solid #007bff;
+            background-color: #f8f8f8;
+            border-left: 3px solid #000000;
             padding: 15px;
             margin: 10px 0;
-            border-radius: 5px;
+            border-radius: 0;
             position: relative;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
         }
         .trace-message.user {
-            border-left-color: #28a745;
-            background-color: #d4edda;
+            border-left-color: #000000;
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            border-left-width: 3px;
         }
         .trace-message.assistant {
-            border-left-color: #007bff;
-            background-color: #d1ecf1;
+            border-left-color: #666666;
+            background-color: #f8f8f8;
         }
         .trace-message.system {
-            border-left-color: #6c757d;
-            background-color: #e9ecef;
+            border-left-color: #cccccc;
+            background-color: #f0f0f0;
         }
         .trace-message .content {
             word-wrap: break-word;
@@ -81,10 +127,10 @@
             cursor: pointer;
         }
         .trace-message .content.has-truncated:hover {
-            background-color: rgba(0, 123, 255, 0.05);
+            background-color: rgba(0, 0, 0, 0.02);
         }
         .expand-indicator {
-            color: #007bff;
+            color: #666666;
             font-weight: bold;
             cursor: pointer;
             display: inline-block;
@@ -92,34 +138,97 @@
             font-size: 0.9em;
         }
         .expand-indicator:hover {
-            text-decoration: underline;
+            color: #000000;
+            text-decoration: none;
         }
         .scores-section {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid #000000;
+            border-radius: 0;
             padding: 15px;
             margin: 10px 0;
         }
         .metadata-section {
-            background-color: #e2e3e5;
-            border-radius: 10px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 0;
             padding: 15px;
             margin: 10px 0;
         }
         .filter-section {
-            background-color: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            border-radius: 0;
+            padding: 25px;
+            margin-bottom: 30px;
         }
         .form-select, .form-control {
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
+            border-radius: 0;
+            border: 1px solid #000000;
+            background-color: #ffffff;
+            font-weight: 400;
         }
         .form-select:focus, .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            border-color: #000000;
+            box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Tree view styles */
+        .tree-view {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .tree-node {
+            margin-left: 0;
+        }
+        .tree-node.nested {
+            margin-left: 20px;
+        }
+        .tree-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 16px;
+            text-align: center;
+            color: #666666;
+            font-weight: bold;
+        }
+        .tree-toggle:hover {
+            color: #000000;
+        }
+        .tree-toggle.empty {
+            cursor: default;
+        }
+        .tree-key {
+            font-weight: 600;
+            color: #000000;
+        }
+        .tree-value {
+            color: #000000;
+        }
+        .tree-value.string {
+            color: #000000;
+        }
+        .tree-value.number {
+            color: #000000;
+        }
+        .tree-value.boolean {
+            color: #000000;
+        }
+        .tree-value.null {
+            color: #666666;
+            font-style: italic;
+        }
+        .tree-children {
+            display: none;
+        }
+        .tree-children.expanded {
+            display: block;
+        }
+        .tree-brackets {
+            color: #666666;
+            font-weight: normal;
         }
     </style>
 </head>
@@ -177,7 +286,10 @@
 
         <!-- Samples Display Section -->
         <div id="samplesSection">
-            <h4><i class="fas fa-list"></i> Samples</h4>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="fas fa-list"></i> Samples</h4>
+                <div id="filterSummary" class="text-muted"></div>
+            </div>
             <div id="samplesContainer"></div>
         </div>
     </div>
@@ -203,25 +315,42 @@
                 const response = await fetch('/get_unique_values');
                 const values = await response.json();
 
-                // Populate task filter (alphabetically sorted)
-                const taskFilter = document.getElementById('taskFilter');
-                taskFilter.innerHTML = '<option value="">All Tasks</option>';
-                values.tasks.sort().forEach(task => {
-                    const option = document.createElement('option');
-                    option.value = task;
-                    option.textContent = task;
-                    taskFilter.appendChild(option);
-                });
+                // Store total count for display
+                window.totalSampleCount = values.total_count || 0;
 
-                // Populate model filter
+                // Populate task filter with counts
+                const taskFilter = document.getElementById('taskFilter');
+                taskFilter.innerHTML = `<option value="">All Tasks (${values.total_count})</option>`;
+                if (values.tasks && Array.isArray(values.tasks)) {
+                    values.tasks.forEach(task => {
+                        const option = document.createElement('option');
+                        option.value = task.value;
+                        option.textContent = `${task.value} (${task.count})`;
+                        taskFilter.appendChild(option);
+                    });
+                }
+
+                // Populate model filter with counts
                 const modelFilter = document.getElementById('modelFilter');
-                modelFilter.innerHTML = '<option value="">All Models</option>';
-                values.models.forEach(model => {
-                    const option = document.createElement('option');
-                    option.value = model;
-                    option.textContent = model;
-                    modelFilter.appendChild(option);
-                });
+                modelFilter.innerHTML = `<option value="">All Models (${values.total_count})</option>`;
+                if (values.models && Array.isArray(values.models)) {
+                    values.models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.value;
+                        option.textContent = `${model.value} (${model.count})`;
+                        modelFilter.appendChild(option);
+                    });
+                }
+
+                // Update lie filter with counts
+                const lieFilter = document.getElementById('lieFilter');
+                if (values.lie_counts) {
+                    lieFilter.innerHTML = `
+                        <option value="">All (${values.total_count})</option>
+                        <option value="true">Lies Only (${values.lie_counts.true})</option>
+                        <option value="false">Truths Only (${values.lie_counts.false})</option>
+                    `;
+                }
             } catch (error) {
                 console.error('Error loading unique values:', error);
             }
@@ -248,6 +377,7 @@
 
                 if (result.samples) {
                     displaySamples(result.samples);
+                    updateFilterSummary(result);
                 } else {
                     showMessage(result.error, 'error');
                 }
@@ -449,35 +579,135 @@
         }
 
         function createMetadataHTML(sample) {
-            let html = '<div class="metadata-section">';
-
-            // Show metadata if it exists
+            let html = '<div class="metadata-section tree-view">';
+            
+            // Prepare all data sections
+            const sections = [];
+            
+            // Metadata section
             if (sample.metadata && Object.keys(sample.metadata).length > 0) {
-                html += '<div><strong>Metadata:</strong></div>';
-                for (const [key, value] of Object.entries(sample.metadata)) {
-                    html += `<div class="ms-3"><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</div>`;
-                }
+                sections.push({
+                    title: 'Metadata',
+                    data: sample.metadata
+                });
             }
-
-            // Show additional fields if they exist
+            
+            // Additional fields section
             if (sample.additional_fields && Object.keys(sample.additional_fields).length > 0) {
-                html += '<div class="mt-2"><strong>Additional Fields:</strong></div>';
-                for (const [key, value] of Object.entries(sample.additional_fields)) {
-                    html += `<div class="ms-3"><strong>${key}:</strong> ${JSON.stringify(value, null, 2)}</div>`;
-                }
+                sections.push({
+                    title: 'Additional Fields',
+                    data: sample.additional_fields
+                });
             }
-
-            // Show basic information
-            html += '<div class="mt-2"><strong>Basic Information:</strong></div>';
-            html += `<div class="ms-3"><strong>Task:</strong> ${sample.task || 'N/A'}</div>`;
-            html += `<div class="ms-3"><strong>Task ID:</strong> ${sample.task_id || 'N/A'}</div>`;
-            html += `<div class="ms-3"><strong>Model:</strong> ${sample.model || 'N/A'}</div>`;
-            html += `<div class="ms-3"><strong>Timestamp:</strong> ${formatTimestamp(sample.timestamp)}</div>`;
-            html += `<div class="ms-3"><strong>File:</strong> ${sample.file_key || 'N/A'}</div>`;
-            html += `<div class="ms-3"><strong>Line Number:</strong> ${sample.line_number || 'N/A'}</div>`;
-
+            
+            // Basic information section
+            const basicInfo = {
+                'Task': sample.task || 'N/A',
+                'Task ID': sample.task_id || 'N/A',
+                'Model': sample.model || 'N/A',
+                'Timestamp': formatTimestamp(sample.timestamp),
+                'File': sample.file_key || 'N/A',
+                'Line Number': sample.line_number || 'N/A'
+            };
+            sections.push({
+                title: 'Basic Information',
+                data: basicInfo
+            });
+            
+            // Scores section if available
+            if (sample.scores && Object.keys(sample.scores).length > 0) {
+                sections.push({
+                    title: 'Scores',
+                    data: sample.scores
+                });
+            }
+            
+            // Build the tree HTML
+            sections.forEach((section, index) => {
+                html += createTreeNode(section.title, section.data, `section-${index}`, false);
+            });
+            
             html += '</div>';
             return html;
+        }
+        
+        function createTreeNode(key, value, nodeId, isNested = true) {
+            const uniqueId = `tree-${nodeId}-${Math.random().toString(36).substr(2, 9)}`;
+            let html = '';
+            
+            if (value === null || value === undefined) {
+                html = `<div class="tree-node ${isNested ? 'nested' : ''}">
+                    <span class="tree-toggle empty">&nbsp;</span>
+                    <span class="tree-key">${key}:</span>
+                    <span class="tree-value null">null</span>
+                </div>`;
+            } else if (typeof value === 'object' && !Array.isArray(value)) {
+                // Object
+                const isEmpty = Object.keys(value).length === 0;
+                html = `<div class="tree-node ${isNested ? 'nested' : ''}">
+                    <span class="tree-toggle ${isEmpty ? 'empty' : ''}" data-target="${uniqueId}" onclick="toggleTreeNode('${uniqueId}')">${isEmpty ? '&nbsp;' : '▶'}</span>
+                    <span class="tree-key">${key}:</span>
+                    <span class="tree-brackets">{${isEmpty ? '}' : ''}</span>
+                    ${!isEmpty ? `<div class="tree-children" id="${uniqueId}">` : ''}`;
+                
+                if (!isEmpty) {
+                    Object.entries(value).forEach(([k, v]) => {
+                        html += createTreeNode(k, v, `${nodeId}-${k}`, true);
+                    });
+                    html += '</div><div class="tree-node nested"><span class="tree-toggle empty">&nbsp;</span><span class="tree-brackets">}</span></div>';
+                }
+                html += '</div>';
+            } else if (Array.isArray(value)) {
+                // Array
+                const isEmpty = value.length === 0;
+                html = `<div class="tree-node ${isNested ? 'nested' : ''}">
+                    <span class="tree-toggle ${isEmpty ? 'empty' : ''}" data-target="${uniqueId}" onclick="toggleTreeNode('${uniqueId}')">${isEmpty ? '&nbsp;' : '▶'}</span>
+                    <span class="tree-key">${key}:</span>
+                    <span class="tree-brackets">[${isEmpty ? ']' : ''}</span>
+                    ${!isEmpty ? `<div class="tree-children" id="${uniqueId}">` : ''}`;
+                
+                if (!isEmpty) {
+                    value.forEach((item, index) => {
+                        html += createTreeNode(`[${index}]`, item, `${nodeId}-${index}`, true);
+                    });
+                    html += '</div><div class="tree-node nested"><span class="tree-toggle empty">&nbsp;</span><span class="tree-brackets">]</span></div>';
+                }
+                html += '</div>';
+            } else {
+                // Primitive value
+                let valueClass = 'tree-value';
+                if (typeof value === 'string') valueClass += ' string';
+                else if (typeof value === 'number') valueClass += ' number';
+                else if (typeof value === 'boolean') valueClass += ' boolean';
+                
+                let displayValue = value;
+                if (typeof value === 'string') {
+                    displayValue = `"${value}"`;
+                }
+                
+                html = `<div class="tree-node ${isNested ? 'nested' : ''}">
+                    <span class="tree-toggle empty">&nbsp;</span>
+                    <span class="tree-key">${key}:</span>
+                    <span class="${valueClass}">${escapeHtml(String(displayValue))}</span>
+                </div>`;
+            }
+            
+            return html;
+        }
+        
+        function toggleTreeNode(nodeId) {
+            const node = document.getElementById(nodeId);
+            const toggle = document.querySelector(`[data-target="${nodeId}"]`);
+            
+            if (node && toggle) {
+                if (node.classList.contains('expanded')) {
+                    node.classList.remove('expanded');
+                    toggle.textContent = '▶';
+                } else {
+                    node.classList.add('expanded');
+                    toggle.textContent = '▼';
+                }
+            }
         }
 
         function formatTimestamp(timestamp) {
@@ -495,6 +725,20 @@
             document.getElementById('lieFilter').value = '';
             document.getElementById('sampleCount').value = '5';
             loadSamples();
+        }
+
+        function updateFilterSummary(result) {
+            const summaryDiv = document.getElementById('filterSummary');
+            const displayedCount = result.samples.length;
+            const filteredCount = result.filtered_samples;
+            const totalCount = result.total_samples;
+            
+            let summary = `Showing ${displayedCount} of ${filteredCount} filtered samples`;
+            if (filteredCount < totalCount) {
+                summary += ` (${totalCount} total)`;
+            }
+            
+            summaryDiv.innerHTML = summary;
         }
 
         function showMessage(message, type) {
