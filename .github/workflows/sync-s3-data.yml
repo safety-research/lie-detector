@@ -1,0 +1,96 @@
+name: Sync S3 Data
+
+on:
+  schedule:
+    # Run every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Allow manual trigger
+    inputs:
+      full_sync:
+        description: 'Force full sync (clear cache and reload all files)'
+        required: false
+        default: 'false'
+        type: boolean
+  push:
+    branches: [main, feature/ui]
+    paths:
+      - 'data_viewer/**'
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for deployment to complete
+        if: github.event_name == 'push'
+        run: sleep 60  # Wait 1 minute for Vercel deployment
+      
+      - name: Sync S3 data in batches
+        run: |
+          BASE_URL="https://lies-flax.vercel.app"
+          BATCH_SIZE=50
+          offset=0
+          total_synced=0
+          
+          echo "🔄 Starting S3 data sync in batches with explicit offsets..."
+          
+          # Check if this is a full sync request
+          if [ "${{ github.event.inputs.full_sync }}" = "true" ]; then
+            echo "🔥 Full sync requested - clearing cache first..."
+            curl -s -X POST "${BASE_URL}/refresh_data" \
+              -H "Content-Type: application/json" \
+              -d '{"batch_offset": 0, "batch_size": '$BATCH_SIZE'}'
+            echo ""
+          fi
+          
+          # Process files in batches until all are synced using sync_batch with explicit offsets
+          while true; do
+            echo "📦 Processing batch: offset=$offset, size=$BATCH_SIZE"
+            
+            response=$(curl -s -X POST "${BASE_URL}/sync_batch" \
+              -H "Content-Type: application/json" \
+              -d '{"batch_offset": '$offset', "batch_size": '$BATCH_SIZE'}')
+            
+            echo "Response: $response"
+            
+            # Extract has_more and sample_count from response
+            has_more=$(echo "$response" | jq -r '.has_more // false')
+            sample_count=$(echo "$response" | jq -r '.sample_count // 0')
+            remaining=$(echo "$response" | jq -r '.remaining_files // 0')
+            
+            total_synced=$sample_count
+            
+            echo "📊 Current total: $total_synced samples, $remaining files remaining"
+            
+            # If no more files to process, break
+            if [ "$has_more" != "true" ]; then
+              echo "✅ All files processed!"
+              break
+            fi
+            
+            # Move to next batch
+            offset=$((offset + BATCH_SIZE))
+            
+            # Safety check to prevent infinite loops
+            if [ $offset -gt 1000 ]; then
+              echo "⚠️ Safety limit reached (offset > 1000), stopping"
+              break
+            fi
+            
+            # Small delay between batches to avoid overwhelming the server
+            sleep 5
+          done
+          
+          echo ""
+          echo "🎉 S3 sync completed!"
+          echo "📊 Total samples loaded: $total_synced"
+          echo "📅 Completed at: $(date)"
+      
+      - name: Verify sync status
+        run: |
+          echo "🔍 Checking final sync status..."
+          response=$(curl -s "https://lies-flax.vercel.app/status")
+          echo "Status: $response"
+          
+          sample_count=$(echo "$response" | jq -r '.data_stats.total_samples // 0')
+          echo "✅ Final sample count: $sample_count"
+          echo "🌐 App URL: https://lies-flax.vercel.app"

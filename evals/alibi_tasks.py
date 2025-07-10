@@ -14,18 +14,17 @@ from pipelines.games.implementations.alibi import (
     create_workplace_alibi_task,
     create_mixed_alibi_task
 )
+
 from pipelines.games.implementations.alibi.hook import *
 
 @task
 def alibi_theft_task():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
-    return create_theft_alibi_task(num_scenarios=30)
-
+    return create_theft_alibi_task(num_scenarios=100)
 
 @task
 def alibi_fraud_task():
-    """Fraud investigation scenario: Detective interrogates suspect about fraud alibi"""
-    return create_fraud_alibi_task(num_scenarios=30)
+    return create_fraud_alibi_task(num_scenarios=100)
 
 
 @task
@@ -69,6 +68,6 @@ if __name__ == "__main__":
         tasks=all_tasks,
         model=model,  # or any model you want to test
         limit=100,  # Limit samples for faster debugging
-        log_dir="./logs",  # Optional: specify log directory
+        log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

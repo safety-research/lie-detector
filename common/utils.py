@@ -1,7 +1,7 @@
 import boto3
 from typing import Optional
 
-def write_to_s3(data: str, filename: str, bucket: str = "dipika-lie-detection-data", prefix: str = "processed-data/", clean_task_name: Optional[str] = None):
+def write_to_s3(data: str, filename: str, bucket: str = "processed-", prefix: str = "processed-data/", clean_task_name: Optional[str] = None):
     """
     Write data to S3 bucket.
     

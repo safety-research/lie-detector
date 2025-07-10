@@ -14,7 +14,7 @@ from enum import Enum
 from inspect_ai.dataset import Dataset, MemoryDataset, Sample
 
 try:
-    from sycophancy.utils import format_feedback_conversation
+    from pipelines.sycophancy.utils import format_feedback_conversation
 except ImportError:
     from utils import format_feedback_conversation
 

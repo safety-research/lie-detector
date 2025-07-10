@@ -106,18 +106,22 @@
             font-size: 13px;
         }
         .trace-message.user {
-            border-left-color: #000000;
-            background-color: #ffffff;
-            border: 1px solid #000000;
-            border-left-width: 3px;
+            border-left-color: #4CAF50;
+            background-color: #E8F5E8;
+            border: 1px solid #C8E6C9;
+            border-left-width: 4px;
         }
         .trace-message.assistant {
-            border-left-color: #666666;
-            background-color: #f8f8f8;
+            border-left-color: #2196F3;
+            background-color: #E3F2FD;
+            border: 1px solid #BBDEFB;
+            border-left-width: 4px;
         }
         .trace-message.system {
-            border-left-color: #cccccc;
-            background-color: #f0f0f0;
+            border-left-color: #9E9E9E;
+            background-color: #F5F5F5;
+            border: 1px solid #E0E0E0;
+            border-left-width: 4px;
         }
         .trace-message .content {
             word-wrap: break-word;
@@ -278,9 +282,6 @@
                 <button id="clearFiltersBtn" class="btn btn-outline-secondary ms-2">
                     <i class="fas fa-times"></i> Clear Filters
                 </button>
-                <button id="refreshDataBtn" class="btn btn-outline-info ms-2">
-                    <i class="fas fa-sync-alt"></i> Refresh Data
-                </button>
             </div>
         </div>
 
@@ -302,7 +303,6 @@
         // Apply filters
         document.getElementById('applyFiltersBtn').addEventListener('click', loadSamples);
         document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
-        document.getElementById('refreshDataBtn').addEventListener('click', refreshData);
 
         // Load data when page loads
         window.addEventListener('load', async () => {
@@ -386,31 +386,6 @@
             }
         }
 
-        async function refreshData() {
-            const btn = document.getElementById('refreshDataBtn');
-            const originalText = btn.innerHTML;
-
-            // Show loading state
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-            btn.disabled = true;
-
-            try {
-                const response = await fetch('/refresh_data', { method: 'POST' });
-                const result = await response.json();
-
-                showMessage(result.message, 'success');
-
-                // Reload unique values after refresh
-                await loadUniqueValues();
-
-            } catch (error) {
-                showMessage('Error refreshing data: ' + error.message, 'error');
-            } finally {
-                // Restore button state
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
 
         function displaySamples(samples) {
             const container = document.getElementById('samplesContainer');

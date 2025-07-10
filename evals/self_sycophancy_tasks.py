@@ -138,12 +138,13 @@ if __name__ == "__main__":
     print(f"Limit: 100 samples per task")
 
     # Run evaluation with all tasks
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     results = eval(
         tasks=all_tasks,
         model=model,  # Using OpenRouter Claude model
-        limit=20,  # Limit samples for faster debugging
+        limit=100,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )
