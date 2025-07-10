@@ -75,7 +75,7 @@ ijson==3.4.0
 importlib_metadata==8.7.0
 iniconfig==2.1.0
 inspect_ai @ git+https://github.com/UKGovernmentBEIS/inspect_ai.git@37d31b0534a288ca3756a23bbe7902ee5b2a6496
-git+https://github.com/UKGovernmentBEIS/inspect_evals.git@<commit>
+git+https://github.com/UKGovernmentBEIS/inspect_evals.git@main
 ipykernel==6.29.5
 ipython==9.3.0
 ipython_pygments_lexers==1.1.1
