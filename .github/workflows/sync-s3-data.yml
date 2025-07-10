@@ -26,7 +26,7 @@ jobs:
       
       - name: Sync S3 data in batches
         run: |
-          BASE_URL="https://lies-j60tsu7hg-jackhopkins-projects.vercel.app"
+          BASE_URL="https://lies-flax.vercel.app"
           BATCH_SIZE=50
           offset=0
           total_synced=0
@@ -42,13 +42,11 @@ jobs:
             echo ""
           fi
           
-          # Process files in batches until all are synced
+          # Process files in batches until all are synced using continue_processing
           while true; do
-            echo "📦 Processing batch: offset=$offset, size=$BATCH_SIZE"
+            echo "📦 Continuing processing from where we left off..."
             
-            response=$(curl -s -X POST "${BASE_URL}/sync_batch" \
-              -H "Content-Type: application/json" \
-              -d '{"batch_offset": '$offset', "batch_size": '$BATCH_SIZE'}')
+            response=$(curl -s -X POST "${BASE_URL}/continue_processing")
             
             echo "Response: $response"
             
@@ -67,12 +65,9 @@ jobs:
               break
             fi
             
-            # Move to next batch
-            offset=$((offset + BATCH_SIZE))
-            
             # Safety check to prevent infinite loops
-            if [ $offset -gt 1000 ]; then
-              echo "⚠️ Safety limit reached (offset > 1000), stopping"
+            if [ $remaining -gt 200 ]; then
+              echo "⚠️ Too many files remaining ($remaining), may indicate processing issue"
               break
             fi
             
@@ -88,9 +83,9 @@ jobs:
       - name: Verify sync status
         run: |
           echo "🔍 Checking final sync status..."
-          response=$(curl -s "https://lies-j60tsu7hg-jackhopkins-projects.vercel.app/status")
+          response=$(curl -s "https://lies-flax.vercel.app/status")
           echo "Status: $response"
           
           sample_count=$(echo "$response" | jq -r '.data_stats.total_samples // 0')
           echo "✅ Final sample count: $sample_count"
-          echo "🌐 App URL: https://lies-j60tsu7hg-jackhopkins-projects.vercel.app"
+          echo "🌐 App URL: https://lies-flax.vercel.app"
