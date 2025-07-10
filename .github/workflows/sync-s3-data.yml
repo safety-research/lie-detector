@@ -42,11 +42,13 @@ jobs:
             echo ""
           fi
           
-          # Process files in batches until all are synced using continue_processing
+          # Process files in batches until all are synced using sync_batch with explicit offsets
           while true; do
-            echo "📦 Continuing processing from where we left off..."
+            echo "📦 Processing batch: offset=$offset, size=$BATCH_SIZE"
             
-            response=$(curl -s -X POST "${BASE_URL}/continue_processing")
+            response=$(curl -s -X POST "${BASE_URL}/sync_batch" \
+              -H "Content-Type: application/json" \
+              -d '{"batch_offset": '$offset', "batch_size": '$BATCH_SIZE'}')
             
             echo "Response: $response"
             
@@ -65,14 +67,17 @@ jobs:
               break
             fi
             
+            # Move to next batch
+            offset=$((offset + BATCH_SIZE))
+            
             # Safety check to prevent infinite loops
-            if [ $remaining -gt 200 ]; then
-              echo "⚠️ Too many files remaining ($remaining), may indicate processing issue"
+            if [ $offset -gt 1000 ]; then
+              echo "⚠️ Safety limit reached (offset > 1000), stopping"
               break
             fi
             
             # Small delay between batches to avoid overwhelming the server
-            sleep 2
+            sleep 5
           done
           
           echo ""
