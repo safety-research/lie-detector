@@ -113,8 +113,8 @@ def load_and_process_s3_data(force_reload=False, batch_offset=0, batch_size=50):
     """Load and process data directly from S3 with incremental loading support"""
     global processed_data, last_load_time, processed_files
     
-    # Check if we have cached data and it's still fresh (unless forcing reload)
-    if not force_reload and processed_data and last_load_time:
+    # Check if we have cached data and it's still fresh (unless forcing reload or doing batch processing)
+    if not force_reload and batch_offset == 0 and processed_data and last_load_time:
         time_since_load = time.time() - last_load_time
         if time_since_load < CACHE_DURATION:
             print(f"Using cached data (loaded {time_since_load:.1f}s ago)")
@@ -513,6 +513,60 @@ def sync_batch():
             "batch_offset": batch_offset,
             "batch_size": batch_size
         })
+
+@app.route('/continue_processing', methods=['POST'])
+def continue_processing():
+    """Continue processing remaining files from where we left off"""
+    if USE_LOCAL_DATA:
+        return jsonify({"error": "Continue processing only available for S3 data source"}), 400
+    
+    try:
+        # Get all S3 files
+        s3_files = list_s3_files()
+        if not s3_files:
+            return jsonify({"error": "No files found in S3"}), 400
+        
+        # Find the next unprocessed file
+        next_offset = 0
+        for i, file_key in enumerate(s3_files):
+            if file_key not in processed_files:
+                next_offset = i
+                break
+        else:
+            # All files processed
+            return jsonify({
+                "message": "All files already processed",
+                "sample_count": len(processed_data),
+                "remaining_files": 0,
+                "has_more": False
+            })
+        
+        # Process next batch starting from the first unprocessed file
+        batch_size = 50
+        result = load_and_process_s3_data(force_reload=False, batch_offset=next_offset, batch_size=batch_size)
+        
+        if len(result) == 3:
+            count, message, remaining_files = result
+            return jsonify({
+                "message": message,
+                "sample_count": count,
+                "batch_offset": next_offset,
+                "batch_size": batch_size,
+                "remaining_files": remaining_files,
+                "has_more": remaining_files > 0,
+                "next_offset": next_offset + batch_size if remaining_files > 0 else None
+            })
+        else:
+            count, message = result[:2]
+            return jsonify({
+                "message": message,
+                "sample_count": count,
+                "batch_offset": next_offset,
+                "batch_size": batch_size
+            })
+            
+    except Exception as e:
+        return jsonify({"error": f"Error continuing processing: {str(e)}"}), 500
 
 @app.route('/status', methods=['GET'])
 def status():
