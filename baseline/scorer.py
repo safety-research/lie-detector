@@ -13,8 +13,12 @@ def truth_scorer() -> Scorer:
         # Improved parsing logic with priority order
         prediction = None
         
-        # 0. Starts with 'A', 'A.', 'A:', 'A/', 'A)', 'A]', or 'B', ... (case-insensitive, ignoring whitespace)
-        if re.match(r"^A[\.\:/)\]]?\b", completion, re.IGNORECASE):
+        # 0. XML-like answer tags: <answer>A</answer> or <answer>B</answer>
+        answer_match = re.search(r"<answer>([AB])</answer>", completion, re.IGNORECASE)
+        if answer_match:
+            prediction = answer_match.group(1).upper()
+        # 1. Starts with 'A', 'A.', 'A:', 'A/', 'A)', 'A]', or 'B', ... (case-insensitive, ignoring whitespace)
+        elif re.match(r"^A[\.\:/)\]]?\b", completion, re.IGNORECASE):
             prediction = "A"
         elif re.match(r"^B[\.\:/)\]]?\b", completion, re.IGNORECASE):
             prediction = "B"
