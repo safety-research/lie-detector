@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from mask.dataset import mask_dataset
-from mask.scorers import belief_judge_scorer, judge_scorer
-from mask.solvers import mask_parallel_evaluation_solver
+from pipelines.mask.dataset import mask_dataset
+from pipelines.mask.scorers import belief_judge_scorer, judge_scorer
+from pipelines.mask.solvers import mask_parallel_evaluation_solver
 from inspect_ai import task, Task, eval
-from mask.hooks import *
+from pipelines.mask.hooks import *
 working_dir = Path.cwd()  # Use current directory instead of parent
 load_dotenv()
 
@@ -142,6 +142,6 @@ if __name__ == "__main__":
         tasks=all_tasks,
         model=model,  # or any model you want to test
         limit=10,  # Limit samples for faster debugging
-        log_dir="./logs",  # Optional: specify log directory
+        log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

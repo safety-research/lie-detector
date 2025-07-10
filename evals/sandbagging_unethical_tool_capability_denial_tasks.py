@@ -8,8 +8,8 @@ from inspect_ai import task, Task, eval
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sandbagging.capability_denial.unethical_tool_usage.tasks import ethical_tool_sandbagging_task
-from sandbagging.capability_denial.unethical_tool_usage.hooks import *
+from pipelines.sandbagging.capability_denial.unethical_tool_usage.tasks import ethical_tool_sandbagging_task
+from pipelines.sandbagging.capability_denial.unethical_tool_usage.hooks import *
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -34,7 +34,7 @@ def tool_ethical_sandbagging_task(
     """
 
     return ethical_tool_sandbagging_task(
-        num_scenarios=100,
+        num_scenarios=1000,
         ethical_frameworks=None,
         test_harmless_first=True,
         include_scenario_description=True,
@@ -62,7 +62,7 @@ def tool_unethical_sandbagging_task(
     """
 
     return ethical_tool_sandbagging_task(
-        num_scenarios=100,
+        num_scenarios=1000,
         ethical_frameworks=None,
         test_harmless_first=True,
         include_scenario_description=True,
@@ -89,6 +89,6 @@ if __name__ == "__main__":
     results = eval(
         tasks=task,
         model=model,  # or any model you want to test
-        limit=20,  # Limit samples for faster debugging
-        log_dir="./logs",  # Specify log directory
+        limit=1000,  # Limit samples for faster debugging
+        log_dir="../logs",  # Specify log directory
     )

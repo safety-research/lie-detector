@@ -13,10 +13,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Get the project root directory for absolute paths
 PROJECT_ROOT = Path(__file__).parent.parent
 
-from sandbagging.capability_denial.ascii_art.dataset import create_ascii_multiple_choice_dataset
-from sandbagging.capability_denial.ascii_art.scorer import ascii_multiple_choice_sandbagging_scorer
-from sandbagging.capability_denial.ascii_art.solver import ascii_multiple_choice_sandbagging_solver
-from sandbagging.capability_denial.ascii_art.hook import *
+from pipelines.sandbagging.capability_denial.ascii_art.dataset import create_ascii_multiple_choice_dataset
+from pipelines.sandbagging.capability_denial.ascii_art.scorer import ascii_multiple_choice_sandbagging_scorer
+from pipelines.sandbagging.capability_denial.ascii_art.solver import ascii_multiple_choice_sandbagging_solver
+from pipelines.sandbagging.capability_denial.ascii_art.hook import *
 
 @task
 def ascii_sandbagging_task(
@@ -90,6 +90,6 @@ if __name__ == "__main__":
     results = eval(
         tasks=[task],
         model=model,  # or any model you want to test
-        limit=20,  # Limit samples for faster debugging
-        log_dir="./logs",  # Specify log directory
+        limit=100,  # Limit samples for faster debugging
+        log_dir="../logs",  # Specify log directory
     )

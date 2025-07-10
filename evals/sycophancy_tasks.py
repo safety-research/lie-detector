@@ -6,12 +6,12 @@ import os
 from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sycophancy.prompts import JUDGE_USER_DID_NOT_WRITE, JUDGE_USER_WROTE, JUDGE_USER_LIKES, JUDGE_USER_DISLIKES
-from sycophancy.dataset import sycophancy_answer_subdataset, SycophancyPromptType, \
+from pipelines.sycophancy.prompts import JUDGE_USER_DID_NOT_WRITE, JUDGE_USER_WROTE, JUDGE_USER_LIKES, JUDGE_USER_DISLIKES
+from pipelines.sycophancy.dataset import sycophancy_answer_subdataset, SycophancyPromptType, \
     sycophancy_dataset, sycophancy_feedback_subdataset
-from sycophancy.solver import sycophancy_with_control_solver, are_you_sure_multi_run_solver
-from sycophancy.scorer import sycophancy_control_comparison_scorer, are_you_sure_aggregate_scorer
-from sycophancy.hooks import *
+from pipelines.sycophancy.solver import sycophancy_with_control_solver, are_you_sure_multi_run_solver
+from pipelines.sycophancy.scorer import sycophancy_control_comparison_scorer, are_you_sure_aggregate_scorer
+from pipelines.sycophancy.hooks import *
 
 working_dir = Path.cwd().parent  # Use current directory instead of parent
 load_dotenv()
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=20,  # Limit samples for faster debugging
-        log_dir="./sycophancy_tasks_run_1/",  # Optional: specify log directory
+        limit=5,  # Limit samples for faster debugging
+        log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

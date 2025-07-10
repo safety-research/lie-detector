@@ -8,13 +8,13 @@ from inspect_ai import task, eval
 load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from games.implementations.alibi.tasks import (
+from pipelines.games.implementations.alibi import (
     create_theft_alibi_task,
     create_fraud_alibi_task,
     create_workplace_alibi_task,
     create_mixed_alibi_task
 )
-from games.implementations.alibi.hook import *
+from pipelines.games.implementations.alibi.hook import *
 
 @task
 def alibi_theft_task():

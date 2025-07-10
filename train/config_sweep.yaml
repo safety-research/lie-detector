@@ -1,0 +1,77 @@
+defaults:
+  - _self_
+
+hydra:
+  sweeper:
+    params:
+      # Learning rate sweep - test different learning rates
+      training.learning_rate: 1e-6, 5e-6, 1e-5, 2e-5, 5e-5, 1e-4
+      
+      # LoRA rank sweep - test different LoRA ranks
+      model.lora_r: 8, 16, 32, 64
+      
+      # LoRA alpha sweep - test different alpha values
+      model.lora_alpha: 16, 32, 64, 128
+      
+      # Batch size and gradient accumulation sweep
+      training.per_device_train_batch_size: 1, 2
+      training.gradient_accumulation_steps: 2, 4, 8
+      
+      # Warmup steps sweep
+      training.warmup_steps: 50, 100, 200
+      
+      # Weight decay sweep
+      training.weight_decay: 0.001, 0.01, 0.1
+      
+      # LoRA dropout sweep
+      model.lora_dropout: 0.05, 0.1, 0.2
+
+model:
+  model_name: "unsloth/Meta-Llama-3.1-70B"
+  use_4bit: true
+  use_nested_quant: true
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true
+  bnb_4bit_quant_type: "nf4"
+  max_length: 2048
+  trust_remote_code: true
+  use_peft: true
+  lora_r: 16  # Will be overridden by sweep
+  lora_alpha: 32  # Will be overridden by sweep
+  lora_dropout: 0.1  # Will be overridden by sweep
+  target_modules: "q_proj,v_proj,k_proj,o_proj,gate_proj,up_proj,down_proj"
+
+data:
+  train_file: "alpaca_full_with_override.jsonl"
+  validation_split: 0.1
+  max_samples: 1000  # Limit for sweep to make it faster
+  prompt_template: "### Human: {prompt}\n\n### Assistant: {completion}"
+
+training:
+  output_dir: "./sweep_results"
+  num_train_epochs: 2  # Shorter for sweep
+  per_device_train_batch_size: 1  # Will be overridden by sweep
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 4  # Will be overridden by sweep
+  learning_rate: 2e-5  # Will be overridden by sweep
+  weight_decay: 0.01  # Will be overridden by sweep
+  warmup_steps: 100  # Will be overridden by sweep
+  logging_steps: 10
+  save_steps: 200  # More frequent saves for sweep
+  eval_steps: 200  # More frequent evaluation for sweep
+  eval_strategy: "steps"
+  save_strategy: "steps"
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  fp16: true
+  dataloader_pin_memory: false
+  remove_unused_columns: false
+  report_to: "wandb"
+  run_name: "hyperparameter-sweep"
+  # Early stopping configuration
+  early_stopping_patience: 2  # Shorter for sweep
+  early_stopping_threshold: 0.001
+
+seed: 42
+use_wandb: true 
