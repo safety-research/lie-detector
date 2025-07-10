@@ -454,8 +454,13 @@ def get_unique_values():
 @app.route('/refresh_data', methods=['POST'])
 def refresh_data():
     """Manually reload data"""
-    batch_offset = request.json.get('batch_offset', 0) if request.json else 0
-    batch_size = request.json.get('batch_size', 50) if request.json else 50
+    # Handle both JSON and form data
+    if request.is_json and request.json:
+        batch_offset = request.json.get('batch_offset', 0)
+        batch_size = request.json.get('batch_size', 50)
+    else:
+        batch_offset = request.form.get('batch_offset', 0, type=int)
+        batch_size = request.form.get('batch_size', 50, type=int)
     
     if USE_LOCAL_DATA:
         count, message = load_and_process_data(force_reload=True)
@@ -480,8 +485,13 @@ def sync_batch():
     if USE_LOCAL_DATA:
         return jsonify({"error": "Batch sync only available for S3 data source"}), 400
     
-    batch_offset = request.json.get('batch_offset', 0) if request.json else 0
-    batch_size = request.json.get('batch_size', 50) if request.json else 50
+    # Handle both JSON and form data
+    if request.is_json and request.json:
+        batch_offset = request.json.get('batch_offset', 0)
+        batch_size = request.json.get('batch_size', 50)
+    else:
+        batch_offset = request.form.get('batch_offset', 0, type=int)
+        batch_size = request.form.get('batch_size', 50, type=int)
     
     result = load_and_process_s3_data(force_reload=False, batch_offset=batch_offset, batch_size=batch_size)
     if len(result) == 3:

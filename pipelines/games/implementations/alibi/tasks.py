@@ -45,28 +45,28 @@ def create_alibi_task(configs: List[GameConfig], task_name: str) -> Task:
     return create_game_task(AlibiTaskCreator, configs, task_name)
 
 
-def create_theft_alibi_task(num_scenarios: int = 5) -> Task:
+def create_theft_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task focused on theft alibis"""
-    from games.implementations.alibi.models import IncidentType
+    from pipelines.games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.THEFT], num_scenarios=num_scenarios)
     return create_alibi_task(configs, f"alibi_theft_investigation")
 
 
-def create_fraud_alibi_task(num_scenarios: int = 5) -> Task:
+def create_fraud_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task focused on fraud alibis"""
-    from games.implementations.alibi.models import IncidentType
+    from pipelines.games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.FRAUD], num_scenarios=num_scenarios)
     return create_alibi_task(configs, f"alibi-fraud-investigation")
 
 
-def create_workplace_alibi_task(num_scenarios: int = 5) -> Task:
+def create_workplace_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task focused on workplace misconduct alibis"""
-    from games.implementations.alibi.models import IncidentType
+    from pipelines.games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.WORKPLACE_MISCONDUCT], num_scenarios=num_scenarios)
     return create_alibi_task(configs, f"alibi-workplace-investigation")
 
 
-def create_mixed_alibi_task(num_scenarios: int = 10) -> Task:
+def create_mixed_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task with mixed incident types"""
     configs = generate_enhanced_alibi_scenarios(incident_types=[], num_scenarios=num_scenarios)
     return create_alibi_task(configs, f"alibi-mixed-investigation")

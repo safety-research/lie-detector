@@ -8,7 +8,7 @@ from inspect_ai.model import ChatMessageSystem, ChatMessageUser, get_model
 from inspect_ai.solver import Solver, TaskState, Generate, solver
 
 try:
-    from ssyc.correctness.prompts import (
+    from pipelines.selfsycophancy.correctness.prompts import (
         SYSTEM_PROMPT,
         CORRECTNESS_ASSESSMENT_PROMPT,
         CHOICE_PROMPT

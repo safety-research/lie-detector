@@ -26,7 +26,7 @@ This Flask application is configured to deploy to Vercel with automatic CI/CD th
    - `VERCEL_PROJECT_ID`: `prj_C1gTgBtPk867euNkK62vvBNz4qaG`
 
 4. **Production URL**
-   Your app is deployed at: https://lies-hhtcv8xe5-jackhopkins-projects.vercel.app
+   Your app is deployed at: https://lies-j60tsu7hg-jackhopkins-projects.vercel.app
 
 ### Environment Variables
 

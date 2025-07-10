@@ -210,7 +210,7 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
 
 def main():
     # Configuration variables - modify these as needed
-    MODEL = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    MODEL = "openrouter/meta-llama/llama-3.3-70b-instruct"#"openrouter/meta-llama/llama-3.1-8b-instruct"
     LIMIT = 200  # Set to a number (e.g., 10) to limit samples per task, or None for all
     CATEGORIES = None  # Set to a list like ["mask", "sycophancy"] or None for all categories
     LOG_DIR = "../logs"  # Set to a path or None for auto-generated timestamp directory

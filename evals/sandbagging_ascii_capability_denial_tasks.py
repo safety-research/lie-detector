@@ -84,7 +84,8 @@ if __name__ == "__main__":
     from inspect_ai import eval
 
     task = ascii_sandbagging_task()
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     # Run evaluation with a specific model
     results = eval(

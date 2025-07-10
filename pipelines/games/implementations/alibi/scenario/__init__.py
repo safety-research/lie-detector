@@ -142,7 +142,7 @@ def generate_incident_alibi_scenario_concurrent(incident_type: IncidentType):
         incident=incident,
         suspect_profile=suspect_profile,
         detective_profile=detective_profile,
-        interrogation_turns_limit=20 + random.randint(-5, 10),
+        interrogation_turns_limit=10 + random.randint(-5, 5),
         game_context=random.choice(contexts)
     )
 

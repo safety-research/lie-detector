@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openai/gpt-4o-mini",  # or any model you want to test
+        model="openrouter/meta-llama/llama-3.3-70b-instruct",# model="openai/gpt-4o-mini",  # or any model you want to test
         limit=5,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )

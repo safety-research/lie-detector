@@ -144,7 +144,8 @@ if __name__ == "__main__":
         n_truths_and_a_lie_travel_experiences(),
         n_truths_and_a_lie_personal_quirks()
     ]
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
 
     # Run evaluation with a specific model
