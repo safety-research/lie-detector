@@ -10,6 +10,7 @@ import os
 # Configuration - modify these values as needed
 NUM_SAMPLES = None  # Set to a number (e.g., 10) to limit samples, or None for all
 MODEL_NAME = "openrouter/meta-llama/llama-3.1-8b-instruct"  # Change model here
+PROCESSED_DATA_DIR = "/Users/dipikakhullar/Desktop/lie-detector/baseline/training_data_july8"  # Directory containing the processed evaluation data
 
 # Add the parent directory to Python path to ensure baseline module can be imported
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -18,5 +19,5 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 if __name__ == "__main__":
-    from baseline.evaluate import main
-    main(num_samples=NUM_SAMPLES, model=MODEL_NAME) 
+    from evaluate import main
+    main(num_samples=NUM_SAMPLES, model=MODEL_NAME, data_dir=PROCESSED_DATA_DIR) 
