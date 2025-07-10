@@ -31,7 +31,7 @@ jobs:
           offset=0
           total_synced=0
           
-          echo "🔄 Starting S3 data sync in batches..."
+          echo "🔄 Starting S3 data sync in batches with explicit offsets..."
           
           # Check if this is a full sync request
           if [ "${{ github.event.inputs.full_sync }}" = "true" ]; then
