@@ -526,13 +526,11 @@ def continue_processing():
         if not s3_files:
             return jsonify({"error": "No files found in S3"}), 400
         
-        # Find the next unprocessed file
-        next_offset = 0
-        for i, file_key in enumerate(s3_files):
-            if file_key not in processed_files:
-                next_offset = i
-                break
-        else:
+        # Find the next unprocessed file by checking from the end of processed files
+        next_offset = len(processed_files)
+        
+        # If we've processed some files, start from there
+        if next_offset >= len(s3_files):
             # All files processed
             return jsonify({
                 "message": "All files already processed",
