@@ -91,7 +91,7 @@ def cot_unfaithfulness_mmlu(
 def cot_unfaithfulness_contrastive_mmlu(
     subject: Optional[str] = None,
     token: TokenType = "★",
-    limit: Optional[int] = 100
+    limit: Optional[int] = 125
 ) -> Task:
     """
     Contrastive pair approach for lie detection.
@@ -144,7 +144,7 @@ def cot_unfaithfulness_contrastive_mmlu(
 def cot_unfaithfulness_contrastive_arc(
         subject: Optional[str] = None,
         token: TokenType = "★",
-        limit: Optional[int] = 100
+        limit: Optional[int] = 125
 ) -> Task:
     """
     Contrastive pair approach for lie detection.
@@ -194,16 +194,17 @@ def cot_unfaithfulness_contrastive_arc(
 
 if __name__ == "__main__":
     # Example evaluation
-    task_instance = [cot_unfaithfulness_contrastive_mmlu(),
-                     cot_unfaithfulness_contrastive_arc()]
-    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    task_instance = [
+        # cot_unfaithfulness_contrastive_mmlu(),
+        cot_unfaithfulness_contrastive_arc()]
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     # Run evaluation
     results = eval(
         tasks=task_instance,
         model=model,
-        limit=100,
+        limit=125,
         log_dir="../logs"
     )
     

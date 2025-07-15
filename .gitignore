@@ -25,3 +25,9 @@ __pycache__
 *.jsonl
 *.txt
 /parquet_output/
+*.eval
+<<<<<<< HEAD
+*.csv
+=======
+*.env
+>>>>>>> d705df5 (train code udpated)

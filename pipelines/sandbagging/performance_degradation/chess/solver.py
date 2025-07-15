@@ -161,7 +161,7 @@ def chess_dual_condition_solver(
         
         # Import necessary modules for move parsing
         import re
-        from sandbagging.performance_degradation.chess.prompts import get_lie_elicitation_prompt
+        from pipelines.sandbagging.performance_degradation.chess.prompts import get_lie_elicitation_prompt
         
         # Helper function to extract move from response
         def extract_move(response: str) -> str:

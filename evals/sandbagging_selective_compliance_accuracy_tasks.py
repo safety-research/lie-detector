@@ -300,15 +300,33 @@ if __name__ == "__main__":
     # Example usage - run judge-based lie detection evaluation
     from inspect_ai import eval
     
-    task = sandbagging_judge_lie_detection()
-    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    all_tasks = [sandbagging_judge_lie_detection(),
+            sandbagging_lie_detection(),
+            sandbagging_contrastive(),
+            sandbagging_detection(),
+            sandbagging_control(),
+            sandbagging_harmful(),
+            sandbagging_physical_security_contrastive(),
+            sandbagging_physical_security(),    
+            sandbagging_digital_security_contrastive(),
+            sandbagging_digital_security(),
+            sandbagging_chemistry_biology_contrastive(),
+            sandbagging_chemistry_biology(),
+            sandbagging_automotive_mechanical_contrastive(),
+            sandbagging_automotive_mechanical(),
+            sandbagging_medical_pharmaceutical_contrastive(),   
+            sandbagging_medical_pharmaceutical(),
+            sandbagging_financial_systems_contrastive(),
+            sandbagging_financial_systems()]
+    
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     
     # Run evaluation with a specific model
     results = eval(
-        tasks=[task],
+        tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=5,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )

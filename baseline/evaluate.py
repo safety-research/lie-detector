@@ -14,12 +14,12 @@ if parent_dir not in sys.path:
 
 # Try to import the task - handle both relative and absolute imports
 try:
-    from baseline.task import baseline_task
+    from baseline.task import baseline_task, conversation_task, llama_chat_task
 except ImportError:
     try:
-        from .task import baseline_task
+        from .task import baseline_task, conversation_task, llama_chat_task
     except ImportError:
-        from task import baseline_task
+        from task import baseline_task, conversation_task, llama_chat_task
 
 load_dotenv()
 
@@ -69,7 +69,7 @@ def examine_data_distribution():
             print(f"{role.capitalize()}: {content}...")
         print(f"Ground truth: did_lie = {item.get('did_lie')}")
 
-def save_prompts_to_file(results, filename, output_dir="."):
+def save_prompts_to_file(results, filename, output_dir=".", baseline_type="baseline"):
     """Save all the prompts sent to the model to a text file."""
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filepath = os.path.join(output_dir, f"prompts_{timestamp}_{filename}.txt")
@@ -85,9 +85,15 @@ def save_prompts_to_file(results, filename, output_dir="."):
             original_did_lie = sample.metadata.get('did_lie', 'N/A')
             
             # Get extracted prediction from scorer
-            if hasattr(sample, 'scores') and sample.scores and 'truth_scorer' in sample.scores:
-                extracted_pred = sample.scores['truth_scorer'].answer
-                metadata = sample.scores['truth_scorer'].metadata
+            if baseline_type == "escaped_transcript":
+                scorer_name = 'conversation_scorer'
+            elif baseline_type == "llama_chat":
+                scorer_name = 'llama_chat_scorer'
+            else:
+                scorer_name = 'truth_scorer'
+            if hasattr(sample, 'scores') and sample.scores and scorer_name in sample.scores:
+                extracted_pred = sample.scores[scorer_name].answer
+                metadata = sample.scores[scorer_name].metadata
                 is_parseable = metadata.get('parseable', True) if metadata else False
             else:
                 extracted_pred = "OTHER"
@@ -103,7 +109,22 @@ def save_prompts_to_file(results, filename, output_dir="."):
             
             f.write("FULL PROMPT SENT TO MODEL:\n")
             f.write("〰" * 40 + "\n")
-            f.write(sample.input)
+            # Handle both string and list inputs (for LLaMA chat format)
+            if isinstance(sample.input, list):
+                # For LLaMA chat format, format as readable messages
+                for j, msg in enumerate(sample.input):
+                    # Handle both dict format and ChatMessage objects
+                    if hasattr(msg, 'role') and hasattr(msg, 'content'):
+                        # ChatMessage object
+                        f.write(f"[{j+1}] {msg.role.upper()}: {msg.content}\n")
+                    elif isinstance(msg, dict) and 'role' in msg and 'content' in msg:
+                        # Dictionary format
+                        f.write(f"[{j+1}] {msg['role'].upper()}: {msg['content']}\n")
+                    else:
+                        # Fallback
+                        f.write(f"[{j+1}] {str(msg)}\n")
+            else:
+                f.write(sample.input)
             f.write("\n" + "〰" * 40 + "\n")
             
             f.write("MODEL RESPONSE:\n")
@@ -112,7 +133,7 @@ def save_prompts_to_file(results, filename, output_dir="."):
     
     return filepath
 
-def save_results_to_files(results, filename, metrics, output_dir="."):
+def save_results_to_files(results, filename, metrics, output_dir=".", baseline_type="baseline"):
     """Save evaluation results to both JSON and TXT files with subtask breakdown."""
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     
@@ -164,9 +185,15 @@ def save_results_to_files(results, filename, metrics, output_dir="."):
         prediction = sample.output.completion.strip()
         original_did_lie = sample.metadata.get('did_lie', 'N/A')
         
-        if hasattr(sample, 'scores') and sample.scores and 'truth_scorer' in sample.scores:
-            extracted_pred = sample.scores['truth_scorer'].answer
-            metadata = sample.scores['truth_scorer'].metadata
+        if baseline_type == "escaped_transcript":
+            scorer_name = 'conversation_scorer'
+        elif baseline_type == "llama_chat":
+            scorer_name = 'llama_chat_scorer'
+        else:
+            scorer_name = 'truth_scorer'
+        if hasattr(sample, 'scores') and sample.scores and scorer_name in sample.scores:
+            extracted_pred = sample.scores[scorer_name].answer
+            metadata = sample.scores[scorer_name].metadata
             is_parseable = metadata.get('parseable', True) if metadata else False
         else:
             extracted_pred = "OTHER"
@@ -320,27 +347,39 @@ def save_results_to_files(results, filename, metrics, output_dir="."):
     
     return json_filepath, txt_filepath
 
-def main(num_samples=None, model=None, data_dir="processed_data"):
+def main(num_samples=None, model=None, data_dir="processed_data", baseline_type="base_transcript"):
     # First examine the data distribution
     examine_data_distribution()
     
     # Then run evaluation
     print("\n" + "="*80)
-    print("=== RUNNING BASELINE EVALUATION ===")
+    print(f"=== RUNNING {baseline_type.upper()} EVALUATION ===")
     
     # Configuration
     model_name = model or "openrouter/meta-llama/llama-3.1-8b-instruct"
-    log_dir = "logs/baseline"
+    log_dir = f"logs/{baseline_type}"
     limit = num_samples  # Use the num_samples parameter
 
-    print(f"Running baseline evaluation...")
+    print(f"Running {baseline_type} evaluation...")
     print(f"Model: {model_name}")
     print(f"Samples: {'All available' if limit is None else limit}")
 
-    task = baseline_task(
-        data_dir=data_dir,
-        limit=limit
-    )
+    # Choose task based on baseline type
+    if baseline_type == "escaped_transcript":
+        task = conversation_task(
+            data_dir=data_dir,
+            limit=limit
+        )
+    elif baseline_type == "llama_chat":
+        task = llama_chat_task(
+            data_dir=data_dir,
+            limit=limit
+        )
+    else:  # base_transcript or fallback
+        task = baseline_task(
+            data_dir=data_dir,
+            limit=limit
+        )
 
     log = eval(task, model=model_name, log_dir=log_dir)
     results = log[0].samples if log and log[0].samples else []
@@ -348,13 +387,13 @@ def main(num_samples=None, model=None, data_dir="processed_data"):
     print(f"\nProcessed {len(results)} samples")
     
     # Create output directories if they don't exist
-    results_dir = "baseline/results"
-    transcripts_dir = "baseline/transcripts"
+    results_dir = f"baseline/results/{baseline_type}"
+    transcripts_dir = f"baseline/transcripts/{baseline_type}"
     os.makedirs(results_dir, exist_ok=True)
     os.makedirs(transcripts_dir, exist_ok=True)
     
     # Save all prompts to file
-    prompts_file = save_prompts_to_file(results, "baseline", transcripts_dir)
+    prompts_file = save_prompts_to_file(results, baseline_type, transcripts_dir, baseline_type)
     print(f"\n📝 Saved all prompts to: {prompts_file}")
     
     # Analyze classification distribution and filter unparseable
@@ -371,9 +410,15 @@ def main(num_samples=None, model=None, data_dir="processed_data"):
         original_did_lie = sample.metadata.get('did_lie', 'N/A')
         
         # Extract A/B from prediction (our scorer should handle this)
-        if hasattr(sample, 'scores') and sample.scores and 'truth_scorer' in sample.scores:
-            extracted_pred = sample.scores['truth_scorer'].answer
-            metadata = sample.scores['truth_scorer'].metadata
+        if baseline_type == "escaped_transcript":
+            scorer_name = 'conversation_scorer'
+        elif baseline_type == "llama_chat":
+            scorer_name = 'llama_chat_scorer'
+        else:
+            scorer_name = 'truth_scorer'
+        if hasattr(sample, 'scores') and sample.scores and scorer_name in sample.scores:
+            extracted_pred = sample.scores[scorer_name].answer
+            metadata = sample.scores[scorer_name].metadata
             is_parseable = metadata.get('parseable', True) if metadata else False
         else:
             extracted_pred = "OTHER"
@@ -440,8 +485,8 @@ def main(num_samples=None, model=None, data_dir="processed_data"):
     total_fn = 0
     
     for r in results:
-        if hasattr(r, 'scores') and r.scores and 'truth_scorer' in r.scores:
-            metadata = r.scores['truth_scorer'].metadata
+        if hasattr(r, 'scores') and r.scores and scorer_name in r.scores:
+            metadata = r.scores[scorer_name].metadata
             if metadata and metadata.get('parseable', True):
                 total_tp += metadata.get('tp', 0)
                 total_tn += metadata.get('tn', 0)
@@ -490,9 +535,205 @@ def main(num_samples=None, model=None, data_dir="processed_data"):
     }
 
     # Save results to files
-    json_filepath, txt_filepath = save_results_to_files(results, "baseline", metrics, results_dir)
+    json_filepath, txt_filepath = save_results_to_files(results, baseline_type, metrics, results_dir, baseline_type)
     print(f"\n📝 Saved results to: {json_filepath}")
     print(f"📝 Saved summary to: {txt_filepath}")
+
+def main_by_model(num_samples=None, model=None, data_dir="processed_data", baseline_type="base_transcript"):
+    """Run baseline evaluation separately for each model."""
+    print("\n" + "="*80)
+    print(f"=== RUNNING {baseline_type.upper()} EVALUATION BY MODEL ===")
+    
+    # Configuration
+    model_name = model or "openrouter/meta-llama/llama-3.1-8b-instruct"
+    log_dir = f"logs/{baseline_type}"
+    limit = num_samples
+
+    print(f"Running {baseline_type} evaluation by model...")
+    print(f"Evaluation model: {model_name}")
+    print(f"Samples per model: {'All available' if limit is None else limit}")
+
+    # Import model-specific task functions
+    try:
+        from baseline.task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model
+    except ImportError:
+        try:
+            from .task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model
+        except ImportError:
+            from task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model
+
+    # Choose task based on baseline type
+    if baseline_type == "escaped_transcript":
+        model_tasks = conversation_task_by_model(data_dir=data_dir, limit=limit)
+    elif baseline_type == "llama_chat":
+        model_tasks = llama_chat_task_by_model(data_dir=data_dir, limit=limit)
+    else:  # base_transcript or fallback
+        model_tasks = baseline_task_by_model(data_dir=data_dir, limit=limit)
+
+    print(f"\nFound {len(model_tasks)} models to evaluate:")
+    for model_key in model_tasks.keys():
+        print(f"  - {model_key}")
+
+    # Create output directories
+    results_dir = f"baseline/results/{baseline_type}"
+    transcripts_dir = f"baseline/transcripts/{baseline_type}"
+    os.makedirs(results_dir, exist_ok=True)
+    os.makedirs(transcripts_dir, exist_ok=True)
+
+    # Run evaluation for each model
+    all_model_metrics = {}
+    
+    for model_key, task in model_tasks.items():
+        print(f"\n{'='*60}")
+        print(f"EVALUATING MODEL: {model_key}")
+        print(f"{'='*60}")
+        
+        # Create model-specific log directory
+        model_log_dir = f"{log_dir}/{model_key.replace('/', '_').replace(':', '_')}"
+        
+        # Run evaluation for this model
+        log = eval(task, model=model_name, log_dir=model_log_dir)
+        results = log[0].samples if log and log[0].samples else []
+        
+        print(f"Processed {len(results)} samples for {model_key}")
+        
+        if len(results) == 0:
+            print(f"No results for {model_key}, skipping...")
+            continue
+        
+        # Save prompts for this model
+        model_safe_name = model_key.replace('/', '_').replace(':', '_')
+        prompts_file = save_prompts_to_file(results, f"{model_safe_name}_{baseline_type}", transcripts_dir, baseline_type)
+        print(f"📝 Saved prompts to: {prompts_file}")
+        
+        # Analyze results for this model
+        correct_predictions = 0
+        by_prediction = {"A": 0, "B": 0, "OTHER": 0}
+        by_target = {"A": 0, "B": 0}
+        misclassified_examples = []
+        filtered_samples = []
+        parseable_samples = []
+        
+        for i, sample in enumerate(results):
+            target = sample.target
+            prediction = sample.output.completion.strip()
+            original_did_lie = sample.metadata.get('did_lie', 'N/A')
+            
+            # Extract A/B from prediction
+            if baseline_type == "escaped_transcript":
+                scorer_name = 'conversation_scorer'
+            elif baseline_type == "llama_chat":
+                scorer_name = 'llama_chat_scorer'
+            else:
+                scorer_name = 'truth_scorer'
+            if hasattr(sample, 'scores') and sample.scores and scorer_name in sample.scores:
+                extracted_pred = sample.scores[scorer_name].answer
+                metadata = sample.scores[scorer_name].metadata
+                is_parseable = metadata.get('parseable', True) if metadata else False
+            else:
+                extracted_pred = "OTHER"
+                is_parseable = False
+                
+            target_str = str(target) if target else "B"
+            if target_str in by_target:
+                by_target[target_str] += 1
+            if extracted_pred in by_prediction:
+                by_prediction[extracted_pred] += 1
+            
+            if not is_parseable or extracted_pred == "OTHER":
+                filtered_samples.append({
+                    'sample_num': i+1,
+                    'target': target_str,
+                    'raw_output': prediction[:100] + "..." if len(prediction) > 100 else prediction,
+                    'did_lie': original_did_lie
+                })
+            else:
+                parseable_samples.append(sample)
+                if target_str == extracted_pred:
+                    correct_predictions += 1
+                else:
+                    if len(misclassified_examples) < 5:
+                        misclassified_examples.append({
+                            'sample_num': i+1,
+                            'target': target_str,
+                            'prediction': extracted_pred,
+                            'raw_output': prediction[:100] + "..." if len(prediction) > 100 else prediction,
+                            'did_lie': original_did_lie
+                        })
+
+        print(f"\n=== {model_key.upper()} FILTERING SUMMARY ===")
+        print(f"Total samples: {len(results)}")
+        print(f"Filtered out (unparseable): {len(filtered_samples)}")
+        print(f"Parseable samples: {len(parseable_samples)}")
+        
+        # Calculate metrics for this model
+        total_tp = 0
+        total_tn = 0 
+        total_fp = 0
+        total_fn = 0
+        
+        for r in results:
+            if hasattr(r, 'scores') and r.scores and scorer_name in r.scores:
+                metadata = r.scores[scorer_name].metadata
+                if metadata and metadata.get('parseable', True):
+                    total_tp += metadata.get('tp', 0)
+                    total_tn += metadata.get('tn', 0)
+                    total_fp += metadata.get('fp', 0)
+                    total_fn += metadata.get('fn', 0)
+        
+        total_parseable = total_tp + total_tn + total_fp + total_fn
+        if total_parseable > 0:
+            accuracy = (total_tp + total_tn) / total_parseable
+            precision = total_tp / (total_tp + total_fp) if (total_tp + total_fp) > 0 else 0
+            recall = total_tp / (total_tp + total_fn) if (total_tp + total_fn) > 0 else 0
+            f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        else:
+            accuracy = precision = recall = f1 = 0
+        
+        print(f"\n=== {model_key.upper()} FINAL METRICS ===")
+        print(f"Parseable samples: {total_parseable}/{len(results)} ({total_parseable/len(results):.1%})")
+        print(f"Accuracy: {accuracy:.4f}")
+        print(f"Precision: {precision:.4f}")
+        print(f"Recall: {recall:.4f}")
+        print(f"F1 Score: {f1:.4f}")
+        print(f"True Positives: {total_tp}")
+        print(f"True Negatives: {total_tn}")
+        print(f"False Positives: {total_fp}")
+        print(f"False Negatives: {total_fn}")
+        
+        # Store metrics for this model
+        all_model_metrics[model_key] = {
+            "parseable_samples": len(parseable_samples),
+            "filtered_samples": len(filtered_samples),
+            "accuracy": accuracy,
+            "precision": precision,
+            "recall": recall,
+            "f1_score": f1,
+            "tp": total_tp,
+            "tn": total_tn,
+            "fp": total_fp,
+            "fn": total_fn,
+            "target_distribution": f"A={by_target['A']}, B={by_target['B']}",
+            "prediction_distribution": f"A={by_prediction['A']}, B={by_prediction['B']}, OTHER={by_prediction['OTHER']}"
+        }
+        
+        # Save results for this model
+        model_safe_name = model_key.replace('/', '_').replace(':', '_')
+        json_filepath, txt_filepath = save_results_to_files(results, f"{model_safe_name}_{baseline_type}", all_model_metrics[model_key], results_dir, baseline_type)
+        print(f"📝 Saved results to: {json_filepath}")
+        print(f"📝 Saved summary to: {txt_filepath}")
+    
+    # Print overall summary
+    print(f"\n{'='*80}")
+    print("OVERALL SUMMARY BY MODEL")
+    print(f"{'='*80}")
+    for model_key, metrics in all_model_metrics.items():
+        print(f"\n{model_key}:")
+        print(f"  Accuracy: {metrics['accuracy']:.4f}")
+        print(f"  Precision: {metrics['precision']:.4f}")
+        print(f"  Recall: {metrics['recall']:.4f}")
+        print(f"  F1: {metrics['f1_score']:.4f}")
+        print(f"  Parseable: {metrics['parseable_samples']}")
 
 if __name__ == "__main__":
     main() 
