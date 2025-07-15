@@ -159,8 +159,3 @@ class SandbaggingHook(BaseSampleProcessingHook):
             print(f"[LogParserHook] Error parsing sample {sample_id}: {e}")
             traceback.print_exc()
             return None
-
-        except Exception as e:
-            print(f"[LogParserHook] Error parsing sample {sample_id}: {e}")
-            traceback.print_exc()
-            return None

@@ -17,11 +17,6 @@ class SandbaggingDomain(Enum):
     FINANCIAL_SYSTEMS = "financial_systems"
 
 
-class PromptVariant(Enum):
-    """Types of prompt variants in sandbagging detection."""
-    CONTROL = "control"
-    SANDBAGGING = "sandbagging"
-
 
 @dataclass
 class SandbaggingPromptPair:
@@ -129,7 +124,6 @@ class SandbaggingResult:
     
     question_id: str
     domain: SandbaggingDomain
-    variant: PromptVariant
     
     # Response data
     model_response: str
@@ -149,7 +143,6 @@ class SandbaggingResult:
         return {
             "question_id": self.question_id,
             "domain": self.domain.value,
-            "variant": self.variant.value,
             "model_response": self.model_response,
             "extracted_answer": self.extracted_answer,
             "is_correct": self.is_correct,

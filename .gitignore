@@ -25,6 +25,7 @@ __pycache__
 *.jsonl
 *.txt
 /parquet_output/
+/private_key
 *.eval
 *.csv
 *.env

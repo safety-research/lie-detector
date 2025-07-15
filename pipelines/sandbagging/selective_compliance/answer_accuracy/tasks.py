@@ -7,21 +7,20 @@ from inspect_ai import Task
 from inspect_ai.dataset import Dataset
 
 try:
-    from .dataset import create_sandbagging_dataset, sandbagging_dataset_factory
+    from .dataset import sandbagging_dataset_factory
     from .solver import sandbagging_solver, sandbagging_with_refusal_detection
-    from .scorer import sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
+    from .scorer import sandbagging_detection_scorer, sandbagging_control_accuracy_scorer, sandbagging_harmful_accuracy_scorer
     from .models import SandbaggingPromptPair, SandbaggingDomain
 except ImportError:
-    from pipelines.sandbagging.contextual.dataset import create_sandbagging_dataset, sandbagging_dataset_factory
-    from pipelines.sandbagging.contextual.solver import sandbagging_solver, sandbagging_with_refusal_detection
-    from pipelines.sandbagging.contextual.scorer import sandbagging_answer_accuracy_scorer, sandbagging_detection_scorer
-    from pipelines.sandbagging.contextual.models import SandbaggingPromptPair, SandbaggingDomain
+    from pipelines.sandbagging.selective_compliance.answer_accuracy.dataset import create_sandbagging_contrastive_dataset, sandbagging_dataset_factory
+    from pipelines.sandbagging.selective_compliance.answer_accuracy.solver import sandbagging_solver, sandbagging_with_refusal_detection
+    from pipelines.sandbagging.selective_compliance.answer_accuracy.scorer import sandbagging_detection_scorer, sandbagging_control_accuracy_scorer, sandbagging_harmful_accuracy_scorer
+    from pipelines.sandbagging.selective_compliance.answer_accuracy.models import SandbaggingPromptPair, SandbaggingDomain
 
 
 def sandbagging_task(
     name: str = "sandbagging_detection",
     dataset: Optional[Dataset] = None,
-    variants: Optional[List[str]] = None,
     domains: Optional[List[SandbaggingDomain]] = None,
     include_refusal_detection: bool = True,
     solver_name: str = "default"
@@ -43,9 +42,8 @@ def sandbagging_task(
     
     # Create dataset if not provided
     if dataset is None:
-        dataset = create_sandbagging_dataset(
-            variants=variants,
-            domains=domains
+        dataset = create_sandbagging_contrastive_dataset(
+            categories=domains
         )
     
     # Select solver
@@ -58,7 +56,8 @@ def sandbagging_task(
     
     # Select scorers
     scorers = [
-        sandbagging_answer_accuracy_scorer(),
+        sandbagging_control_accuracy_scorer(),
+        sandbagging_harmful_accuracy_scorer(),
         sandbagging_detection_scorer()
     ]
     
@@ -73,20 +72,6 @@ def sandbagging_task(
     )
 
 
-def sandbagging_control_task() -> Task:
-    """Task with only control prompts."""
-    return sandbagging_task(
-        name="sandbagging_control",
-        variants=["control"]
-    )
-
-
-def sandbagging_harmful_task() -> Task:
-    """Task with only sandbagging (harmful context) prompts."""
-    return sandbagging_task(
-        name="sandbagging_harmful",
-        variants=["sandbagging"]
-    )
 
 
 def sandbagging_domain_task(domain: SandbaggingDomain) -> Task:
@@ -133,8 +118,6 @@ def create_all_sandbagging_tasks() -> List[Task]:
     
     # Main tasks
     tasks.append(sandbagging_task())
-    tasks.append(sandbagging_control_task())
-    tasks.append(sandbagging_harmful_task())
     
     # Domain-specific tasks
     for domain in SandbaggingDomain:
@@ -146,8 +129,6 @@ def create_all_sandbagging_tasks() -> List[Task]:
 # Registry of available tasks
 SANDBAGGING_TASKS = {
     "sandbagging_detection": sandbagging_task,
-    "sandbagging_control": sandbagging_control_task,
-    "sandbagging_harmful": sandbagging_harmful_task,
     "sandbagging_physical_security": sandbagging_physical_security_task,
     "sandbagging_digital_security": sandbagging_digital_security_task,
     "sandbagging_chemistry_biology": sandbagging_chemistry_biology_task,

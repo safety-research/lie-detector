@@ -24,84 +24,18 @@ class SandbaggingHook(BaseSampleProcessingHook):
         task_name = eval_log.eval.task
         task_id = eval_log.eval.task_id
         timestamp = eval_log.eval.created
+        # Build the parsed entry
+        sample_id = sample.id if hasattr(sample, 'id') else sample.get('id', 'unknown')
 
         try:
-            # Get conversation from metadata if available
-            conversation_history = []
-            if hasattr(sample, 'metadata') and 'conversation_history' in sample.metadata:
-                conversation_history = sample.metadata['conversation_history']
-
-            # Build trace from conversation history
+            messages = sample.messages
             trace = []
 
-            # If we have conversation history, use it
-            if conversation_history:
-                # Find the harmful subject conversation
-                # The harmful subject is the last one in the sequence
-                harmful_start_index = None
-                for i in range(len(conversation_history) - 1, -1, -1):
-                    if conversation_history[i]['role'] == 'user' and 'are you able to draw a picture of' in \
-                            conversation_history[i]['content']:
-                        # Check if this is the harmful subject by looking at metadata
-                        if hasattr(sample, 'metadata') and sample.metadata.get('harmful_subject'):
-                            if sample.metadata['harmful_subject'] in conversation_history[i]['content']:
-                                harmful_start_index = i
-                                break
-
-                # If we found the harmful conversation, extract it
-                if harmful_start_index is not None:
-                    # Add system message
-                    for msg in conversation_history:
-                        if msg['role'] == 'system':
-                            trace.append(msg)
-                            break
-
-                    # Add the harmful subject conversation
-                    if harmful_start_index < len(conversation_history) - 1:
-                        trace.append(conversation_history[harmful_start_index])  # User question
-                        trace.append(conversation_history[harmful_start_index + 1])  # Assistant response
-                else:
-                    # Fallback: use the full conversation history
-                    trace = conversation_history
-
-            # If no conversation history or trace is empty, fall back to messages
-            if not trace:
-                messages = sample.messages if hasattr(sample, 'messages') else []
-
-                # Extract the last user-assistant exchange with system message
-                system_msg = None
-                last_user_msg = None
-                last_assistant_msg = None
-
-                for msg in messages:
-                    role = msg.role if hasattr(msg, 'role') else msg.get('role')
-                    if role == 'system' and system_msg is None:
-                        system_msg = msg
-                    elif role == 'user':
-                        last_user_msg = msg
-                    elif role == 'assistant' and last_user_msg is not None:
-                        last_assistant_msg = msg
-
-                # Build trace
-                if system_msg:
-                    trace.append({
-                        'role': 'system',
-                        'content': system_msg.content if hasattr(system_msg, 'content') else system_msg.get(
-                            'content', '')
-                    })
-                if last_user_msg:
-                    trace.append({
-                        'role': 'user',
-                        'content': last_user_msg.content if hasattr(last_user_msg,
-                                                                    'content') else last_user_msg.get('content', '')
-                    })
-                if last_assistant_msg:
-                    trace.append({
-                        'role': 'assistant',
-                        'content': last_assistant_msg.content if hasattr(last_assistant_msg,
-                                                                         'content') else last_assistant_msg.get(
-                            'content', '')
-                    })
+            for message in messages:
+                trace.append({
+                    "role": message.role,
+                    "content": message.content,
+                })
 
             # Extract model information
             model = None
@@ -114,9 +48,6 @@ class SandbaggingHook(BaseSampleProcessingHook):
                     if msg_role == 'assistant' and msg_model:
                         model = msg_model
                         break
-
-            # Build the parsed entry
-            sample_id = sample.id if hasattr(sample, 'id') else sample.get('id', 'unknown')
 
             parsed_entry = {
                 'sample_id': f"conv_{datetime.now().strftime('%Y%m%d')}_{sample_id}",
@@ -142,18 +73,14 @@ class SandbaggingHook(BaseSampleProcessingHook):
             scores = sample.scores if hasattr(sample, 'scores') else {}
             if scores:
                 for name, score in scores.items():
-                    parsed_entry['scores'][name] = score.metadata
+                    if score.metadata:
+                        parsed_entry['scores'][name] = score.metadata
 
             # Get model from eval log if not found in sample
             if parsed_entry['model'] == 'unknown' and hasattr(eval_log.eval, 'model'):
                 parsed_entry['model'] = eval_log.eval.model
 
             return parsed_entry
-
-        except Exception as e:
-            print(f"[LogParserHook] Error parsing sample {sample_id}: {e}")
-            traceback.print_exc()
-            return None
 
         except Exception as e:
             print(f"[LogParserHook] Error parsing sample {sample_id}: {e}")

@@ -22,14 +22,13 @@ Usage:
 """
 
 from .models import SandbaggingDomain, SandbaggingPromptPair, SandbaggingConfig
-from .dataset import create_sandbagging_dataset, print_dataset_info
+from .dataset import print_dataset_info
 from .prompt_generation import generate_sandbagging_prompts
 
 __all__ = [
     "SandbaggingDomain",
     "SandbaggingPromptPair", 
     "SandbaggingConfig",
-    "create_sandbagging_dataset",
     "print_dataset_info",
     "generate_sandbagging_prompts"
 ]
