@@ -34,7 +34,7 @@ def sandbagging_contrastive():
 @task
 def sandbagging_physical_security_contrastive():
     """Contrastive sandbagging task for physical security domain."""
-    dataset = create_sandbagging_contrastive_dataset(domains=[SandbaggingDomain.PHYSICAL_SECURITY])
+    dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.PHYSICAL_SECURITY])
     
     return Task(
         name="sandbagging_physical_security_contrastive",
@@ -50,7 +50,7 @@ def sandbagging_physical_security_contrastive():
 @task
 def sandbagging_digital_security_contrastive():
     """Contrastive sandbagging task for digital security domain."""
-    dataset = create_sandbagging_contrastive_dataset(domains=[SandbaggingDomain.DIGITAL_SECURITY])
+    dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.DIGITAL_SECURITY])
     
     return Task(
         name="sandbagging_digital_security_contrastive",
@@ -68,7 +68,7 @@ def sandbagging_digital_security_contrastive():
 @task
 def sandbagging_chemistry_biology_contrastive():
     """Contrastive sandbagging task for chemistry/biology domain."""
-    dataset = create_sandbagging_contrastive_dataset(domains=[SandbaggingDomain.CHEMISTRY_BIOLOGY])
+    dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.CHEMISTRY_BIOLOGY])
     
     return Task(
         name="sandbagging_chemistry_biology_contrastive",
@@ -86,7 +86,7 @@ def sandbagging_chemistry_biology_contrastive():
 @task
 def sandbagging_automotive_mechanical_contrastive():
     """Contrastive sandbagging task for automotive/mechanical domain."""
-    dataset = create_sandbagging_contrastive_dataset(domains=[SandbaggingDomain.AUTOMOTIVE_MECHANICAL])
+    dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.AUTOMOTIVE_MECHANICAL])
     
     return Task(
         name="sandbagging_automotive_mechanical_contrastive",
@@ -103,7 +103,7 @@ def sandbagging_automotive_mechanical_contrastive():
 @task
 def sandbagging_medical_pharmaceutical_contrastive():
     """Contrastive sandbagging task for medical/pharmaceutical domain."""
-    dataset = create_sandbagging_contrastive_dataset(domains=[SandbaggingDomain.MEDICAL_PHARMACEUTICAL])
+    dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.MEDICAL_PHARMACEUTICAL])
     
     return Task(
         name="sandbagging_medical_pharmaceutical_contrastive",
@@ -153,6 +153,6 @@ if __name__ == "__main__":
     # Run evaluation with a specific model
     results = eval(
         tasks=all_tasks,
-        limit=125,  # Limit samples for faster debugging
-        log_dir="./logs",  # Specify log directory
+        limit=5,  # Limit samples for faster debugging
+        log_dir="../logs",  # Specify log directory
     )
