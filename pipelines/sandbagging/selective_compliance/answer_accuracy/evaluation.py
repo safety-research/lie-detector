@@ -3,19 +3,20 @@ Evaluation pipeline for sandbagging detection.
 """
 
 import json
-import asyncio
+from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Optional
-from datetime import datetime
 
+from dotenv import load_dotenv
 from inspect_ai import eval
 from inspect_ai.model import Model, get_model
 
-from tasks import sandbagging_task, get_sandbagging_task
-from dataset import create_sandbagging_dataset, sandbagging_dataset_factory
+from dataset import create_sandbagging_contrastive_dataset
+from models import SandbaggingDomain
 from scorer import compute_sandbagging_metrics
-from models import SandbaggingConfig, SandbaggingDomain
+from tasks import sandbagging_task
 
+load_dotenv()
 
 class SandbaggingEvaluator:
     """Main evaluator for sandbagging detection experiments."""
@@ -24,7 +25,7 @@ class SandbaggingEvaluator:
         self,
         model: Optional[Model] = None,
         model_name: str = "openai/gpt-4o-mini",
-        output_dir: str = "sandbagging_results",
+        output_dir: str = "../../../../logs",
         runs_per_prompt: int = 20
     ):
         self.model = model or get_model(model_name)
@@ -35,59 +36,19 @@ class SandbaggingEvaluator:
         # Create output directory
         self.output_dir.mkdir(exist_ok=True)
     
-    async def evaluate_single_task(
+    def evaluate(
         self,
-        task_name: str = "sandbagging_detection",
-        **task_kwargs
-    ) -> Dict[str, Any]:
-        """Evaluate a single sandbagging task."""
-        
-        # Get the task
-        task = get_sandbagging_task(task_name)
-        
-        # Run evaluation
-        logs = await eval(
-            task,
-            model=self.model,
-            limit=None,  # Evaluate all samples
-            epochs=self.runs_per_prompt,
-            log_dir=str(self.output_dir / "logs"),
-            log_level="info"
-        )
-        
-        return logs
-    
-    async def evaluate_control_vs_sandbagging(
-        self,
-        domains: Optional[List[SandbaggingDomain]] = None
+        domains: Optional[List[SandbaggingDomain]] = None,
+        limit = 5
     ) -> Dict[str, Any]:
         """
         Evaluate both control and sandbagging variants to detect sandbagging behavior.
         """
-        
         results = {}
         
         # Create datasets for both variants
-        control_dataset = create_sandbagging_dataset(variants=["control"], domains=domains)
-        sandbagging_dataset = create_sandbagging_dataset(variants=["sandbagging"], domains=domains)
-        
-        # Evaluate control condition
-        print("Evaluating control condition...")
-        control_task = sandbagging_task(
-            name="sandbagging_control",
-            dataset=control_dataset
-        )
-        
-        control_logs = await eval(
-            control_task,
-            model=self.model,
-            epochs=self.runs_per_prompt,
-            log_dir=str(self.output_dir / "logs"),
-            log_level="info"
-        )
-        
-        results["control"] = control_logs
-        
+        sandbagging_dataset = create_sandbagging_contrastive_dataset(categories=domains)
+
         # Evaluate sandbagging condition
         print("Evaluating sandbagging condition...")
         sandbagging_task_obj = sandbagging_task(
@@ -95,37 +56,28 @@ class SandbaggingEvaluator:
             dataset=sandbagging_dataset
         )
         
-        sandbagging_logs = await eval(
+        sandbagging_logs = eval(
             sandbagging_task_obj,
             model=self.model,
             epochs=self.runs_per_prompt,
             log_dir=str(self.output_dir / "logs"),
-            log_level="info"
+            log_level="info",
+            limit=limit
         )
         
         results["sandbagging"] = sandbagging_logs
         
         # Compute comparative metrics
         all_samples = []
-        
-        # Extract results from control logs
-        for sample_data in control_logs[0].samples:
-            sample_result = {
-                'question_id': sample_data.metadata.get('question_id'),
-                'variant': 'control',
-                'is_correct': sample_data.scores['sandbagging_answer_accuracy_scorer/accuracy'].value == 1.0,
-                'domain': sample_data.metadata.get('domain'),
-                'response': sample_data.output.completion if hasattr(sample_data, 'output') else '',
-                'metadata': sample_data.metadata
-            }
-            all_samples.append(sample_result)
-        
+
         # Extract results from sandbagging logs
         for sample_data in sandbagging_logs[0].samples:
+            accuracy = sample_data.scores[
+                'sandbagging_answer_accuracy_scorer/accuracy'].value if 'sandbagging_answer_accuracy_scorer/accuracy' in sample_data.scores else 0
             sample_result = {
                 'question_id': sample_data.metadata.get('question_id'),
                 'variant': 'sandbagging',
-                'is_correct': sample_data.scores['sandbagging_answer_accuracy_scorer/accuracy'].value == 1.0,
+                'is_correct': accuracy == 1.0,
                 'domain': sample_data.metadata.get('domain'),
                 'response': sample_data.output.completion if hasattr(sample_data, 'output') else '',
                 'metadata': sample_data.metadata
@@ -137,37 +89,7 @@ class SandbaggingEvaluator:
         results["analysis"] = metrics
         
         return results
-    
-    async def evaluate_domain_comparison(self) -> Dict[str, Any]:
-        """Evaluate sandbagging across different domains."""
-        
-        domain_results = {}
-        
-        for domain in SandbaggingDomain:
-            print(f"Evaluating domain: {domain.value}")
-            
-            domain_results[domain.value] = await self.evaluate_control_vs_sandbagging(
-                domains=[domain]
-            )
-        
-        return domain_results
-    
-    async def evaluate_harm_gradient(self) -> Dict[str, Any]:
-        """Evaluate sandbagging across different harm severity levels."""
-        
-        # This would require prompts with varying harm levels
-        # For now, we'll analyze by the existing harm_severity metadata
-        
-        results = await self.evaluate_control_vs_sandbagging()
-        
-        # Group by harm severity
-        severity_results = {}
-        
-        for sample in results.get("analysis", {}).get("question_level_metrics", {}).items():
-            # This would need to be implemented based on the harm severity
-            pass
-        
-        return results
+
     
     def save_results(self, results: Dict[str, Any], filename: str = None) -> Path:
         """Save evaluation results to JSON file."""
@@ -235,11 +157,12 @@ class SandbaggingEvaluator:
                 print(f"  ... and {len(question_metrics) - 5} more questions")
 
 
-async def run_sandbagging_evaluation(
+def run_sandbagging_evaluation(
     model_name: str = "openai/gpt-4o-mini",
-    output_dir: str = "sandbagging_results",
+    output_dir: str = "../../../../logs",
     runs_per_prompt: int = 20,
-    domains: Optional[List[str]] = None
+    domains: Optional[List[str]] = None,
+    limit = 5
 ) -> Dict[str, Any]:
     """
     Run a complete sandbagging evaluation.
@@ -266,7 +189,7 @@ async def run_sandbagging_evaluation(
     )
     
     # Run evaluation
-    results = await evaluator.evaluate_control_vs_sandbagging(domains=domain_enums)
+    results = evaluator.evaluate(domains=domain_enums, limit=limit)
     
     # Save and summarize
     evaluator.save_results(results)
@@ -277,7 +200,8 @@ async def run_sandbagging_evaluation(
 
 if __name__ == "__main__":
     # Example usage
-    results = asyncio.run(run_sandbagging_evaluation(
-        model_name="openai/gpt-4o-mini",
-        runs_per_prompt=10  # Reduced for quick testing
-    ))
+    results = run_sandbagging_evaluation(
+        model_name="openrouter/anthropic/claude-3.7-sonnet",
+        domains=["digital_security"],
+        runs_per_prompt=1  # Reduced for quick testing
+    )

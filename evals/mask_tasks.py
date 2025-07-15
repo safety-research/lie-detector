@@ -16,7 +16,7 @@ load_dotenv()
 
 @task
 def mask_statistics():
-    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/statistics.csv"))
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../pipelines/mask/data/statistics.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -36,7 +36,7 @@ def mask_statistics():
 
 @task
 def mask_continuations():
-    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/continuations.csv"))
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../pipelines/mask/data/continuations.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -56,7 +56,7 @@ def mask_continuations():
 
 @task
 def mask_known_facts():
-    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/known_facts.csv"))
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../pipelines/mask/data/known_facts.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -76,7 +76,7 @@ def mask_known_facts():
 
 @task
 def mask_provided_facts():
-    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/provided_facts.csv"))
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../pipelines/mask/data/provided_facts.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
@@ -93,7 +93,7 @@ def mask_provided_facts():
 
 @task
 def mask_disinformation():
-    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../mask/data/disinformation.csv"))
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../pipelines/mask/data/disinformation.csv"))
     # Load dataset
     print(f"\nLoading dataset...")
     dataset = mask_dataset(dataset_path)
