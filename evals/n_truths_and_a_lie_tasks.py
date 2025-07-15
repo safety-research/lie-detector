@@ -15,7 +15,7 @@ from pipelines.games.implementations.n_truths_and_a_lie import GameConfig
 from pipelines.games.implementations.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
 from pipelines.games.implementations.n_truths_and_a_lie.solvers import n_truths_solver
 from pipelines.games.implementations.n_truths_and_a_lie.hook import *
-MAX_SCENARIOS = 1
+MAX_SCENARIOS = 125
 
 
 def _configs_to_dataset(configs: List[GameConfig]) -> MemoryDataset:
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=task,
         model=model,  # Using OpenRouter Claude model
-        limit=10,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

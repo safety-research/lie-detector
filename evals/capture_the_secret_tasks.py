@@ -43,14 +43,14 @@ def capture_the_secret_relationship():
 if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
     task = capture_the_secret_corporate()
-    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
         model=model,  # or any model you want to test
-        limit=1,  # Limit samples for faster debugging
+        limit=250,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

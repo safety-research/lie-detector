@@ -126,14 +126,14 @@ async def run():
     #     #chess_mate_in_2_dual_safety_concern_task(),
     # ]
     #models = ["openrouter/anthropic/claude-sonnet-4", "openrouter/openai/gpt-4o", "openrouter/meta-llama/llama-3.1-8b-instruct"]
-    #models = [ "openrouter/meta-llama/llama-3.1-8b-instruct"] #"openai/gpt-4o"]
-    models = ["openrouter/meta-llama/llama-3.3-70b-instruct"]
+    models = [ "openrouter/meta-llama/llama-3.1-8b-instruct"] #"openai/gpt-4o"]
+    # models = ["openrouter/meta-llama/llama-3.3-70b-instruct"]
 
     # Run evaluation with a specific model
     results = await eval_async(
         tasks=tasks,
         model=models,  # or any model you want to test
-        limit=25,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )
 

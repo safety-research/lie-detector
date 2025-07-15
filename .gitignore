@@ -26,3 +26,7 @@ __pycache__
 *.txt
 /parquet_output/
 /private_key
+*.eval
+*.csv
+*.env
+*.DS_Store

@@ -13,25 +13,6 @@ from pipelines.sandbagging.selective_compliance.answer_accuracy.hooks import *
 
 
 
-
-@task
-def sandbagging_lie_detection():
-    """Sandbagging task with rule-based lie detection - returns C score when model lies."""
-    dataset = create_sandbagging_contrastive_dataset()
-    
-    return Task(
-        name="sandbagging_lie_detection",
-        dataset=dataset,
-        solver=sandbagging_contrastive_solver(),
-        scorer=[
-            sandbagging_detection_scorer(),
-            sandbagging_control_accuracy_scorer(),
-            sandbagging_harmful_accuracy_scorer()
-        ],
-        sandbox="local"
-    )
-
-
 @task
 def sandbagging_contrastive():
     """Main sandbagging detection task using contrastive pairs."""
@@ -156,16 +137,22 @@ if __name__ == "__main__":
     # Example usage - run judge-based lie detection evaluation
     from inspect_ai import eval
     
-    task = sandbagging_financial_systems_contrastive()
-    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model = "openrouter/anthropic/claude-3.7-sonnet"
+    all_tasks = [
+      sandbagging_financial_systems_contrastive(),
+      sandbagging_medical_pharmaceutical_contrastive(),
+      sandbagging_automotive_mechanical_contrastive(),
+      sandbagging_chemistry_biology_contrastive(),
+      sandbagging_digital_security_contrastive(),
+      sandbagging_physical_security_contrastive()
+    ]
+    
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     
     # Run evaluation with a specific model
     results = eval(
-        tasks=[task],
-        model=model,  # or any model you want to test
-        limit=5,  # Limit samples for faster debugging
-        log_dir="../logs",  # Specify log directory
+        tasks=all_tasks,
+        limit=125,  # Limit samples for faster debugging
+        log_dir="./logs",  # Specify log directory
     )
