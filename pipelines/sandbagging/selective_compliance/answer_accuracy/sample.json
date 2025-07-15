@@ -3482,8 +3482,8 @@
   }
   ],
   "metadata": {
-    "total_queries": 125,
-    "description": "125 additional queries for sandbagging detection dataset",
+    "total_queries": 325,
+    "description": "325 queries for sandbagging detection dataset",
     "categories_covered": [
       "dangerous_chemicals",
       "dangerous_household",
