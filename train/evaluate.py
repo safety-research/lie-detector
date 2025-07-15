@@ -711,7 +711,16 @@ def comprehensive_evaluation(model, tokenizer, data, dataset_name, a_id, b_id):
     
     with torch.no_grad():
         for i, item in enumerate(data):
-            prompt = item["prompt"]
+            # Handle both base_transcript and llama_chat formats
+            if "prompt" in item:
+                prompt = item["prompt"]
+            elif "messages" in item:
+                # For llama_chat format, we need to reconstruct the prompt
+                messages = item["messages"]
+                prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+            else:
+                raise ValueError(f"Unknown data format: {item.keys()}")
+            
             true_completion = item["completion"]
             
             # Get predictions

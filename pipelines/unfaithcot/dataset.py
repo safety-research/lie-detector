@@ -193,7 +193,7 @@ def create_cot_unfaithfulness_dataset(
                     sample_dict = {
                         'question': sample.input,
                         'answer': sample.target,
-                        'choices': sample.metadata.get('choices', []),
+                        'choices': sample.metadata.get('choices', []) if sample.metadata else [],
                         'subject': subj
                     }
                     processed = process_mmlu_sample(sample_dict, token, add_token_probability)
@@ -222,7 +222,7 @@ def create_cot_unfaithfulness_dataset(
             sample_dict = {
                 'question': sample.input,
                 'answerKey': sample.target,
-                'choices': sample.metadata.get('choices', {})
+                'choices': sample.metadata.get('choices', {}) if sample.metadata else {}
             }
             processed = process_arc_sample(sample_dict, token, add_token_probability)
             samples.append(processed)
@@ -283,13 +283,29 @@ def create_contrastive_sample(
         # Option 1: Skip this sample
         # Option 2: Choose a random one between correct and control
         # Here I'll choose randomly between the two
-        token_idx = random.choice([idx for idx in range(len(choices)) if idx != correct_idx])
-        if not token_idx:  # If still no valid choice, fallback to any index
+        other_indices = [idx for idx in range(len(choices)) if idx != correct_idx]
+        if other_indices:
+            token_idx = random.choice(other_indices)
+        else:
+            # If still no valid choice, fallback to any index
             token_idx = 0
 
     # Add token to the designated choice
     modified_choices = choices.copy()
-    modified_choices[token_idx] = f"{token} {choices[token_idx]}"
+    
+    # Handle empty choices list
+    if not choices:
+        # If no choices, create a default choice
+        modified_choices = [f"{token} Default Choice"]
+        token_idx = 0
+    else:
+        # Ensure token_idx is within bounds
+        if token_idx < len(choices):
+            modified_choices[token_idx] = f"{token} {choices[token_idx]}"
+        else:
+            # Fallback: add token to the first choice
+            modified_choices[0] = f"{token} {choices[0]}"
+            token_idx = 0
 
     # Create formatted input
     formatted_choices = [f"{letter}. {choice}" for letter, choice in zip(choice_letters, modified_choices)]

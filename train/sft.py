@@ -216,6 +216,29 @@ class LieDetectionDataset(Dataset):
                     self.data.append(json.loads(line))
         
         logger.info(f"Loaded {len(self.data)} examples from {data_path}")
+        
+        # Print first few examples to show what the data looks like
+        print("\n" + "="*80)
+        print("TRAINING DATA EXAMPLES:")
+        print("="*80)
+        for i in range(min(3, len(self.data))):
+            print(f"\n--- Example {i+1} ---")
+            print(f"Prompt length: {len(self.data[i]['prompt'])} characters")
+            print(f"Completion: '{self.data[i]['completion']}'")
+            
+            # Show first 200 characters of prompt
+            prompt_preview = self.data[i]['prompt'][:200]
+            if len(self.data[i]['prompt']) > 200:
+                prompt_preview += "..."
+            print(f"Prompt preview: {prompt_preview}")
+            
+            # Show last 200 characters of prompt
+            if len(self.data[i]['prompt']) > 200:
+                prompt_end = self.data[i]['prompt'][-200:]
+                print(f"Prompt end: ...{prompt_end}")
+            
+            print(f"Full prompt length: {len(self.data[i]['prompt'])} characters")
+            print("-" * 40)
     
     def __len__(self):
         return len(self.data)
@@ -253,6 +276,15 @@ class LieDetectionDataset(Dataset):
 
         labels = input_ids.copy()
 
+        # Print tokenization info for first few examples
+        if idx < 3:
+            print(f"\n--- Tokenization for Example {idx+1} ---")
+            print(f"Prompt tokens: {len(prompt_tokens)} tokens")
+            print(f"Completion tokens: {completion_tokens} (decoded: '{self.tokenizer.decode(completion_tokens)}')")
+            print(f"Input IDs length: {len(input_ids)}")
+            print(f"Labels length: {len(labels)}")
+            print(f"Last 10 input tokens: {input_ids[-10:]}")
+            print(f"Decoded last 10 tokens: '{self.tokenizer.decode(input_ids[-10:])}'")
 
         return {
             "input_ids": input_ids,
@@ -312,6 +344,13 @@ def load_model_and_tokenizer(config: Config, local_rank: int = 0):
 def prepare_data(config: Config, tokenizer):
     """Prepare training and validation datasets"""
     
+    # Print info about the training file
+    print(f"\nTraining file: {config.data.train_file}")
+    print(f"File exists: {os.path.exists(config.data.train_file)}")
+    if os.path.exists(config.data.train_file):
+        file_size = os.path.getsize(config.data.train_file)
+        print(f"File size: {file_size} bytes ({file_size/1024/1024:.2f} MB)")
+    
     # Load full dataset
     full_dataset = LieDetectionDataset(
         config.data.train_file,
@@ -356,6 +395,34 @@ def prepare_data(config: Config, tokenizer):
     
     logger.info(f"Train dataset size: {len(train_dataset)}")
     logger.info(f"Validation dataset size: {len(val_dataset)}")
+    
+    # Print dataset statistics
+    print("\n" + "="*80)
+    print("DATASET STATISTICS:")
+    print("="*80)
+    print(f"Total examples loaded: {total_size}")
+    print(f"Training examples: {len(train_dataset)}")
+    print(f"Validation examples: {len(val_dataset)}")
+    
+    # Show completion distribution
+    train_completions = [ex['completion'] for ex in train_examples]
+    val_completions = [ex['completion'] for ex in val_examples]
+    
+    print(f"\nTraining completion distribution:")
+    print(f"  A (truth): {train_completions.count('A')} ({train_completions.count('A')/len(train_completions)*100:.1f}%)")
+    print(f"  B (lie): {train_completions.count('B')} ({train_completions.count('B')/len(train_completions)*100:.1f}%)")
+    
+    print(f"\nValidation completion distribution:")
+    print(f"  A (truth): {val_completions.count('A')} ({val_completions.count('A')/len(val_completions)*100:.1f}%)")
+    print(f"  B (lie): {val_completions.count('B')} ({val_completions.count('B')/len(val_completions)*100:.1f}%)")
+    
+    # Show prompt length statistics
+    train_prompt_lengths = [len(ex['prompt']) for ex in train_examples]
+    val_prompt_lengths = [len(ex['prompt']) for ex in val_examples]
+    
+    print(f"\nPrompt length statistics:")
+    print(f"  Training - Min: {min(train_prompt_lengths)}, Max: {max(train_prompt_lengths)}, Avg: {sum(train_prompt_lengths)/len(train_prompt_lengths):.1f}")
+    print(f"  Validation - Min: {min(val_prompt_lengths)}, Max: {max(val_prompt_lengths)}, Avg: {sum(val_prompt_lengths)/len(val_prompt_lengths):.1f}")
     
     return train_dataset, val_dataset, train_examples, val_examples
 

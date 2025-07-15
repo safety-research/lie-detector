@@ -3,87 +3,159 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers.trainer import Trainer
 from transformers.training_args import TrainingArguments
 from transformers.trainer_callback import TrainerCallback
+from transformers.data.data_collator import DataCollatorForSeq2Seq
 from datasets import Dataset
 import numpy as np
 import logging
 import json
+import argparse
 from peft import LoraConfig, get_peft_model, TaskType
-from transformers import DataCollatorForSeq2Seq
 from evaluate import ComprehensiveAccuracyCallback, comprehensive_evaluation, predict_a_b, save_comprehensive_results, UnifiedEvaluationCallback
 import wandb
 import sys
 import random
+import os
+from datetime import datetime
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    print("Warning: python-dotenv not installed. Install with: pip install python-dotenv")
 
+# Add parent directory to path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sweep_config = {
-    'method': 'random',  # or 'grid', 'bayes'
-    'metric': {
-        'name': 'final/val_accuracy',
-        'goal': 'maximize'
-    },
-    'parameters': {
-        'learning_rate': {
-            'values': [2e-4,1e-5, 5e-5, 1e-4, 2e-4, 5e-4]
-        },
-        'lora_r': {
-            'values': [8, 16, 32, 64]
-        },
-        'lora_alpha': {
-            'values': [16, 32, 64, 128]
-        },
-        'per_device_batch_size': {
-            'values': [4, 8, 16, 32]
-        },
-        'num_epochs': {
-            'values': [2,3,4]
-        },
-        'lora_dropout': {
-            'min': 0.0,
-            'max': 0.3
-        }
-    }
-}
+# S3 copy before any data processing
+from common.utils import copy_s3_folder_to_local  # Assuming this exists, otherwise define below
+from train.preprocess_training_data import process_training_data
 
-def prepare_lie_detection_dataset(data, tokenizer, max_length=512):
+def prepare_lie_detection_dataset(data, tokenizer, max_length=512, format_type="base_transcript"):
+    """
+    Prepare dataset for training based on the format type.
+    
+    Args:
+        data: List of training examples
+        tokenizer: The tokenizer to use
+        max_length: Maximum sequence length
+        format_type: Either "base_transcript" or "llama_chat"
+    """
     examples = []
+    total_examples = len(data)
+    filtered_examples = 0
+    
+    # Print first few examples to show what the data looks like
+    print("\n" + "="*80)
+    print("TRAINING DATA EXAMPLES:")
+    print("="*80)
+    for i in range(min(3, len(data))):
+        print(f"\n--- Example {i+1} ---")
+        if format_type == "base_transcript":
+            print(f"Prompt length: {len(data[i]['prompt'])} characters")
+            print(f"Completion: '{data[i]['completion']}'")
+            
+            # Show first 200 characters of prompt
+            prompt_preview = data[i]['prompt'][:200]
+            if len(data[i]['prompt']) > 200:
+                prompt_preview += "..."
+            print(f"Prompt preview: {prompt_preview}")
+            
+            # Show last 200 characters of prompt
+            if len(data[i]['prompt']) > 200:
+                prompt_end = data[i]['prompt'][-200:]
+                print(f"Prompt end: ...{prompt_end}")
+        elif format_type == "llama_chat":
+            print(f"Messages: {len(data[i]['messages'])} messages")
+            print(f"Completion: '{data[i]['completion']}'")
+            for j, msg in enumerate(data[i]['messages']):
+                print(f"  Message {j+1} ({msg['role']}): {msg['content'][:100]}...")
+        
+        print("-" * 40)
     
     for item in data:
-        prompt = item["prompt"]
-        completion = item["completion"]
-        
-        prompt_tokens = tokenizer(
-            prompt,
-            truncation=True,
-            padding=False,
-            add_special_tokens=False,
-            max_length=max_length-1
-        )["input_ids"]
-        
-        completion_tokens = tokenizer(
-            completion,
-            truncation=False,
-            padding=False,
-            add_special_tokens=False
-        )["input_ids"]
-        
-        if len(completion_tokens) != 1:
-            continue
+        if format_type == "base_transcript":
+            # Original format with text prompt
+            prompt = item["prompt"]
+            completion = item["completion"]
             
-        input_ids = prompt_tokens + completion_tokens
-        labels = [-100] * len(prompt_tokens) + completion_tokens
+            prompt_tokens = tokenizer(
+                prompt,
+                truncation=True,
+                padding=False,
+                add_special_tokens=False,
+                max_length=max_length-1
+            )["input_ids"]
+            
+            completion_tokens = tokenizer(
+                completion,
+                truncation=False,
+                padding=False,
+                add_special_tokens=False
+            )["input_ids"]
+            
+            if len(completion_tokens) != 1:
+                filtered_examples += 1
+                continue
+                
+            input_ids = prompt_tokens + completion_tokens
+            labels = [-100] * len(prompt_tokens) + completion_tokens
+            
+        elif format_type == "llama_chat":
+            # LLaMA chat format using apply_chat_template
+            messages = item["messages"]
+            completion = item["completion"]
+
+            # Tokenize the full conversation using the chat template
+            conversation_tokens = tokenizer.apply_chat_template(
+                messages,
+                tokenize=True,
+                return_tensors="pt",
+                add_generation_prompt=True
+            )[0].tolist()
+
+            # Tokenize the completion
+            completion_tokens = tokenizer(
+                completion,
+                truncation=False,
+                padding=False,
+                add_special_tokens=False
+            )["input_ids"]
+
+            input_ids = conversation_tokens + completion_tokens
+            labels = [-100] * len(conversation_tokens) + completion_tokens
+        
+        else:
+            raise ValueError(f"Unknown format_type: {format_type}")
         
         examples.append({
             "input_ids": input_ids,
             "labels": labels
         })
     
+    print(f"📊 Dataset preparation stats ({format_type} format):")
+    print(f"   Total examples: {total_examples}")
+    print(f"   Filtered out: {filtered_examples} (completion != 1 token)")
+    print(f"   Final examples: {len(examples)}")
+    print(f"   Filter rate: {filtered_examples/total_examples:.1%}")
+    
+    # Print tokenization info for first few examples
+    print("\n" + "="*80)
+    print("TOKENIZATION EXAMPLES:")
+    print("="*80)
+    for i in range(min(3, len(examples))):
+        print(f"\n--- Tokenization for Example {i+1} ---")
+        input_ids = examples[i]["input_ids"]
+        labels = examples[i]["labels"]
+        print(f"Input IDs length: {len(input_ids)}")
+        print(f"Labels length: {len(labels)}")
+        print(f"Last 10 input tokens: {input_ids[-10:]}")
+        print(f"Decoded last 10 tokens: '{tokenizer.decode(input_ids[-10:])}'")
+        print(f"Completion token: {input_ids[-1]} (decoded: '{tokenizer.decode([input_ids[-1]])}')")
+    
     return examples
 
-def train_with_config(config=None):
+def train_with_config(config=None, format_type="base_transcript"):
     """Training function that accepts wandb config for sweeps"""
     
     # Initialize wandb run
@@ -95,14 +167,20 @@ def train_with_config(config=None):
     learning_rate = getattr(config, 'learning_rate', 1e-5)
     lora_r = getattr(config, 'lora_r', 16)
     lora_alpha = getattr(config, 'lora_alpha', 32)
+    lora_dropout = getattr(config, 'lora_dropout', 0.1)
     per_device_batch_size = getattr(config, 'per_device_batch_size', 8)
+    gradient_accumulation_steps = getattr(config, 'gradient_accumulation_steps', 2)
     num_epochs = getattr(config, 'num_epochs', 3)
     lora_dropout = getattr(config, 'lora_dropout', 0.1)
+    weight_decay = getattr(config, 'weight_decay', 0.0)
+    warmup_ratio = getattr(config, 'warmup_ratio', 0.0)
     
     print(f"🔧 Hyperparameters:")
     print(f"   Learning Rate: {learning_rate}")
     print(f"   LoRA r: {lora_r}, alpha: {lora_alpha}, dropout: {lora_dropout}")
     print(f"   Batch size: {per_device_batch_size}, Epochs: {num_epochs}")
+    print(f"   Weight decay: {weight_decay}, Warmup ratio: {warmup_ratio}")
+    print(f"   Format type: {format_type}")
     
     # Load model
     model_name = "meta-llama/Meta-Llama-3-8B"
@@ -136,16 +214,47 @@ def train_with_config(config=None):
     total_params = sum(p.numel() for p in model.parameters())
     print(f"Trainable parameters: {trainable_params:,} / {total_params:,} ({100*trainable_params/total_params:.2f}%)")
 
-
     # Load data
     print("Loading dataset...")
+    print(f"Loading from file: {output_file}")
+    print(f"File exists: {os.path.exists(output_file)}")
+    if os.path.exists(output_file):
+        file_size = os.path.getsize(output_file)
+        print(f"File size: {file_size} bytes ({file_size/1024/1024:.2f} MB)")
+    
     data = []
-    with open("/root/lie-detector/training_data_july8.jsonl", 'r') as f:
+    with open(output_file, 'r') as f:
         for line in f:
             if line.strip():
                 data.append(json.loads(line))
 
     print(f"Loaded {len(data)} examples")
+    
+    # Print dataset statistics
+    print("\n" + "="*80)
+    print("DATASET STATISTICS:")
+    print("="*80)
+    
+    # Show completion distribution
+    completions = [item['completion'] for item in data]
+    a_count = completions.count('A')
+    b_count = completions.count('B')
+    
+    print(f"Completion distribution:")
+    print(f"  A (truth): {a_count} ({a_count/len(completions)*100:.1f}%)")
+    print(f"  B (lie): {b_count} ({b_count/len(completions)*100:.1f}%)")
+    
+    # Show prompt length statistics for base_transcript format
+    if format_type == "base_transcript":
+        prompt_lengths = [len(item['prompt']) for item in data]
+        print(f"\nPrompt length statistics:")
+        print(f"  Min: {min(prompt_lengths)}, Max: {max(prompt_lengths)}, Avg: {sum(prompt_lengths)/len(prompt_lengths):.1f}")
+    
+    # Show message statistics for llama_chat format
+    elif format_type == "llama_chat":
+        message_counts = [len(item['messages']) for item in data]
+        print(f"\nMessage count statistics:")
+        print(f"  Min: {min(message_counts)}, Max: {max(message_counts)}, Avg: {sum(message_counts)/len(message_counts):.1f}")
 
     print("🔀 Shuffling data...")
 
@@ -157,15 +266,19 @@ def train_with_config(config=None):
     original_b_count = len(data) - original_a_count
     print(f"📊 Data distribution: A={original_a_count} ({original_a_count/len(data):.1%}), B={original_b_count} ({original_b_count/len(data):.1%})")
 
-
     # Split data
     train_size = int(0.8 * len(data))
     train_data = data[:train_size]
     eval_data = data[train_size:]
 
-    # Prepare datasets
-    train_examples = prepare_lie_detection_dataset(train_data, tokenizer)
-    eval_examples = prepare_lie_detection_dataset(eval_data, tokenizer)
+    print(f"📊 Data split:")
+    print(f"   Train examples: {len(train_data)}")
+    print(f"   Eval examples: {len(eval_data)}")
+    print(f"   Split ratio: {len(train_data)}/{len(eval_data)} ({len(train_data)/len(data):.1%}/{len(eval_data)/len(data):.1%})")
+
+    # Prepare datasets with format-specific processing
+    train_examples = prepare_lie_detection_dataset(train_data, tokenizer, format_type=format_type)
+    eval_examples = prepare_lie_detection_dataset(eval_data, tokenizer, format_type=format_type)
 
     train_dataset = Dataset.from_list(train_examples)
     eval_dataset = Dataset.from_list(eval_examples)
@@ -179,10 +292,10 @@ def train_with_config(config=None):
         return_tensors="pt"
     )
 
-
     #Training arguments with sweep parameters
+    run_name = wandb.run.name if wandb.run else f"run-{now_str}"
     training_args = TrainingArguments(
-        output_dir=f"./outputs-sweep-{wandb.run.name}",
+        output_dir=f"{model_output_dir}/sweep-{run_name}",
         per_device_train_batch_size=per_device_batch_size,  # ✅ From sweep
         per_device_eval_batch_size=4,
         gradient_accumulation_steps=2,
@@ -202,6 +315,8 @@ def train_with_config(config=None):
         dataloader_pin_memory=False,
         dataloader_num_workers=0,
         remove_unused_columns=False,
+        weight_decay=weight_decay,
+        warmup_ratio=warmup_ratio,
     )
 
     # Get token IDs
@@ -220,26 +335,6 @@ def train_with_config(config=None):
 
     # Add callback
     train_dataloader = trainer.get_train_dataloader()
-    # comprehensive_callback = ComprehensiveAccuracyCallback(
-    #     tokenizer=tokenizer, 
-    #     a_id=a_id, 
-    #     b_id=b_id,
-    #     train_dataloader=train_dataloader,
-    #     max_batches=5  # ✅ Faster evaluation during sweep
-    # )
-
-    # best_model_callback = BestModelTrackingCallback(
-    #     tokenizer=tokenizer,
-    #     a_id=a_id,
-    #     b_id=b_id,
-    #     train_dataloader=train_dataloader,
-    #     eval_data=eval_data,
-    #     train_data=train_data,
-    #     max_batches=5
-    # )
-
-    # trainer.add_callback(comprehensive_callback)
-    # trainer.add_callback(best_model_callback)
     unified_callback = UnifiedEvaluationCallback(
             tokenizer=tokenizer,
             a_id=a_id,
@@ -269,12 +364,10 @@ def train_with_config(config=None):
         "final/val_b_accuracy": val_metrics['b_accuracy'],
     })
 
-
     # Evaluate on training set (optional - might be slow)
     print(f"\n{'='*60}")
     train_metrics = comprehensive_evaluation(model, tokenizer, train_data, "TRAINING", a_id, b_id)
     print(f"🎯 Final Validation Accuracy: {val_metrics['accuracy']:.3f}")
-
 
      # Save comprehensive results to WandB run folder
     sweep_id = getattr(wandb.run, 'sweep_id', None) if wandb.run else None
@@ -282,9 +375,30 @@ def train_with_config(config=None):
         config=config,
         val_metrics=val_metrics,
         train_metrics=train_metrics,
-        run_name=wandb.run.name,
+        run_name=run_name,
         sweep_id=sweep_id
     )
+    
+    # Also save a simple summary in our unified run directory
+    summary_file = f"{run_dir}/run_summary.json"
+    summary = {
+        "run_name": run_name,
+        "sweep_id": sweep_id,
+        "timestamp": now_str,
+        "format_type": format_type,
+        "val_accuracy": val_metrics['accuracy'],
+        "val_confidence": val_metrics['mean_confidence'],
+        "train_accuracy": train_metrics['accuracy'],
+        "train_confidence": train_metrics['mean_confidence'],
+        "data_file": output_file,
+        "model_output_dir": f"{model_output_dir}/sweep-{run_name}",
+        "wandb_results_path": results_path
+    }
+    
+    with open(summary_file, 'w') as f:
+        json.dump(summary, f, indent=2)
+    
+    print(f"📋 Run summary saved to: {summary_file}")
     
     # ✅ Clean up for next run
     del model, trainer
@@ -292,21 +406,107 @@ def train_with_config(config=None):
     
     return val_metrics['accuracy']
 
+# Parse command line arguments
+parser = argparse.ArgumentParser(description="Train lie detection model with SFT")
+parser.add_argument("--format", type=str, default="base_transcript", 
+                   choices=["base_transcript", "llama_chat"],
+                   help="Training format type: base_transcript or llama_chat")
+parser.add_argument("--sweep", action="store_true", 
+                   help="Run hyperparameter sweep instead of single experiment")
+parser.add_argument("--s3_source", type=str, 
+                   default="s3://dipika-lie-detection-data/processed-data-v4-copy/",
+                   help="S3 source for training data")
+parser.add_argument("--input_path", type=str, 
+                   default="/root/lie-detector/training_data_july8",
+                   help="Local input path for training data")
+
+args = parser.parse_args()
+
+# Determine destination folder with timestamp
+now_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+run_dir = f"run_{now_str}_{args.format}"
+local_data_dir = f"{run_dir}/training_data"
+model_output_dir = f"{run_dir}/model_outputs"
+
+# Create the unified run directory
+os.makedirs(run_dir, exist_ok=True)
+os.makedirs(local_data_dir, exist_ok=True)
+os.makedirs(model_output_dir, exist_ok=True)
+
+print(f"📁 Created unified run directory: {run_dir}")
+print(f"   ├── {local_data_dir} (training data)")
+print(f"   └── {model_output_dir} (model outputs)")
+
+# Copy S3 folder to local
+print(f"Copying data from {args.s3_source} to {local_data_dir} ...")
+copy_s3_folder_to_local(args.s3_source, local_data_dir)
+print(f"S3 copy complete. Data available in {local_data_dir}")
+
+# Preprocess the copied data to create merged training file
+print(f"Preprocessing training data with format: {args.format}")
+output_file = f"{run_dir}/training_data_{args.format}.jsonl"
+process_training_data(local_data_dir, output_file, args.format)
+print(f"Preprocessing complete. Merged file: {output_file}")
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+sweep_config = {
+    'method': 'random',  # or 'grid', 'bayes'
+    'metric': {
+        'name': 'final/val_accuracy',
+        'goal': 'maximize'
+    },
+    'parameters': {
+        'learning_rate': {
+            'values': [1e-6, 5e-6, 1e-5, 2e-5, 5e-5, 1e-4, 2e-4, 5e-4, 1e-3, 2e-3, 5e-3]
+        },
+        'lora_r': {
+            'values': [4, 8, 16, 32, 64, 128, 256]
+        },
+        'lora_alpha': {
+            'values': [8, 16, 32, 64, 128, 256]
+        },
+        'lora_dropout': {
+            'min': 0.0,
+            'max': 0.3
+        },
+        'per_device_batch_size': {
+            'values': [4, 8, 16, 32]
+        },
+        'num_epochs': {
+            'values': [2,3,4]
+        },
+        'lora_dropout': {
+            'min': 0.0,
+            'max': 0.3
+        },
+        'weight_decay': {
+            'min': 0.0,
+            'max': 0.1
+        },
+        'warmup_ratio': {
+            'min': 0.0,
+            'max': 0.2
+        }
+    }
+}
 
 if __name__ == "__main__":
     
-    if len(sys.argv) > 1 and sys.argv[1] == "sweep":
+    if args.sweep:
         # ✅ RUN HYPERPARAMETER SWEEP
         print("🚀 Starting hyperparameter sweep...")
         sweep_id = wandb.sweep(sweep_config, project="lie-detection-llama")
         print(f"📊 Sweep ID: {sweep_id}")
         
         # Run the sweep (10 experiments)
-        wandb.agent(sweep_id, train_with_config, count=10)
+        wandb.agent(sweep_id, lambda config: train_with_config(config, args.format), count=10)
         print("✨ Sweep complete! Check WandB for best hyperparameters.")
         
     else:
-        # ✅ RUN SINGLE EXPERIMENT (your original code)
+        # ✅ RUN SINGLE EXPERIMENT
         print("🚀 Running single experiment...")
         
         # Your original single run config
@@ -314,12 +514,17 @@ if __name__ == "__main__":
             "learning_rate": 1e-5,
             "lora_r": 16,
             "lora_alpha": 32,
+            "lora_dropout": 0.1,
             "per_device_batch_size": 8,
+            "gradient_accumulation_steps": 2,
             "num_epochs": 1,
-            "lora_dropout": 0.1
+            "lora_dropout": 0.1,
+            "weight_decay": 0.0,
+            "warmup_ratio": 0.0
         }
         
         # Run single experiment
-        train_with_config(single_config)
+        train_with_config(single_config, args.format)
         
         print("✨ Single experiment complete!")
+

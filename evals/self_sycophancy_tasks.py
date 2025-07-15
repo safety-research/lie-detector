@@ -30,7 +30,7 @@ correctness_scorers = [distribution_based_sycophancy_scorer(),
                        significant_sycophancy_scorer()]
 
 @task
-def harmfulness_common_sense() -> Task:
+def self_sycophancy_harmfulness_common_sense() -> Task:
     """Evaluate both self-sycophancy and self-skepticism on common sense ethics"""
     return Task(
         dataset=ethics_preference_dataset(name="commonsense"),
@@ -40,7 +40,7 @@ def harmfulness_common_sense() -> Task:
 
 
 @task
-def harmfulness_deontology() -> Task:
+def self_sycophancy_harmfulness_deontology() -> Task:
     """Evaluate both self-sycophancy and self-skepticism on deontological ethics"""
     return Task(
         dataset=ethics_preference_dataset(name="deontology"),
@@ -50,7 +50,7 @@ def harmfulness_deontology() -> Task:
 
 
 @task
-def harmfulness_justice() -> Task:
+def self_sycophancy_harmfulness_justice() -> Task:
     """Evaluate both self-sycophancy and self-skepticism on justice ethics"""
     return Task(
         dataset=ethics_preference_dataset(name="justice"),
@@ -60,7 +60,7 @@ def harmfulness_justice() -> Task:
 
 
 @task
-def correctness_physics() -> Task:
+def self_sycophancy_correctness_physics() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on physics questions"""
     return Task(
         dataset=science_math_dataset("physics"),
@@ -70,7 +70,7 @@ def correctness_physics() -> Task:
 
 
 @task
-def correctness_mathematics() -> Task:
+def self_sycophancy_correctness_mathematics() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on mathematics questions"""
     return Task(
         dataset=science_math_dataset("mathematics"),
@@ -80,7 +80,7 @@ def correctness_mathematics() -> Task:
 
 
 @task
-def correctness_chemistry() -> Task:
+def self_sycophancy_correctness_chemistry() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on chemistry questions"""
     return Task(
         dataset=science_math_dataset("chemistry"),
@@ -90,7 +90,7 @@ def correctness_chemistry() -> Task:
 
 
 @task
-def correctness_biology() -> Task:
+def self_sycophancy_correctness_biology() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on biology questions"""
     return Task(
         dataset=science_math_dataset("biology"),
@@ -100,7 +100,7 @@ def correctness_biology() -> Task:
 
 
 @task
-def correctness_arc() -> Task:
+def self_sycophancy_correctness_arc() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on ARC Challenge questions"""
     return Task(
         dataset=arc_challenge_dataset(),
@@ -123,14 +123,14 @@ if __name__ == "__main__":
 
     # Define all self-sycophancy tasks
     all_tasks = [
-        harmfulness_common_sense(),
-        harmfulness_deontology(),
-        harmfulness_justice(),
-        correctness_physics(),
-        correctness_mathematics(),
-        correctness_chemistry(),
-        correctness_biology(),
-        correctness_arc()
+        self_sycophancy_harmfulness_common_sense(),
+        self_sycophancy_harmfulness_deontology(),
+        self_sycophancy_harmfulness_justice(),
+        self_sycophancy_correctness_physics(),
+        self_sycophancy_correctness_mathematics(),
+        self_sycophancy_correctness_chemistry(),
+        self_sycophancy_correctness_biology(),
+        self_sycophancy_correctness_arc()
     ]
 
     print("Running all self-sycophancy tasks...")
@@ -138,13 +138,13 @@ if __name__ == "__main__":
     print(f"Limit: 100 samples per task")
 
     # Run evaluation with all tasks
-    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     results = eval(
         tasks=all_tasks,
         model=model,  # Using OpenRouter Claude model
-        limit=100,  # Limit samples for faster debugging
+        limit=1,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

@@ -20,7 +20,7 @@ from pipelines.sandbagging.capability_denial.basic_tool_usage.hook import *
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent
-SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "sandbagging" / "capability_denial" / "ascii_art"
+SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "pipelines" / "sandbagging" / "capability_denial" / "ascii_art"
 SANDBAGGING_ETHICAL_PATH = PROJECT_ROOT / "sandbagging" / "ethical_capabilities"
 
 load_dotenv()
@@ -202,10 +202,13 @@ def tool_code_sandbagging_task(
 
 
 if __name__ == "__main__":
+    # Configuration
+    NUM_SUBJECTS = 100
+    
     # Example usage - run judge-based lie detection evaluation
-    task = [tool_code_sandbagging_task(),
-            tool_image_gen_sandbagging_task(),
-            tool_search_sandbagging_task()]
+    task = [tool_code_sandbagging_task(num_subjects=NUM_SUBJECTS),
+            tool_image_gen_sandbagging_task(num_subjects=NUM_SUBJECTS),
+            tool_search_sandbagging_task(num_subjects=NUM_SUBJECTS)]
 
     #task = [tool_code_sandbagging_task()]
 
@@ -216,6 +219,6 @@ if __name__ == "__main__":
     results = eval(
         tasks=task,
         model=model,  # or any model you want to test
-        limit=25,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )
