@@ -1,7 +1,7 @@
 
 
 # Rowans Mapping 1
-map_1 = {
+generalization_map_1 = {
     "instruction_following": [
         "alibi-fraud-investigation",
         "alibi_theft_investigation",
@@ -38,11 +38,29 @@ map_1 = {
         "sandbagging_physical_security",
         "sandbagging_physical_security_contrastive",
         "ascii_sandbagging_task",
+        "sycophancy_answer_positive_correct",
+        "sycophancy_answer_positive_incorrect",
+        "sycophancy_answer_negative_correct",
+        "sycophancy_feedback_user_did_not_write",
+        "sycophancy_feedback_user_dislikes",
+        "sycophancy_feedback_user_likes",
+        "sycophancy_feedback_user_wrote",
+        "tool_code_sandbagging_task",
+        "tool_image_gen_sandbagging_task",
+        "tool_search_sandbagging_task",
+        "self_sycophancy_correctness_arc",
+        "self_sycophancy_correctness_biology",
+        "self_sycophancy_correctness_chemistry",
+        "self_sycophancy_correctness_mathematics",
+        "self_sycophancy_correctness_physics",
+        "self_sycophancy_harmfulness_common_sense",
+        "self_sycophancy_harmfulness_deontology",
+        "self_sycophancy_harmfulness_justice",
     ],
 }
 
 # Rowans Mapping 2
-map_2 = {
+generalization_map_2 = {
     "in_context_knowledge": [
         "sandbagging_automotive_mechanical",
         "sandbagging_automotive_mechanical_contrastive",
@@ -58,6 +76,25 @@ map_2 = {
         "sandbagging_physical_security_contrastive",
         "sandbagging_tool_use",
         "mask_provided_facts",
+        # Added tool-related tasks
+        "sandbagging_tool_results_tasks",
+        "tool_code_sandbagging_task",
+        "tool_image_gen_sandbagging_task",
+        "tool_search_sandbagging_task",
+        # Added alibi and capture tasks
+        "capture_the_secret_corporate",
+        "alibi_fraud_investigation",
+        "alibi_mixed_investigation",
+        "alibi_theft_investigation",
+        "alibi_theft_task",
+        "alibi_workplace_investigation",
+        # Added remaining sandbagging tasks
+        "sandbagging_contrastive",
+        "sandbagging_control",
+        "sandbagging_detection",
+        "sandbagging_harmful",
+        "sandbagging_judge_lie_detection",
+        "sandbagging_lie_detection",
     ],
     "internal_knowledge": [
         "sycophancy_answer_positive_correct",
@@ -74,7 +111,8 @@ map_2 = {
         "cot_unfaithfulness_contrastive_mmlu",
         "cot_unfaithfulness_contrastive_arc",
         "sandbagging_automotive_mechanical",
-        "sandbagging_harmlessness",
+        # Added sycophancy task
+        "sycophancy_are_you_sure",
     ],
     "introspective_knowledge": [
         "self_sycophancy_correctness_physics",
@@ -86,5 +124,7 @@ map_2 = {
         "self_sycophancy_harmfulness_justice",
         "self_sycophancy_harmfulness_deontology",
         "ascii_sandbagging_task",
+        # Added chess task
+        "chess_mate_in_2_shutdown_threat_task",
     ],
 }

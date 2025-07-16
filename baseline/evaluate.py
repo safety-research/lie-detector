@@ -14,12 +14,12 @@ if parent_dir not in sys.path:
 
 # Try to import the task - handle both relative and absolute imports
 try:
-    from baseline.task import baseline_task, conversation_task, llama_chat_task
+    from baseline.task import baseline_task, conversation_task, llama_chat_task, llama_chat_reasoning_task, base_transcript_reasoning_task
 except ImportError:
     try:
-        from .task import baseline_task, conversation_task, llama_chat_task
+        from .task import baseline_task, conversation_task, llama_chat_task, llama_chat_reasoning_task, base_transcript_reasoning_task
     except ImportError:
-        from task import baseline_task, conversation_task, llama_chat_task
+        from task import baseline_task, conversation_task, llama_chat_task, llama_chat_reasoning_task, base_transcript_reasoning_task
 
 load_dotenv()
 
@@ -89,6 +89,10 @@ def save_prompts_to_file(results, filename, output_dir=".", baseline_type="basel
                 scorer_name = 'conversation_scorer'
             elif baseline_type == "llama_chat":
                 scorer_name = 'llama_chat_scorer'
+            elif baseline_type == "llama_chat_reasoning":
+                scorer_name = 'llama_chat_reasoning_scorer'
+            elif baseline_type == "base_transcript_reasoning":
+                scorer_name = 'base_transcript_reasoning_scorer'
             else:
                 scorer_name = 'truth_scorer'
             if hasattr(sample, 'scores') and sample.scores and scorer_name in sample.scores:
@@ -189,6 +193,10 @@ def save_results_to_files(results, filename, metrics, output_dir=".", baseline_t
             scorer_name = 'conversation_scorer'
         elif baseline_type == "llama_chat":
             scorer_name = 'llama_chat_scorer'
+        elif baseline_type == "llama_chat_reasoning":
+            scorer_name = 'llama_chat_reasoning_scorer'
+        elif baseline_type == "base_transcript_reasoning":
+            scorer_name = 'base_transcript_reasoning_scorer'
         else:
             scorer_name = 'truth_scorer'
         if hasattr(sample, 'scores') and sample.scores and scorer_name in sample.scores:
@@ -375,6 +383,16 @@ def main(num_samples=None, model=None, data_dir="processed_data", baseline_type=
             data_dir=data_dir,
             limit=limit
         )
+    elif baseline_type == "llama_chat_reasoning":
+        task = llama_chat_reasoning_task(
+            data_dir=data_dir,
+            limit=limit
+        )
+    elif baseline_type == "base_transcript_reasoning":
+        task = base_transcript_reasoning_task(
+            data_dir=data_dir,
+            limit=limit
+        )
     else:  # base_transcript or fallback
         task = baseline_task(
             data_dir=data_dir,
@@ -555,18 +573,22 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
 
     # Import model-specific task functions
     try:
-        from baseline.task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model
+        from baseline.task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model, llama_chat_reasoning_task_by_model, base_transcript_reasoning_task_by_model
     except ImportError:
         try:
-            from .task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model
+            from .task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model, llama_chat_reasoning_task_by_model, base_transcript_reasoning_task_by_model
         except ImportError:
-            from task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model
+            from task import baseline_task_by_model, conversation_task_by_model, llama_chat_task_by_model, llama_chat_reasoning_task_by_model, base_transcript_reasoning_task_by_model
 
     # Choose task based on baseline type
     if baseline_type == "escaped_transcript":
         model_tasks = conversation_task_by_model(data_dir=data_dir, limit=limit)
     elif baseline_type == "llama_chat":
         model_tasks = llama_chat_task_by_model(data_dir=data_dir, limit=limit)
+    elif baseline_type == "llama_chat_reasoning":
+        model_tasks = llama_chat_reasoning_task_by_model(data_dir=data_dir, limit=limit)
+    elif baseline_type == "base_transcript_reasoning":
+        model_tasks = base_transcript_reasoning_task_by_model(data_dir=data_dir, limit=limit)
     else:  # base_transcript or fallback
         model_tasks = baseline_task_by_model(data_dir=data_dir, limit=limit)
 
@@ -624,6 +646,10 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
                 scorer_name = 'conversation_scorer'
             elif baseline_type == "llama_chat":
                 scorer_name = 'llama_chat_scorer'
+            elif baseline_type == "llama_chat_reasoning":
+                scorer_name = 'llama_chat_reasoning_scorer'
+            elif baseline_type == "base_transcript_reasoning":
+                scorer_name = 'base_transcript_reasoning_scorer'
             else:
                 scorer_name = 'truth_scorer'
             if hasattr(sample, 'scores') and sample.scores and scorer_name in sample.scores:
