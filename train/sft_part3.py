@@ -24,6 +24,12 @@ try:
 except ImportError:
     print("Warning: python-dotenv not installed. Install with: pip install python-dotenv")
 
+
+# Verify they're loaded
+print(f"HF_HOME: {os.getenv('HF_HOME')}")
+print(f"TRANSFORMERS_CACHE: {os.getenv('TRANSFORMERS_CACHE')}")
+
+
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -31,7 +37,15 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.utils import copy_s3_folder_to_local  # Assuming this exists, otherwise define below
 from train.preprocess_training_data import process_training_data
 
-def prepare_lie_detection_dataset(data, tokenizer, max_length=512, format_type="base_transcript"):
+# Import generalization mappings
+try:
+    from common.generalization_mappings import generalization_map_1, generalization_map_2
+except ImportError as e:
+    print(f"Warning: Could not import generalization mappings from common.generalization_mappings: {e}")
+    generalization_map_1 = {}
+    generalization_map_2 = {}
+
+def prepare_lie_detection_dataset(data, tokenizer, max_length=2048, format_type="base_transcript"):
     """
     Prepare dataset for training based on the format type.
     
@@ -155,6 +169,146 @@ def prepare_lie_detection_dataset(data, tokenizer, max_length=512, format_type="
     
     return examples
 
+def train_with_kfold_cv_wrapper(config=None, format_type="base_transcript", generalization_map_name=None, k_folds=3):
+    """
+    Wrapper function that performs proper k-fold cross-validation by calling train_with_config
+    with different train/test splits for each fold.
+    
+    Args:
+        config: Training configuration
+        format_type: Data format type
+        generalization_map_name: Name of generalization map (not used in proper k-fold)
+        k_folds: Number of folds for cross-validation (default: 3)
+    """
+    
+    print(f"🔀 Starting proper k-fold cross-validation with {k_folds} folds")
+    
+    # Load all data
+    print("Loading all data...")
+    all_data = []
+    with open(output_file, 'r') as f:
+        for line in f:
+            if line.strip():
+                all_data.append(json.loads(line))
+    
+    print(f"Loaded {len(all_data)} total examples")
+    
+    # Shuffle data for proper k-fold CV
+    print("🔀 Shuffling data for k-fold cross-validation...")
+    random.seed(42)  # For reproducibility
+    random.shuffle(all_data)
+    
+    # Split data into k folds
+    fold_size = len(all_data) // k_folds
+    folds = []
+    
+    for i in range(k_folds):
+        start_idx = i * fold_size
+        end_idx = start_idx + fold_size if i < k_folds - 1 else len(all_data)
+        folds.append(all_data[start_idx:end_idx])
+    
+    print(f"📊 Data split into {k_folds} folds:")
+    for i, fold in enumerate(folds):
+        print(f"   Fold {i+1}: {len(fold)} examples")
+    
+    # Perform k-fold cross-validation
+    fold_results = {}
+    
+    for fold_idx in range(k_folds):
+        fold_name = f"fold_{fold_idx + 1}"
+        print(f"\n{'='*60}")
+        print(f"🎯 Training fold: {fold_name}")
+        print(f"{'='*60}")
+        
+        # Use current fold as test data, all other folds as training data
+        test_data = folds[fold_idx]
+        train_data = []
+        
+        for i in range(k_folds):
+            if i != fold_idx:
+                train_data.extend(folds[i])
+        
+        print(f"📊 Fold {fold_name} data split:")
+        print(f"   Train: {len(train_data)} examples (folds {[j+1 for j in range(k_folds) if j != fold_idx]})")
+        print(f"   Test: {len(test_data)} examples (fold {fold_idx + 1})")
+        
+        if len(train_data) == 0:
+            print(f"⚠️  Warning: No training data for fold {fold_name}, skipping...")
+            continue
+        
+        if len(test_data) == 0:
+            print(f"⚠️  Warning: No test data for fold {fold_name}, skipping...")
+            continue
+        
+        # Create temporary files for this fold
+        fold_dir = f"{run_dir}/fold_{fold_name}"
+        os.makedirs(fold_dir, exist_ok=True)
+        
+        train_file = f"{fold_dir}/train_data.jsonl"
+        test_file = f"{fold_dir}/test_data.jsonl"
+        
+        # Save train and test data to temporary files
+        with open(train_file, 'w') as f:
+            for item in train_data:
+                f.write(json.dumps(item) + '\n')
+        
+        with open(test_file, 'w') as f:
+            for item in test_data:
+                f.write(json.dumps(item) + '\n')
+        
+        # Temporarily replace the global output_file with train_file
+        original_output_file = output_file
+        global output_file
+        output_file = train_file
+        
+        try:
+            # For k-fold CV, we need to modify train_with_config to accept train/test data directly
+            # Since train_with_config expects to load from output_file, we'll temporarily replace it
+            # and modify the function to use the provided train/test split
+            
+            # Create a modified config that includes fold information
+            fold_config = config.copy() if config else {}
+            fold_config['fold_name'] = fold_name
+            fold_config['train_data'] = train_data
+            fold_config['test_data'] = test_data
+            
+            # Call the original train_with_config function
+            fold_accuracy = train_with_config(fold_config, format_type)
+            fold_results[fold_name] = fold_accuracy
+            
+        finally:
+            # Restore the original output_file
+            output_file = original_output_file
+        
+        # Clean up temporary files
+        import shutil
+        shutil.rmtree(fold_dir, ignore_errors=True)
+    
+    # Log overall results
+    if fold_results:
+        avg_accuracy = sum(fold_results.values()) / len(fold_results)
+        print(f"\n{'='*60}")
+        print(f"🎯 K-FOLD CROSS-VALIDATION RESULTS")
+        print(f"{'='*60}")
+        for fold_name, accuracy in fold_results.items():
+            print(f"Fold {fold_name}: {accuracy:.3f}")
+        print(f"Average accuracy: {avg_accuracy:.3f}")
+        
+        # Log to wandb
+        wandb.log({
+            "kfold/average_accuracy": avg_accuracy,
+            "kfold/num_folds": len(fold_results)
+        })
+        
+        for fold_name, accuracy in fold_results.items():
+            wandb.log({
+                f"kfold/{fold_name}_accuracy": accuracy
+            })
+    
+    return fold_results
+
+
+
 def train_with_config(config=None, format_type="base_transcript"):
     """Training function that accepts wandb config for sweeps"""
     
@@ -184,6 +338,7 @@ def train_with_config(config=None, format_type="base_transcript"):
     
     # Load model
     model_name = "meta-llama/Meta-Llama-3-8B"
+    model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -230,6 +385,35 @@ def train_with_config(config=None, format_type="base_transcript"):
 
     print(f"Loaded {len(data)} examples")
     
+    # Check if train_data and test_data are provided (for k-fold CV)
+    fold_name = getattr(config, 'fold_name', None) if config else None
+    provided_train_data = getattr(config, 'train_data', None) if config else None
+    provided_test_data = getattr(config, 'test_data', None) if config else None
+    
+    if fold_name and provided_train_data is not None and provided_test_data is not None:
+        print(f"🎯 K-fold run detected: {fold_name}")
+        train_data = provided_train_data
+        eval_data = provided_test_data
+        
+        print(f"📊 K-fold data split:")
+        print(f"   Train examples: {len(train_data)}")
+        print(f"   Test examples: {len(eval_data)}")
+    else:
+        # Standard random split for training
+        print("🔀 Shuffling data...")
+        random.seed(42)  # For reproducibility
+        random.shuffle(data)
+        
+        # Split data
+        train_size = int(0.8 * len(data))
+        train_data = data[:train_size]
+        eval_data = data[train_size:]
+        
+        print(f"📊 Data split:")
+        print(f"   Train examples: {len(train_data)}")
+        print(f"   Eval examples: {len(eval_data)}")
+        print(f"   Split ratio: {len(train_data)}/{len(eval_data)} ({len(train_data)/len(data):.1%}/{len(eval_data)/len(data):.1%})")
+    
     # Print dataset statistics
     print("\n" + "="*80)
     print("DATASET STATISTICS:")
@@ -255,26 +439,11 @@ def train_with_config(config=None, format_type="base_transcript"):
         message_counts = [len(item['messages']) for item in data]
         print(f"\nMessage count statistics:")
         print(f"  Min: {min(message_counts)}, Max: {max(message_counts)}, Avg: {sum(message_counts)/len(message_counts):.1f}")
-
-    print("🔀 Shuffling data...")
-
-    random.seed(42)  # For reproducibility
-    random.shuffle(data)
     
-    # Check class distribution before and after shuffle
+    # Check class distribution
     original_a_count = sum(1 for item in data if item["completion"] == "A")
     original_b_count = len(data) - original_a_count
     print(f"📊 Data distribution: A={original_a_count} ({original_a_count/len(data):.1%}), B={original_b_count} ({original_b_count/len(data):.1%})")
-
-    # Split data
-    train_size = int(0.8 * len(data))
-    train_data = data[:train_size]
-    eval_data = data[train_size:]
-
-    print(f"📊 Data split:")
-    print(f"   Train examples: {len(train_data)}")
-    print(f"   Eval examples: {len(eval_data)}")
-    print(f"   Split ratio: {len(train_data)}/{len(eval_data)} ({len(train_data)/len(data):.1%}/{len(eval_data)/len(data):.1%})")
 
     # Prepare datasets with format-specific processing
     train_examples = prepare_lie_detection_dataset(train_data, tokenizer, format_type=format_type)
@@ -340,9 +509,9 @@ def train_with_config(config=None, format_type="base_transcript"):
             a_id=a_id,
             b_id=b_id,
             eval_data=eval_data,
-            train_data=train_data,
+            train_data=train_data[:250],
             train_dataloader=train_dataloader,
-            max_batches=5,
+            max_batches=500,
             improvement_threshold=0.005
         )
     trainer.add_callback(unified_callback)
@@ -417,14 +586,18 @@ parser.add_argument("--s3_source", type=str,
                    default="s3://dipika-lie-detection-data/processed-data-v4-copy/",
                    help="S3 source for training data")
 parser.add_argument("--input_path", type=str, 
-                   default="/root/lie-detector/training_data_july8",
-                   help="Local input path for training data")
+                   default=None,
+                   help="Local input path for training data (if provided, will use this instead of S3)")
+parser.add_argument("--generalization_map_1", action="store_true",
+                   help="Use generalization map 1 from common.generalization_mappings for k-fold CV")
+parser.add_argument("--generalization_map_2", action="store_true",
+                   help="Use generalization map 2 from common.generalization_mappings for k-fold CV")
 
 args = parser.parse_args()
 
 # Determine destination folder with timestamp
 now_str = datetime.now().strftime('%Y%m%d_%H%M%S')
-run_dir = f"run_{now_str}_{args.format}"
+run_dir = f"runs/{args.format}/run_{now_str}_{args.format}"
 local_data_dir = f"{run_dir}/training_data"
 model_output_dir = f"{run_dir}/model_outputs"
 
@@ -437,15 +610,37 @@ print(f"📁 Created unified run directory: {run_dir}")
 print(f"   ├── {local_data_dir} (training data)")
 print(f"   └── {model_output_dir} (model outputs)")
 
-# Copy S3 folder to local
-print(f"Copying data from {args.s3_source} to {local_data_dir} ...")
-copy_s3_folder_to_local(args.s3_source, local_data_dir)
-print(f"S3 copy complete. Data available in {local_data_dir}")
+# Use local data if --input_path is provided and exists, otherwise use S3
+if args.input_path and os.path.exists(args.input_path) and os.listdir(args.input_path):
+    print(f"📁 Using local training data from: {args.input_path}")
+    # Copy local data to run directory for consistency
+    import shutil
+    shutil.copytree(args.input_path, local_data_dir, dirs_exist_ok=True)
+    print(f"✅ Local data copied to: {local_data_dir}")
+else:
+    print(f"📥 Using S3 data source: {args.s3_source}")
+    print(f"Copying data from {args.s3_source} to {local_data_dir} ...")
+    copy_s3_folder_to_local(args.s3_source, local_data_dir)
+    print(f"S3 copy complete. Data available in {local_data_dir}")
 
-# Preprocess the copied data to create merged training file
+# Preprocess the data to create merged training file
 print(f"Preprocessing training data with format: {args.format}")
 output_file = f"{run_dir}/training_data_{args.format}.jsonl"
-process_training_data(local_data_dir, output_file, args.format)
+
+# Check if we have generalization map arguments
+generalization_map_name = None
+if args.generalization_map_1:
+    generalization_map_name = "generalization_map_1"
+    print(f"Using generalization map 1 from common.generalization_mappings")
+elif args.generalization_map_2:
+    generalization_map_name = "generalization_map_2"
+    print(f"Using generalization map 2 from common.generalization_mappings")
+
+if generalization_map_name:
+    process_training_data(local_data_dir, output_file, args.format, generalization_map_name)
+else:
+    process_training_data(local_data_dir, output_file, args.format)
+
 print(f"Preprocessing complete. Merged file: {output_file}")
 
 # Configure logging
@@ -473,10 +668,10 @@ sweep_config = {
             'max': 0.3
         },
         'per_device_batch_size': {
-            'values': [4, 8, 16, 32]
+            'values': [4, 8]
         },
         'num_epochs': {
-            'values': [2,3,4]
+            'values': [3,4,5]
         },
         'lora_dropout': {
             'min': 0.0,
@@ -501,13 +696,23 @@ if __name__ == "__main__":
         sweep_id = wandb.sweep(sweep_config, project="lie-detection-llama")
         print(f"📊 Sweep ID: {sweep_id}")
         
-        # Run the sweep (10 experiments)
-        wandb.agent(sweep_id, lambda config: train_with_config(config, args.format), count=10)
+        # ✅ FIXED: Remove config parameter from lambda
+        wandb.agent(sweep_id, lambda: train_with_config(None, args.format), count=10)
         print("✨ Sweep complete! Check WandB for best hyperparameters.")
+
+
+        # # ✅ RUN HYPERPARAMETER SWEEP
+        # print("🚀 Starting hyperparameter sweep...")
+        # sweep_id = wandb.sweep(sweep_config, project="lie-detection-llama")
+        # print(f"📊 Sweep ID: {sweep_id}")
+        
+        # # Run the sweep (10 experiments)
+        # wandb.agent(sweep_id, lambda config: train_with_config(config, args.format), count=10)
+        # print("✨ Sweep complete! Check WandB for best hyperparameters.")
         
     else:
-        # ✅ RUN SINGLE EXPERIMENT
-        print("🚀 Running single experiment...")
+        # ✅ RUN SINGLE EXPERIMENT OR K-FOLD CV
+        print("🚀 Running experiment...")
         
         # Your original single run config
         single_config = {
@@ -523,8 +728,22 @@ if __name__ == "__main__":
             "warmup_ratio": 0.0
         }
         
-        # Run single experiment
-        train_with_config(single_config, args.format)
+        # Check if we should run k-fold cross-validation
+        if generalization_map_name:
+            # Get the generalization map to determine number of folds
+            if generalization_map_name == "generalization_map_1":
+                generalization_map = generalization_map_1
+            elif generalization_map_name == "generalization_map_2":
+                generalization_map = generalization_map_2
+            else:
+                raise ValueError(f"Unknown generalization map: {generalization_map_name}")
+            
+            num_folds = len(generalization_map)
+            print(f"🎯 Running k-fold cross-validation with {num_folds} folds from {generalization_map_name}")
+            train_with_kfold_cv_wrapper(single_config, args.format, generalization_map_name, k_folds=num_folds)
+        else:
+            print("🎯 Running single experiment")
+            train_with_config(single_config, args.format)
         
-        print("✨ Single experiment complete!")
+        print("✨ Experiment complete!")
 

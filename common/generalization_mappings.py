@@ -1,7 +1,7 @@
 
 
 # Rowans Mapping 1
-map_1 = {
+generalization_map_1 = {
     "instruction_following": [
         "alibi-fraud-investigation",
         "alibi_theft_investigation",
@@ -42,7 +42,7 @@ map_1 = {
 }
 
 # Rowans Mapping 2
-map_2 = {
+generalization_map_2 = {
     "in_context_knowledge": [
         "sandbagging_automotive_mechanical",
         "sandbagging_automotive_mechanical_contrastive",
