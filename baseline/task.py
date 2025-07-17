@@ -13,18 +13,18 @@ if parent_dir not in sys.path:
 
 # Try to import - handle both relative and absolute imports
 try:
-    from baseline.dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset
-    from baseline.dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model
-    from baseline.scorer import truth_scorer, conversation_scorer, llama_chat_scorer, llama_chat_reasoning_scorer, base_transcript_reasoning_scorer
+    from baseline.dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset, rowans_escaped_transcript_dataset
+    from baseline.dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model, rowans_escaped_transcript_dataset_by_model
+    from baseline.scorer import truth_scorer, escaped_transcript_scorer, llama_chat_scorer, llama_chat_reasoning_scorer, base_transcript_reasoning_scorer
 except ImportError:
     try:
-        from .dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset
-        from .dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model
-        from .scorer import truth_scorer, conversation_scorer, llama_chat_scorer, llama_chat_reasoning_scorer, base_transcript_reasoning_scorer
+        from .dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset, rowans_escaped_transcript_dataset
+        from .dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model, rowans_escaped_transcript_dataset_by_model
+        from .scorer import truth_scorer, escaped_transcript_scorer, llama_chat_scorer, llama_chat_reasoning_scorer, base_transcript_reasoning_scorer
     except ImportError:
-        from dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset
-        from dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model
-        from scorer import truth_scorer, conversation_scorer, llama_chat_scorer, llama_chat_reasoning_scorer, base_transcript_reasoning_scorer
+        from dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset, rowans_escaped_transcript_dataset
+        from dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model, rowans_escaped_transcript_dataset_by_model
+        from scorer import truth_scorer, escaped_transcript_scorer, llama_chat_scorer, llama_chat_reasoning_scorer, base_transcript_reasoning_scorer
 
 @task
 def baseline_task(
@@ -41,17 +41,17 @@ def baseline_task(
     ) 
 
 @task
-def conversation_task(
+def escaped_transcript_task(
     data_dir: str, 
     limit: Optional[int] = None
 ) -> Task:
     """
-    Conversation-based lie detection task.
+    Escaped transcript format lie detection task.
     """
     return Task(
         dataset=conversation_dataset(data_dir, limit=limit),
         solver=generate(),
-        scorer=conversation_scorer()
+        scorer=escaped_transcript_scorer()
     ) 
 
 @task
@@ -94,6 +94,20 @@ def base_transcript_reasoning_task(
         dataset=base_transcript_reasoning_dataset(data_dir, limit=limit),
         solver=generate(),
         scorer=base_transcript_reasoning_scorer()
+    )
+
+@task
+def rowans_escaped_transcript_task(
+    data_dir: str, 
+    limit: Optional[int] = None
+) -> Task:
+    """
+    Rowan's escaped transcript format lie detection task.
+    """
+    return Task(
+        dataset=rowans_escaped_transcript_dataset(data_dir, limit=limit),
+        solver=generate(),
+        scorer=escaped_transcript_scorer()
     ) 
 
 def baseline_task_by_model(
@@ -115,12 +129,12 @@ def baseline_task_by_model(
     
     return model_tasks
 
-def conversation_task_by_model(
+def escaped_transcript_task_by_model(
     data_dir: str, 
     limit: Optional[int] = None
 ) -> Dict[str, Task]:
     """
-    Conversation-based lie detection task split by model.
+    Escaped transcript format lie detection task split by model.
     """
     model_datasets = conversation_dataset_by_model(data_dir, limit=limit)
     model_tasks = {}
@@ -129,7 +143,7 @@ def conversation_task_by_model(
         model_tasks[model] = Task(
             dataset=dataset,
             solver=generate(),
-            scorer=conversation_scorer()
+            scorer=escaped_transcript_scorer()
         )
     
     return model_tasks
@@ -187,6 +201,25 @@ def base_transcript_reasoning_task_by_model(
             dataset=dataset,
             solver=generate(),
             scorer=base_transcript_reasoning_scorer()
+        )
+    
+    return model_tasks
+
+def rowans_escaped_transcript_task_by_model(
+    data_dir: str, 
+    limit: Optional[int] = None
+) -> Dict[str, Task]:
+    """
+    Rowan's escaped transcript format lie detection task split by model.
+    """
+    model_datasets = rowans_escaped_transcript_dataset_by_model(data_dir, limit=limit)
+    model_tasks = {}
+    
+    for model, dataset in model_datasets.items():
+        model_tasks[model] = Task(
+            dataset=dataset,
+            solver=generate(),
+            scorer=escaped_transcript_scorer()
         )
     
     return model_tasks 

@@ -12,17 +12,18 @@ import os
 
 # Configuration - modify these values as needed
 NUM_SAMPLES = None  # Set to a number (e.g., 10) to limit samples, or None for all
-MODEL_NAME = "openrouter/meta-llama/llama-3.1-8b-instruct"  # Change model here
+MODEL_NAME = "openrouter/meta-llama/llama-3.1-8b-instruct" # Change model here
 
 # S3 Configuration - set this to copy data from S3 before running baselines
-S3_URI = "s3://dipika-lie-detection-data/processed-data-v4/"  # Set to None to use local data only
+S3_URI = "s3://dipika-lie-detection-data/processed-data-v4-copy/"  # Set to None to use local data only
+# S3_URI = None
 
 # Local data directory (used if S3_URI is None or after S3 copy)
 PROCESSED_DATA_DIR = "/Users/dipikakhullar/Desktop/lie-detector/baseline/training_data_20250716_072911"  # Directory containing the processed evaluation data
 
 
-clearBASELINE_TYPES = ["base_transcript_reasoning"]  # List of all baselines to run - testing only the new task
-BASELINE_TYPES = ["base_transcript_reasoning"]
+# BASELINE_TYPES = ["escaped_transcript"]  # List of all baselines to run - testing only the new task
+BASELINE_TYPES = ["escaped_transcript", "rowans_escaped_transcript"]  # Testing the new Rowan's escaped transcript baseline
 # BASELINE_TYPES = ["escaped_transcript"]
 # Evaluation mode - set to True to split results by model, False for combined results
 SPLIT_BY_MODEL = True

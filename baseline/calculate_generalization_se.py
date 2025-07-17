@@ -13,8 +13,8 @@ from pathlib import Path
 def load_generalization_mappings():
     """Load the generalization mappings."""
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-    from common.generalization_mappings import map_1, map_2
-    return map_1, map_2
+    from common.generalization_mappings import generalization_map_1, generalization_map_2
+    return generalization_map_1, generalization_map_2
 
 def calculate_se_for_category(tasks_in_category, sorted_df):
     """Calculate standard error of the mean precision for tasks in a category."""
@@ -46,13 +46,16 @@ def calculate_se_for_category(tasks_in_category, sorted_df):
 def update_generalization_csv_with_se():
     """Update generalization CSV files with standard error data."""
     # Load generalization mappings
-    map_1, map_2 = load_generalization_mappings()
+    generalization_map_1, generalization_map_2 = load_generalization_mappings()
     
     # Baseline types and their folders
     baseline_types = {
         'base_transcript': 'base_transcript',
         'escaped_transcript': 'escaped_transcript', 
-        'llama_chat': 'llama_chat'
+        'llama_chat': 'llama_chat',
+        'llama_chat_reasoning': 'llama_chat_reasoning',
+        'base_transcript_reasoning': 'base_transcript_reasoning',
+        'rowans_escaped_transcript': 'rowans_escaped_transcript'
     }
     
     for baseline_type, folder in baseline_types.items():
@@ -85,6 +88,12 @@ def update_generalization_csv_with_se():
                     file_suffix = 'escaped'
                 elif baseline_type == 'llama_chat':
                     file_suffix = 'llama'
+                elif baseline_type == 'llama_chat_reasoning':
+                    file_suffix = 'llama'
+                elif baseline_type == 'base_transcript_reasoning':
+                    file_suffix = 'base'
+                elif baseline_type == 'rowans_escaped_transcript':
+                    file_suffix = 'rowans'
                 else:
                     file_suffix = baseline_type
                 
@@ -125,8 +134,8 @@ def update_generalization_csv_with_se():
                     elif category.startswith('map_1_'):
                         # Find tasks in map_1 category
                         category_name = category.replace('map_1_', '')
-                        if category_name in map_1:
-                            tasks_in_category = map_1[category_name]
+                        if category_name in generalization_map_1:
+                            tasks_in_category = generalization_map_1[category_name]
                             se_val = calculate_se_for_category(tasks_in_category, sorted_df)
                             se_values.append(se_val)
                         else:
@@ -134,8 +143,8 @@ def update_generalization_csv_with_se():
                     elif category.startswith('map_2_'):
                         # Find tasks in map_2 category
                         category_name = category.replace('map_2_', '')
-                        if category_name in map_2:
-                            tasks_in_category = map_2[category_name]
+                        if category_name in generalization_map_2:
+                            tasks_in_category = generalization_map_2[category_name]
                             se_val = calculate_se_for_category(tasks_in_category, sorted_df)
                             se_values.append(se_val)
                         else:
