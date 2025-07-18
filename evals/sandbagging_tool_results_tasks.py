@@ -11,7 +11,8 @@ from pipelines.sandbagging.selective_compliance.content_filtering import tool_re
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pipelines.sandbagging.selective_compliance.content_filtering.hook import *
+# Removed global hook import to prevent hook from being applied to all tasks
+# from pipelines.sandbagging.selective_compliance.content_filtering.hook import *
 
 @task
 def sandbagging_tool_results_tasks():

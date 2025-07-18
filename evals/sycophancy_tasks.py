@@ -13,7 +13,7 @@ from pipelines.sycophancy.solver import sycophancy_with_control_solver, are_you_
 from pipelines.sycophancy.scorer import sycophancy_control_comparison_scorer, are_you_sure_aggregate_scorer
 from pipelines.sycophancy.hooks import *
 
-working_dir = Path.cwd().parent  # Use current directory instead of parent
+working_dir = Path.cwd()  # Use current directory
 load_dotenv()
 
 @task

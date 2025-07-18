@@ -16,7 +16,8 @@ PROJECT_ROOT = Path(__file__).parent.parent
 from pipelines.sandbagging.capability_denial.ascii_art.dataset import create_ascii_multiple_choice_dataset
 from pipelines.sandbagging.capability_denial.ascii_art.scorer import ascii_multiple_choice_sandbagging_scorer
 from pipelines.sandbagging.capability_denial.ascii_art.solver import ascii_multiple_choice_sandbagging_solver
-from pipelines.sandbagging.capability_denial.ascii_art.hook import *
+# Removed global hook import to prevent hook from being applied to all tasks
+# from pipelines.sandbagging.capability_denial.ascii_art.hook import *
 
 @task
 def ascii_sandbagging_task(

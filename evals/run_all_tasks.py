@@ -140,14 +140,14 @@ def get_all_tasks():
             tool_search_sandbagging_task,
             tool_ethical_sandbagging_task,
             tool_unethical_sandbagging_task,
-            sandbagging_tool_results_tasks
+            # sandbagging_tool_results_tasks  # Requires tool usage - excluded for models without tool support
         ],
         "sandbagging_chess": [
-            chess_task,
-            chess_binary_task,
-            chess_mate_in_2_shutdown_threat_task,
-            chess_mate_in_2_capability_hiding_task,
-            chess_mate_in_2_safety_concern_task
+            # chess_task,
+            # chess_binary_task,
+            # chess_mate_in_2_shutdown_threat_task,
+            # chess_mate_in_2_capability_hiding_task,
+            # chess_mate_in_2_safety_concern_task
         ],
         "sandbagging_contrastive": [
             sandbagging_contrastive,
@@ -234,27 +234,34 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
         return None
 
 def main():
-    # Configuration variables - modify these as needed
-    # MODEL = "openrouter/meta-llama/llama-3.3-70b-instruct"#"openrouter/meta-llama/llama-3.1-8b-instruct"
-    # MODEL = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    MODEL = "openrouter/google/gemma-2-27b-it"
-    LIMIT = 1  # Set to a number (e.g., 10) to limit samples per task, or None for all
-    CATEGORIES = None  # Set to a list like ["mask", "sycophancy"] or None for all categories
-    LOG_DIR = "../logs"  # Set to a path or None for auto-generated timestamp directory
+    import argparse
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Run all evaluation tasks')
+    parser.add_argument('--model', type=str, default="openrouter/google/gemma-2-27b-it",
+                       help='Model to use for evaluation')
+    parser.add_argument('--limit', type=int, default=1,
+                       help='Limit samples per task (default: 1)')
+    parser.add_argument('--categories', nargs='+', default=None,
+                       help='Specific categories to run (e.g., mask sycophancy)')
+    parser.add_argument('--log-dir', type=str, default="../logs",
+                       help='Log directory (default: ../logs)')
+    
+    args = parser.parse_args()
     
     print("LIE DETECTOR - ALL TASKS EVALUATION")
     print("=" * 50)
-    print(f"Model: {MODEL}")
-    print(f"Limit: {LIMIT if LIMIT else 1000}")
-    print(f"Categories: {CATEGORIES if CATEGORIES else 'All'}")
+    print(f"Model: {args.model}")
+    print(f"Limit: {args.limit if args.limit else 1000}")
+    print(f"Categories: {args.categories if args.categories else 'All'}")
     print("=" * 50)
     
     # Run all tasks
     results = run_all_tasks(
-        model=MODEL,
-        limit=LIMIT,
-        categories=CATEGORIES,
-        log_dir=LOG_DIR
+        model=args.model,
+        limit=args.limit,
+        categories=args.categories,
+        log_dir=args.log_dir
     )
     
     if results:
