@@ -53,8 +53,8 @@ if __name__ == "__main__":
     # )
 
     all_tasks = [
-        # alibi_theft_task(),
-        alibi_fraud_task(),
+        alibi_theft_task(),
+        # alibi_fraud_task(),
         # alibi_workplace_task(),
         # alibi_mixed_task()
     ]
@@ -64,7 +64,8 @@ if __name__ == "__main__":
 
     # Run evaluation with all tasks
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/google/gemma-3-27b-it"
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
