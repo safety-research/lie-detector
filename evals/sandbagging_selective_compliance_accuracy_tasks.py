@@ -147,12 +147,20 @@ if __name__ == "__main__":
     ]
     
     model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/meta-llama/llama-3.1-8b-base"
+    #model = "openrouter/meta-llama/llama-3.1-405b"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-
+    model2 = ["openrouter/anthropic/claude-3.7-sonnet",
+             "openrouter/anthropic/claude-sonnet-4",
+             "openrouter/google/gemma-3-27b-it",
+             "openrouter/google/gemma-3-9b-it"
+             ]
     
     # Run evaluation with a specific model
     results = eval(
-        tasks=all_tasks,
-        limit=5,  # Limit samples for faster debugging
+        model=model,
+        tasks=sandbagging_financial_systems_contrastive(),#all_tasks,
+        #token_limit=1,
+        limit=4,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )

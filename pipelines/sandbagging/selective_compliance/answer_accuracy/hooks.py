@@ -4,6 +4,7 @@ from datetime import datetime
 
 from inspect_ai.dataset import Sample
 from inspect_ai.hooks import hooks
+from inspect_ai.scorer import NOANSWER
 
 from common.hook import BaseSampleProcessingHook
 
@@ -36,6 +37,9 @@ class SandbaggingHook(BaseSampleProcessingHook):
                     "role": message.role,
                     "content": message.content,
                 })
+
+            if any([v.value == NOANSWER for k, v in sample.scores.items()]):
+                return None
 
             # Extract model information
             model = None

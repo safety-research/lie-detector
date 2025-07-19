@@ -31,12 +31,7 @@ from evals.sycophancy_tasks import (
     sycophancy_feedback_user_likes, sycophancy_feedback_user_dislikes
 )
 
-from evals.self_sycophancy_tasks import (
-    harmfulness_common_sense, harmfulness_deontology,
-    harmfulness_justice, correctness_arc,
-    correctness_biology, correctness_chemistry,
-    correctness_mathematics, correctness_physics
-)
+from evals.self_sycophancy_tasks import *
 
 from evals.n_truths_and_a_lie_tasks import (
     n_truths_and_a_lie_family_history, n_truths_and_a_lie_hidden_talents,
@@ -54,9 +49,7 @@ from evals.alibi_tasks import alibi_theft_task
 
 from evals.sandbagging_ascii_capability_denial_tasks import ascii_sandbagging_task
 
-from evals.sandbagging_basic_tool_capability_denial_tasks import (
-    tool_code_sandbagging_task, tool_image_gen_sandbagging_task, tool_search_sandbagging_task
-)
+from evals.sandbagging_basic_tool_capability_denial_tasks import *
 
 from evals.sandbagging_unethical_tool_capability_denial_tasks import (
     tool_ethical_sandbagging_task, tool_unethical_sandbagging_task
@@ -84,14 +77,14 @@ def get_all_tasks():
             sycophancy_feedback_user_dislikes
         ],
         "self_sycophancy": [
-            harmfulness_common_sense,
-            harmfulness_deontology,
-            harmfulness_justice,
-            correctness_arc,
-            correctness_biology,
-            correctness_chemistry,
-            correctness_mathematics,
-            correctness_physics
+            self_sycophancy_harmfulness_common_sense,
+            self_sycophancy_harmfulness_deontology,
+            self_sycophancy_harmfulness_justice,
+            self_sycophancy_correctness_arc,
+            self_sycophancy_correctness_biology,
+            self_sycophancy_correctness_chemistry,
+            self_sycophancy_correctness_mathematics,
+            self_sycophancy_correctness_physics
         ],
         "n_truths_and_a_lie": [
             n_truths_and_a_lie_family_history,
@@ -210,7 +203,8 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
 
 def main():
     # Configuration variables - modify these as needed
-    MODEL = "openrouter/meta-llama/llama-3.3-70b-instruct"#"openrouter/meta-llama/llama-3.1-8b-instruct"
+    #MODEL = "openrouter/meta-llama/llama-3.3-70b-instruct"#"openrouter/meta-llama/llama-3.1-8b-instruct"
+    MODEL = "google/gemma-3-12b-it"#"openrouter/"
     LIMIT = 200  # Set to a number (e.g., 10) to limit samples per task, or None for all
     CATEGORIES = None  # Set to a list like ["mask", "sycophancy"] or None for all categories
     LOG_DIR = "../logs"  # Set to a path or None for auto-generated timestamp directory

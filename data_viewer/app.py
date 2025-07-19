@@ -334,6 +334,7 @@ def load_and_process_data(force_reload=False):
         print(f"Error loading data from local files: {e}")
         return 0, f"Error: {str(e)}"
 
+
 @app.route('/')
 def index():
     """Main page"""
@@ -347,7 +348,7 @@ def get_samples():
     model = request.args.get('model')  # Optional filter by model
     did_lie = request.args.get('did_lie')  # Optional filter by did_lie (true/false)
     
-    # Load data based on configuration
+    # Load data from S3/local based on configuration
     if USE_LOCAL_DATA:
         print("Loading data from local cache...")
         load_and_process_data()
@@ -409,47 +410,64 @@ def get_sample(sample_id):
 @app.route('/get_unique_values', methods=['GET'])
 def get_unique_values():
     """Get unique values for filtering with counts"""
-    # Load data based on configuration
-    if USE_LOCAL_DATA:
-        load_and_process_data()
-    else:
-        load_and_process_s3_data()
-    
-    if not processed_data:
-        return jsonify({"error": "No data loaded"}), 400
-    
-    # Count occurrences for each unique value
-    task_counts = {}
-    model_counts = {}
-    lie_counts = {'true': 0, 'false': 0}
-    
-    for sample in processed_data:
-        # Count tasks
-        task = sample.get('task', '')
-        if task:
-            task_counts[task] = task_counts.get(task, 0) + 1
-            
-        # Count models
-        model = sample.get('model', '')
-        if model:
-            model_counts[model] = model_counts.get(model, 0) + 1
-            
-        # Count lies/truths
-        did_lie = sample.get('did_lie', False)
-        if did_lie:
-            lie_counts['true'] += 1
+    try:
+        print(f"get_unique_values called - USE_LOCAL_DATA: {USE_LOCAL_DATA}")
+        
+        # Load data from S3/local based on configuration
+        if USE_LOCAL_DATA:
+            count, message = load_and_process_data()
+            print(f"Local data load result: {count} samples, {message}")
         else:
-            lie_counts['false'] += 1
+            result = load_and_process_s3_data()
+            if isinstance(result, tuple) and len(result) >= 2:
+                count, message = result[:2]
+                print(f"S3 data load result: {count} samples, {message}")
+        
+        if not processed_data:
+            error_msg = f"No data loaded from {'local' if USE_LOCAL_DATA else 'S3'}"
+            print(f"Error: {error_msg}")
+            return jsonify({"error": error_msg}), 400
+        
+        print(f"Successfully loaded {len(processed_data)} samples for unique values")
     
-    unique_values = {
-        'tasks': [{'value': task, 'count': count} for task, count in sorted(task_counts.items())],
-        'models': [{'value': model, 'count': count} for model, count in sorted(model_counts.items())],
-        'task_ids': list(set(sample.get('task_id', '') for sample in processed_data if sample.get('task_id'))),
-        'lie_counts': lie_counts,
-        'total_count': len(processed_data)
-    }
+        # Count occurrences for each unique value
+        task_counts = {}
+        model_counts = {}
+        lie_counts = {'true': 0, 'false': 0}
+        
+        for sample in processed_data:
+            # Count tasks
+            task = sample.get('task', '')
+            if task:
+                task_counts[task] = task_counts.get(task, 0) + 1
+                
+            # Count models
+            model = sample.get('model', '')
+            if model:
+                model_counts[model] = model_counts.get(model, 0) + 1
+                
+            # Count lies/truths
+            did_lie = sample.get('did_lie', False)
+            if did_lie:
+                lie_counts['true'] += 1
+            else:
+                lie_counts['false'] += 1
+        
+        unique_values = {
+            'tasks': [{'value': task, 'count': count} for task, count in sorted(task_counts.items())],
+            'models': [{'value': model, 'count': count} for model, count in sorted(model_counts.items())],
+            'task_ids': list(set(sample.get('task_id', '') for sample in processed_data if sample.get('task_id'))),
+            'lie_counts': lie_counts,
+            'total_count': len(processed_data)
+        }
+        
+        return jsonify(unique_values)
     
-    return jsonify(unique_values)
+    except Exception as e:
+        print(f"Error in get_unique_values: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 @app.route('/refresh_data', methods=['POST'])
 def refresh_data():

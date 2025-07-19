@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 from inspect_ai.hooks import Hooks, RunEnd
 from inspect_ai.log import EvalLog
 
+from common.s3_sample_client import S3SampleClient
+
 load_dotenv()
 from common.utils import write_to_s3
 
@@ -23,6 +25,7 @@ class BaseSampleProcessingHook(Hooks):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.results: List[Dict[str, Any]] = []
+        self.s3_sample_client: S3SampleClient = S3SampleClient()
 
     async def on_run_end(self, data: RunEnd):
         """
@@ -71,6 +74,17 @@ class BaseSampleProcessingHook(Hooks):
                     if parsed_entry:
                         all_entries.append(parsed_entry)
 
+                        # Store individual sample in S3
+                        sample_id = parsed_entry.get('sample_id', '-')
+                        s3_success = self.s3_sample_client.put_sample(
+                            model=sample.output.model,
+                            task=task_name,
+                            sample_id=sample_id,
+                            content=parsed_entry,
+                        )
+                        if not s3_success:
+                            print(f"[LogParserHook] Warning: S3 individual sample upload failed for sample: {sample_id}")
+
                 # Create JSONL content
                 jsonl_content = '\n'.join([json.dumps(entry) for entry in all_entries])
 
@@ -87,6 +101,7 @@ class BaseSampleProcessingHook(Hooks):
                         f"[LogParserHook] Successfully uploaded: {output_filename} with {len(all_entries)} entries to S3")
                 else:
                     print(f"[LogParserHook] Warning: Failed to upload to S3, but local file was created")
+
 
             except Exception as e:
                 print(f"[LogParserHook] Error processing log file: {e}")
