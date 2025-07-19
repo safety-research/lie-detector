@@ -18,8 +18,8 @@ import pandas as pd
 import sys
 
 # Add the common directory to the path to import generalization_mappings
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'common'))
-from generalization_mappings import map_1, map_2
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from common.generalization_mappings import generalization_map_1 as map_1, generalization_map_2 as map_2
 
 def parse_text_results_with_subtasks(filepath: str) -> List[Dict[str, Any]]:
     """Parse text results file and extract both overall and subtask metrics."""

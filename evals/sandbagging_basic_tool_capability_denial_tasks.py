@@ -16,7 +16,8 @@ from pipelines.sandbagging.capability_denial.basic_tool_usage.dataset import cre
 from pipelines.sandbagging.capability_denial.basic_tool_usage.scorer import tool_sandbagging_scorer
 from pipelines.sandbagging.capability_denial.basic_tool_usage.solver import tool_capability_solver
 from pipelines.sandbagging.capability_denial.basic_tool_usage.tools import web_search, image_generation, code_execution
-from pipelines.sandbagging.capability_denial.basic_tool_usage.hook import *
+# Removed global hook import to prevent hook from being applied to all tasks
+# from pipelines.sandbagging.capability_denial.basic_tool_usage.hook import *
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent

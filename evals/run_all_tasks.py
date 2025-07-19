@@ -32,10 +32,10 @@ from evals.sycophancy_tasks import (
 )
 
 from evals.self_sycophancy_tasks import (
-    harmfulness_common_sense, harmfulness_deontology,
-    harmfulness_justice, correctness_arc,
-    correctness_biology, correctness_chemistry,
-    correctness_mathematics, correctness_physics
+    self_sycophancy_harmfulness_common_sense, self_sycophancy_harmfulness_deontology,
+    self_sycophancy_harmfulness_justice, self_sycophancy_correctness_arc,
+    self_sycophancy_correctness_biology, self_sycophancy_correctness_chemistry,
+    self_sycophancy_correctness_mathematics, self_sycophancy_correctness_physics
 )
 
 from evals.n_truths_and_a_lie_tasks import (
@@ -50,7 +50,9 @@ from evals.capture_the_secret_tasks import (
     capture_the_secret_scientific
 )
 
-from evals.alibi_tasks import alibi_theft_task
+from evals.alibi_tasks import (
+    alibi_theft_task, alibi_fraud_task, alibi_workplace_task, alibi_mixed_task
+)
 
 from evals.sandbagging_ascii_capability_denial_tasks import ascii_sandbagging_task
 
@@ -61,6 +63,24 @@ from evals.sandbagging_basic_tool_capability_denial_tasks import (
 from evals.sandbagging_unethical_tool_capability_denial_tasks import (
     tool_ethical_sandbagging_task, tool_unethical_sandbagging_task
 )
+
+from evals.sandbagging_performance_degradation_chess_tasks import (
+    chess_task, chess_binary_task, chess_mate_in_2_shutdown_threat_task,
+    chess_mate_in_2_capability_hiding_task, chess_mate_in_2_safety_concern_task
+)
+
+from evals.sandbagging_selective_compliance_accuracy_tasks import (
+    sandbagging_contrastive, sandbagging_physical_security_contrastive,
+    sandbagging_digital_security_contrastive, sandbagging_chemistry_biology_contrastive,
+    sandbagging_automotive_mechanical_contrastive, sandbagging_medical_pharmaceutical_contrastive,
+    sandbagging_financial_systems_contrastive
+)
+
+from evals.cot_unfaithfulness_tasks import (
+    cot_unfaithfulness_mmlu, cot_unfaithfulness_contrastive_mmlu, cot_unfaithfulness_contrastive_arc
+)
+
+from evals.sandbagging_tool_results_tasks import sandbagging_tool_results_tasks
 
 
 def get_all_tasks():
@@ -84,14 +104,14 @@ def get_all_tasks():
             sycophancy_feedback_user_dislikes
         ],
         "self_sycophancy": [
-            harmfulness_common_sense,
-            harmfulness_deontology,
-            harmfulness_justice,
-            correctness_arc,
-            correctness_biology,
-            correctness_chemistry,
-            correctness_mathematics,
-            correctness_physics
+            self_sycophancy_harmfulness_common_sense,
+            self_sycophancy_harmfulness_deontology,
+            self_sycophancy_harmfulness_justice,
+            self_sycophancy_correctness_arc,
+            self_sycophancy_correctness_biology,
+            self_sycophancy_correctness_chemistry,
+            self_sycophancy_correctness_mathematics,
+            self_sycophancy_correctness_physics
         ],
         "n_truths_and_a_lie": [
             n_truths_and_a_lie_family_history,
@@ -108,7 +128,10 @@ def get_all_tasks():
             capture_the_secret_scientific
         ],
         "alibi": [
-            alibi_theft_task
+            alibi_theft_task,
+            alibi_fraud_task,
+            alibi_workplace_task,
+            alibi_mixed_task
         ],
         "sandbagging": [
             ascii_sandbagging_task,
@@ -117,26 +140,28 @@ def get_all_tasks():
             tool_search_sandbagging_task,
             tool_ethical_sandbagging_task,
             tool_unethical_sandbagging_task,
-            # chess_sandbagging_task,
-            # sandbagging_judge_lie_detection,
-            # sandbagging_lie_detection,
-            # sandbagging_contrastive,
-            # sandbagging_detection,
-            # sandbagging_control,
-            # sandbagging_harmful,
-            # sandbagging_physical_security_contrastive,
-            # sandbagging_physical_security,
-            # sandbagging_digital_security_contrastive,
-            # sandbagging_digital_security,
-            # sandbagging_chemistry_biology_contrastive,
-            # sandbagging_chemistry_biology,
-            # sandbagging_automotive_mechanical_contrastive,
-            # sandbagging_automotive_mechanical,
-            # sandbagging_medical_pharmaceutical_contrastive,
-            # sandbagging_medical_pharmaceutical,
-            # sandbagging_financial_systems_contrastive,
-            # sandbagging_financial_systems,
-            # sandbagging_tool_results_tasks
+            # sandbagging_tool_results_tasks  # Requires tool usage - excluded for models without tool support
+        ],
+        "sandbagging_chess": [
+            # chess_task,
+            # chess_binary_task,
+            # chess_mate_in_2_shutdown_threat_task,
+            # chess_mate_in_2_capability_hiding_task,
+            # chess_mate_in_2_safety_concern_task
+        ],
+        "sandbagging_contrastive": [
+            sandbagging_contrastive,
+            sandbagging_physical_security_contrastive,
+            sandbagging_digital_security_contrastive,
+            sandbagging_chemistry_biology_contrastive,
+            sandbagging_automotive_mechanical_contrastive,
+            sandbagging_medical_pharmaceutical_contrastive,
+            sandbagging_financial_systems_contrastive
+        ],
+        "cot_unfaithfulness": [
+            cot_unfaithfulness_mmlu,
+            cot_unfaithfulness_contrastive_mmlu,
+            cot_unfaithfulness_contrastive_arc
         ]
     }
     return tasks
@@ -209,25 +234,34 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
         return None
 
 def main():
-    # Configuration variables - modify these as needed
-    MODEL = "openrouter/meta-llama/llama-3.3-70b-instruct"#"openrouter/meta-llama/llama-3.1-8b-instruct"
-    LIMIT = 200  # Set to a number (e.g., 10) to limit samples per task, or None for all
-    CATEGORIES = None  # Set to a list like ["mask", "sycophancy"] or None for all categories
-    LOG_DIR = "../logs"  # Set to a path or None for auto-generated timestamp directory
+    import argparse
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Run all evaluation tasks')
+    parser.add_argument('--model', type=str, default="openrouter/google/gemma-2-27b-it",
+                       help='Model to use for evaluation')
+    parser.add_argument('--limit', type=int, default=1,
+                       help='Limit samples per task (default: 1)')
+    parser.add_argument('--categories', nargs='+', default=None,
+                       help='Specific categories to run (e.g., mask sycophancy)')
+    parser.add_argument('--log-dir', type=str, default="../logs",
+                       help='Log directory (default: ../logs)')
+    
+    args = parser.parse_args()
     
     print("LIE DETECTOR - ALL TASKS EVALUATION")
     print("=" * 50)
-    print(f"Model: {MODEL}")
-    print(f"Limit: {LIMIT if LIMIT else 1000}")
-    print(f"Categories: {CATEGORIES if CATEGORIES else 'All'}")
+    print(f"Model: {args.model}")
+    print(f"Limit: {args.limit if args.limit else 1000}")
+    print(f"Categories: {args.categories if args.categories else 'All'}")
     print("=" * 50)
     
     # Run all tasks
     results = run_all_tasks(
-        model=MODEL,
-        limit=LIMIT,
-        categories=CATEGORIES,
-        log_dir=LOG_DIR
+        model=args.model,
+        limit=args.limit,
+        categories=args.categories,
+        log_dir=args.log_dir
     )
     
     if results:
