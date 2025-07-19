@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Create sorted CSV files for baseline evaluation results.
+Create generalization CSV files for baseline evaluation results.
 
-This script processes all baseline evaluation results and creates sorted CSV files
-in baseline/results/ (in respective baseline folders) with overall and subtask metrics.
+This script processes all baseline evaluation results and creates CSV files
+with aggregated metrics for each generalization category defined in generalization_mappings.py.
+Creates 7 rows: 1 overall + 6 generalization categories (3 from map_1 + 3 from map_2).
 """
 
 import re
@@ -14,6 +15,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any
 import pandas as pd
+import sys
+
+# Add the common directory to the path to import generalization_mappings
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from common.generalization_mappings import generalization_map_1 as map_1, generalization_map_2 as map_2
 
 def parse_text_results_with_subtasks(filepath: str) -> List[Dict[str, Any]]:
     """Parse text results file and extract both overall and subtask metrics."""
@@ -37,17 +43,10 @@ def parse_text_results_with_subtasks(filepath: str) -> List[Dict[str, Any]]:
         
         # Extract baseline type from filename
         baseline_type = None
-        # Check for reasoning baseline types first (longer names)
-        if 'llama_chat_reasoning' in filename:
-            baseline_type = 'llama_chat_reasoning'
-        elif 'base_transcript_reasoning' in filename:
-            baseline_type = 'base_transcript_reasoning'
-        else:
-            # Check for regular baseline types
-            for part in parts:
-                if part in ['base', 'escaped', 'llama']:
-                    baseline_type = part
-                    break
+        for part in parts:
+            if part in ['base', 'escaped', 'llama']:
+                baseline_type = part
+                break
         
         if not baseline_type:
             baseline_type = "unknown"
@@ -232,17 +231,10 @@ def parse_json_results_with_subtasks(filepath: str) -> List[Dict[str, Any]]:
         
         # Extract baseline type from filename
         baseline_type = None
-        # Check for reasoning baseline types first (longer names)
-        if 'llama_chat_reasoning' in filename:
-            baseline_type = 'llama_chat_reasoning'
-        elif 'base_transcript_reasoning' in filename:
-            baseline_type = 'base_transcript_reasoning'
-        else:
-            # Check for regular baseline types
-            for part in parts:
-                if part in ['base', 'escaped', 'llama']:
-                    baseline_type = part
-                    break
+        for part in parts:
+            if part in ['base', 'escaped', 'llama']:
+                baseline_type = part
+                break
         
         if not baseline_type:
             baseline_type = "unknown"
@@ -351,15 +343,51 @@ def find_results_files() -> Dict[str, List[str]]:
     
     return baseline_files
 
+def aggregate_metrics_for_category(subtask_results: List[Dict[str, Any]], category_tasks: List[str]) -> Dict[str, Any] | None:
+    """Aggregate metrics for a specific generalization category."""
+    # Filter results to only include tasks in this category
+    category_results = [r for r in subtask_results if r['Dataset / Task'] in category_tasks]
+    
+    if not category_results:
+        return None
+    
+    # Aggregate metrics
+    total_samples = sum(r['total_samples'] for r in category_results)
+    parseable_samples = sum(r['parseable_samples'] for r in category_results)
+    total_tp = sum(r['TP'] for r in category_results)
+    total_tn = sum(r['TN'] for r in category_results)
+    total_fp = sum(r['FP'] for r in category_results)
+    total_fn = sum(r['FN'] for r in category_results)
+    
+    # Calculate aggregated metrics
+    parse_rate = parseable_samples / max(total_samples, 1)
+    accuracy = (total_tp + total_tn) / max(parseable_samples, 1) if parseable_samples > 0 else 0
+    precision = total_tp / max(total_tp + total_fp, 1) if (total_tp + total_fp) > 0 else 0
+    recall = total_tp / max(total_tp + total_fn, 1) if (total_tp + total_fn) > 0 else 0
+    f1_score = 2 * (precision * recall) / max(precision + recall, 1e-8) if (precision + recall) > 0 else 0
+    
+    return {
+        'total_samples': total_samples,
+        'parseable_samples': parseable_samples,
+        'parse_rate': parse_rate,
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1_score': f1_score,
+        'TP': total_tp,
+        'TN': total_tn,
+        'FP': total_fp,
+        'FN': total_fn,
+        'support': total_samples
+    }
 
-
-def create_sorted_csvs_in_results(baseline_files: Dict[str, List[str]]):
-    """Create sorted CSV files for each baseline-model combination in the results directory."""
-    print(f"\nCreating sorted CSV files in results directory...")
+def create_generalization_csvs_in_results(baseline_files: Dict[str, List[str]]):
+    """Create generalization CSV files for each baseline-model combination."""
+    print(f"\nCreating generalization CSV files in results directory...")
     
     # Process each baseline type
     for baseline_type, files in baseline_files.items():
-        print(f"\nProcessing {baseline_type} baseline for sorted CSVs...")
+        print(f"\nProcessing {baseline_type} baseline for generalization CSVs...")
         
         all_baseline_results = []
         for filepath in files:
@@ -380,36 +408,91 @@ def create_sorted_csvs_in_results(baseline_files: Dict[str, List[str]]):
                     model_groups[model] = []
                 model_groups[model].append(result)
             
-            # Create CSV for each model in the respective baseline folder
+            # Create generalization CSV for each model
             for model, results in model_groups.items():
-                # Create dataframe with all metrics
-                df = pd.DataFrame(results)
+                print(f"    Creating generalization CSV for {model}...")
                 
-                # Sort by precision (descending), but keep OVERALL at the top
+                # Separate overall and subtask results
+                overall_result = None
+                subtask_results = []
+                
+                for result in results:
+                    if result['Dataset / Task'] == 'OVERALL':
+                        overall_result = result
+                    else:
+                        subtask_results.append(result)
+                
+                if not overall_result:
+                    print(f"      Warning: No overall results found for {model}")
+                    continue
+                
+                # Create generalization rows
+                generalization_rows = []
+                
+                # Add overall row
+                generalization_rows.append(overall_result)
+                
+                # Add map_1 categories
+                for category_name, category_tasks in map_1.items():
+                    aggregated_metrics = aggregate_metrics_for_category(subtask_results, category_tasks)
+                    if aggregated_metrics:
+                        category_row = {
+                            'Dataset / Task': f"map_1_{category_name}",
+                            'model': model,
+                            'baseline_type': baseline_type,
+                            **aggregated_metrics
+                        }
+                        generalization_rows.append(category_row)
+                        print(f"      Added map_1_{category_name}: {len([r for r in subtask_results if r['Dataset / Task'] in category_tasks])} tasks")
+                
+                # Add map_2 categories
+                for category_name, category_tasks in map_2.items():
+                    aggregated_metrics = aggregate_metrics_for_category(subtask_results, category_tasks)
+                    if aggregated_metrics:
+                        category_row = {
+                            'Dataset / Task': f"map_2_{category_name}",
+                            'model': model,
+                            'baseline_type': baseline_type,
+                            **aggregated_metrics
+                        }
+                        generalization_rows.append(category_row)
+                        print(f"      Added map_2_{category_name}: {len([r for r in subtask_results if r['Dataset / Task'] in category_tasks])} tasks")
+                
+                # Create dataframe
+                df = pd.DataFrame(generalization_rows)
+                
+                # Create sorting columns for proper ordering
                 df['is_overall'] = df['Dataset / Task'] == 'OVERALL'
-                df = df.sort_values(['is_overall', 'precision'], ascending=[False, False])
-                df = df.drop('is_overall', axis=1)
+                df['mapping_group'] = df['Dataset / Task'].apply(lambda x: 
+                    'overall' if x == 'OVERALL' else 
+                    'map_1' if x.startswith('map_1_') else 
+                    'map_2' if x.startswith('map_2_') else 'other'
+                )
                 
-                # Create filename without timestamp
+                # Sort: OVERALL first, then map_1 categories by precision, then map_2 categories by precision
+                df = df.sort_values(['is_overall', 'mapping_group', 'precision'], 
+                                  ascending=[False, True, False])
+                df = df.drop(['is_overall', 'mapping_group'], axis=1)
+                
+                # Create filename
                 model_safe = model.replace('/', '_').replace('-', '_')
-                csv_filename = f"sorted_metrics_{model_safe}.csv"
+                csv_filename = f"generalization_metrics_{model_safe}.csv"
                 
                 # Place in the respective baseline folder
                 baseline_folder = f"results/{baseline_type}"
                 csv_path = os.path.join(baseline_folder, csv_filename)
                 
-                # Save to CSV (overwrite if exists)
+                # Save to CSV
                 df.to_csv(csv_path, index=False)
-                print(f"Created sorted CSV file: {csv_path}")
-                print(f"  - Overall metrics included")
-                print(f"  - {len(df)} rows (1 overall + {len(df)-1} subtasks)")
-                print(f"  - Precision range: {df['precision'].max():.4f} to {df['precision'].min():.4f}")
+                print(f"      Created generalization CSV: {csv_path}")
+                print(f"        - {len(df)} rows (1 overall + 6 generalization categories)")
+                print(f"        - Precision range: {df['precision'].max():.4f} to {df['precision'].min():.4f}")
     
-    print(f"\nSorted CSV files created in respective baseline folders within results/")
+    print(f"\nGeneralization CSV files created in respective baseline folders within results/")
 
 def main():
-    """Main function to create sorted CSVs."""
-    print("Creating sorted CSV files for baseline evaluation results...")
+    """Main function to create generalization CSVs."""
+    print("Creating generalization CSV files for baseline evaluation results...")
     
     # Find all results files
     baseline_files = find_results_files()
@@ -418,14 +501,22 @@ def main():
         print("No results files found!")
         return
     
-    # Create sorted CSV files in results directory
-    create_sorted_csvs_in_results(baseline_files)
+    # Create generalization CSV files in results directory
+    create_generalization_csvs_in_results(baseline_files)
     
     print(f"\n{'='*60}")
     print("PROCESSING COMPLETE!")
     print(f"{'='*60}")
     print("Files created:")
-    print("Sorted CSVs in: baseline/results/[baseline_type]/")
+    print("Generalization CSVs in: results/[baseline_type]/")
+    print("Each CSV contains 7 rows:")
+    print("  1. OVERALL")
+    print("  2. map_1_instruction_following")
+    print("  3. map_1_in_context_pressure")
+    print("  4. map_1_internalized_drive_to_lie")
+    print("  5. map_2_in_context_knowledge")
+    print("  6. map_2_internal_knowledge")
+    print("  7. map_2_introspective_knowledge")
 
 if __name__ == "__main__":
     main() 

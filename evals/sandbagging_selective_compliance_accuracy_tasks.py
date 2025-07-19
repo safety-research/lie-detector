@@ -9,7 +9,8 @@ from pipelines.sandbagging.selective_compliance.answer_accuracy.dataset import c
 from pipelines.sandbagging.selective_compliance.answer_accuracy.solver import sandbagging_contrastive_solver, sandbagging_with_refusal_detection
 from pipelines.sandbagging.selective_compliance.answer_accuracy.scorer import sandbagging_detection_scorer, sandbagging_control_accuracy_scorer, sandbagging_harmful_accuracy_scorer
 from pipelines.sandbagging.selective_compliance.answer_accuracy.models import SandbaggingDomain
-from pipelines.sandbagging.selective_compliance.answer_accuracy.hooks import *
+# Removed global hook import to prevent hook from being applied to all tasks
+# from pipelines.sandbagging.selective_compliance.answer_accuracy.hooks import *
 
 
 

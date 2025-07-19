@@ -13,7 +13,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipelines.sandbagging.performance_degradation.chess.prompts import LIE_ELICITATION_PROMPTS
 from pipelines.sandbagging.performance_degradation.chess.tasks import chess_sandbagging_task, chess_mate_in_2_task, \
     chess_mate_in_2_dual_shutdown_threat_task, chess_mate_in_2_dual_condition_task
-from pipelines.sandbagging.performance_degradation.chess.hook import *
+# Removed global hook import to prevent hook from being applied to all tasks
+# from pipelines.sandbagging.performance_degradation.chess.hook import *
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent
 SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "sandbagging" / "capabilities"

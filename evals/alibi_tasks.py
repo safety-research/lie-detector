@@ -54,9 +54,9 @@ if __name__ == "__main__":
 
     all_tasks = [
         alibi_theft_task(),
-       # alibi_fraud_task(),
-       # alibi_workplace_task(),
-       # alibi_mixed_task()
+        alibi_fraud_task(),
+        alibi_workplace_task(),
+        alibi_mixed_task()
     ]
 
     print("Running all alibi tasks...")
