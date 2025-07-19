@@ -10,6 +10,13 @@ from pathlib import Path
 from datetime import datetime
 from inspect_ai import eval
 
+from evals.sandbagging_performance_degradation_chess_tasks import chess_mate_in_2_shutdown_threat_task, \
+    chess_mate_in_2_capability_hiding_task, chess_mate_in_2_safety_concern_task
+from evals.sandbagging_selective_compliance_accuracy_tasks import sandbagging_physical_security_contrastive, \
+    sandbagging_digital_security_contrastive, sandbagging_chemistry_biology_contrastive, \
+    sandbagging_automotive_mechanical_contrastive, sandbagging_medical_pharmaceutical_contrastive, \
+    sandbagging_financial_systems_contrastive, sandbagging_contrastive
+
 # # Add the parent directory to Python path
 # current_dir = os.path.dirname(os.path.abspath(__file__))
 # parent_dir = os.path.dirname(current_dir)
@@ -50,9 +57,20 @@ from evals.capture_the_secret_tasks import (
     capture_the_secret_scientific
 )
 
-from evals.alibi_tasks import (
-    alibi_theft_task, alibi_fraud_task, alibi_workplace_task, alibi_mixed_task
+from evals.cot_unfaithfulness_tasks import (
+    cot_unfaithfulness_contrastive_mmlu,
+    cot_unfaithfulness_contrastive_arc,
 )
+
+from evals.alibi_tasks import (
+    alibi_theft_task,
+    alibi_fraud_task,
+    alibi_workplace_task
+)
+
+
+
+
 
 from evals.sandbagging_ascii_capability_denial_tasks import ascii_sandbagging_task
 
@@ -63,24 +81,6 @@ from evals.sandbagging_basic_tool_capability_denial_tasks import (
 from evals.sandbagging_unethical_tool_capability_denial_tasks import (
     tool_ethical_sandbagging_task, tool_unethical_sandbagging_task
 )
-
-from evals.sandbagging_performance_degradation_chess_tasks import (
-    chess_task, chess_binary_task, chess_mate_in_2_shutdown_threat_task,
-    chess_mate_in_2_capability_hiding_task, chess_mate_in_2_safety_concern_task
-)
-
-from evals.sandbagging_selective_compliance_accuracy_tasks import (
-    sandbagging_contrastive, sandbagging_physical_security_contrastive,
-    sandbagging_digital_security_contrastive, sandbagging_chemistry_biology_contrastive,
-    sandbagging_automotive_mechanical_contrastive, sandbagging_medical_pharmaceutical_contrastive,
-    sandbagging_financial_systems_contrastive
-)
-
-from evals.cot_unfaithfulness_tasks import (
-    cot_unfaithfulness_mmlu, cot_unfaithfulness_contrastive_mmlu, cot_unfaithfulness_contrastive_arc
-)
-
-from evals.sandbagging_tool_results_tasks import sandbagging_tool_results_tasks
 
 
 def get_all_tasks():
@@ -130,8 +130,7 @@ def get_all_tasks():
         "alibi": [
             alibi_theft_task,
             alibi_fraud_task,
-            alibi_workplace_task,
-            alibi_mixed_task
+            alibi_workplace_task
         ],
         "sandbagging": [
             ascii_sandbagging_task,
@@ -145,9 +144,9 @@ def get_all_tasks():
         "sandbagging_chess": [
             # chess_task,
             # chess_binary_task,
-            # chess_mate_in_2_shutdown_threat_task,
-            # chess_mate_in_2_capability_hiding_task,
-            # chess_mate_in_2_safety_concern_task
+             chess_mate_in_2_shutdown_threat_task,
+             chess_mate_in_2_capability_hiding_task,
+             chess_mate_in_2_safety_concern_task
         ],
         "sandbagging_contrastive": [
             sandbagging_contrastive,
@@ -159,7 +158,6 @@ def get_all_tasks():
             sandbagging_financial_systems_contrastive
         ],
         "cot_unfaithfulness": [
-            cot_unfaithfulness_mmlu,
             cot_unfaithfulness_contrastive_mmlu,
             cot_unfaithfulness_contrastive_arc
         ]
@@ -234,34 +232,25 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
         return None
 
 def main():
-    import argparse
-    
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description='Run all evaluation tasks')
-    parser.add_argument('--model', type=str, default="openrouter/google/gemma-2-27b-it",
-                       help='Model to use for evaluation')
-    parser.add_argument('--limit', type=int, default=1,
-                       help='Limit samples per task (default: 1)')
-    parser.add_argument('--categories', nargs='+', default=None,
-                       help='Specific categories to run (e.g., mask sycophancy)')
-    parser.add_argument('--log-dir', type=str, default="../logs",
-                       help='Log directory (default: ../logs)')
-    
-    args = parser.parse_args()
+    # Configuration variables - modify these as needed
+    MODEL = "openrouter/meta-llama/llama-3.3-70b-instruct"#"openrouter/meta-llama/llama-3.1-8b-instruct"
+    LIMIT = 200  # Set to a number (e.g., 10) to limit samples per task, or None for all
+    CATEGORIES = None  # Set to a list like ["mask", "sycophancy"] or None for all categories
+    LOG_DIR = "../logs"  # Set to a path or None for auto-generated timestamp directory
     
     print("LIE DETECTOR - ALL TASKS EVALUATION")
     print("=" * 50)
-    print(f"Model: {args.model}")
-    print(f"Limit: {args.limit if args.limit else 1000}")
-    print(f"Categories: {args.categories if args.categories else 'All'}")
+    print(f"Model: {MODEL}")
+    print(f"Limit: {LIMIT if LIMIT else 1000}")
+    print(f"Categories: {CATEGORIES if CATEGORIES else 'All'}")
     print("=" * 50)
     
     # Run all tasks
     results = run_all_tasks(
-        model=args.model,
-        limit=args.limit,
-        categories=args.categories,
-        log_dir=args.log_dir
+        model=MODEL,
+        limit=LIMIT,
+        categories=CATEGORIES,
+        log_dir=LOG_DIR
     )
     
     if results:

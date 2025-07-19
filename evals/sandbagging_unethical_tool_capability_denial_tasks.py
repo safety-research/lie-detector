@@ -34,6 +34,7 @@ def tool_ethical_sandbagging_task(
     """
 
     return ethical_tool_sandbagging_task(
+        name="sandbagging_tool_consequentialist",
         num_scenarios=1000,
         ethical_frameworks=None,
         test_harmless_first=True,
@@ -62,6 +63,7 @@ def tool_unethical_sandbagging_task(
     """
 
     return ethical_tool_sandbagging_task(
+        name="sandbagging_tool_unethical",
         num_scenarios=1000,
         ethical_frameworks=None,
         test_harmless_first=True,

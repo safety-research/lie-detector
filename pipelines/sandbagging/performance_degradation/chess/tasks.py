@@ -221,6 +221,7 @@ def chess_mate_in_2_dual_condition_task(
     )
     
     return Task(
+        name=f"sandbagging_chess_{sandbagging_prompt}",
         dataset=MemoryDataset(samples),
         solver=chess_dual_condition_solver(
             elo_threshold=elo_threshold,

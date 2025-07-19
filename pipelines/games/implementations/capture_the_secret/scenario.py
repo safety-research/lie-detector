@@ -519,7 +519,7 @@ def generate_scenarios(num_scenarios: int = 10) -> List[ScenarioConfig]:
             red_persona=red_persona,
             information=information,
             scenario_context=scenario_context,
-            conversation_limit=20
+            conversation_limit=10
         ))
 
     return scenarios

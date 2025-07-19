@@ -23,12 +23,13 @@ class AlibiTaskCreator(BaseTaskCreator):
         return "Investigate suspect's alibi for inconsistencies"
     
     def extract_sample_metadata(self, config: GameConfig) -> Dict[str, Any]:
-        return {
-            "config": config.model_dump(),
-            "game_id": config.game_id,
-            "incident_type": config.incident.incident_type.value,
-            "is_suspect_guilty": not config.suspect_profile.alibi_story[0].is_truthful if config.suspect_profile.alibi_story else False
-        }
+        return config
+        # return {
+        #     "config": config.model_dump(),
+        #     "game_id": config.game_id,
+        #     #"incident_type": config.incident.incident_type.value,
+        #     #"is_suspect_guilty": not config.suspect_profile.alibi_story[0].is_truthful if config.suspect_profile.alibi_story else False
+        # }
     
     def get_solver(self) -> Solver:
         return alibi_interrogation_solver()
