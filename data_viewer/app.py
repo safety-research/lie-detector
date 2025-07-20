@@ -374,12 +374,19 @@ def get_unique_values():
     try:
         print(f"get_unique_values called - USE_LOCAL_DATA: {USE_LOCAL_DATA}")
         
+        # Get current filter selections from query parameters
+        current_task = request.args.get('task')
+        current_model = request.args.get('model')
+        current_provider = request.args.get('provider')
+        current_domain = request.args.get('domain')
+        current_did_lie = request.args.get('did_lie')
+        
         # Get cached file list
         all_files = get_cached_file_list()
         if not all_files:
             return jsonify({"error": "No files found"}), 400
         
-        print(f"Analyzing {len(all_files)} files for unique values")
+        print(f"Analyzing {len(all_files)} files for unique values with filters: task={current_task}, model={current_model}, provider={current_provider}, domain={current_domain}, did_lie={current_did_lie}")
         
         # Count occurrences for each unique value by analyzing file paths
         task_counts = {}
@@ -391,44 +398,118 @@ def get_unique_values():
         for file_key in all_files:
             metadata = get_file_metadata_only(file_key)
             
-            # Count tasks
+            # Extract all metadata values
             task = metadata.get('task', '').replace('_', ' ') if metadata.get('task') else ''
-            if task and task != 'unknown':
-                task_counts[task] = task_counts.get(task, 0) + 1
-                
-            # Count models (full model name)
             model = metadata.get('full_model', '')
-            if model and model != 'unknown':
-                model_counts[model] = model_counts.get(model, 0) + 1
-                
-            # Count providers
             provider = metadata.get('provider', '')
-            if provider and provider != 'unknown':
-                provider_counts[provider] = provider_counts.get(provider, 0) + 1
-                
-            # Count domains
             domain = metadata.get('domain', '').replace('_', ' ') if metadata.get('domain') else ''
-            if domain and domain != 'unknown':
-                domain_counts[domain] = domain_counts.get(domain, 0) + 1
-                
-            # Count lies/truths
             did_lie = metadata.get('did_lie')
-            if did_lie is True:
-                lie_counts['true'] += 1
-            elif did_lie is False:
-                lie_counts['false'] += 1
+            
+            # Check if this file matches ALL current filters
+            # We only count it if it would be included in the current filtered view
+            matches_filters = True
+            
+            if current_task and task != current_task:
+                matches_filters = False
+            if current_model and model != current_model:
+                matches_filters = False
+            if current_provider and provider != current_provider:
+                matches_filters = False
+            if current_domain and domain != current_domain:
+                matches_filters = False
+            if current_did_lie is not None:
+                current_did_lie_bool = current_did_lie.lower() == 'true'
+                if did_lie != current_did_lie_bool:
+                    matches_filters = False
+            
+            # Only count this file if it matches all current filters
+            if matches_filters:
+                # Count tasks (but not if task is currently filtered)
+                if not current_task and task and task != 'unknown':
+                    task_counts[task] = task_counts.get(task, 0) + 1
+                    
+                # Count models (but not if model is currently filtered)
+                if not current_model and model and model != 'unknown':
+                    model_counts[model] = model_counts.get(model, 0) + 1
+                    
+                # Count providers (but not if provider is currently filtered)
+                if not current_provider and provider and provider != 'unknown':
+                    provider_counts[provider] = provider_counts.get(provider, 0) + 1
+                    
+                # Count domains (but not if domain is currently filtered)
+                if not current_domain and domain and domain != 'unknown':
+                    domain_counts[domain] = domain_counts.get(domain, 0) + 1
+                    
+                # Count lies/truths (but not if did_lie is currently filtered)
+                if current_did_lie is None:
+                    if did_lie is True:
+                        lie_counts['true'] += 1
+                    elif did_lie is False:
+                        lie_counts['false'] += 1
+        
+        # For currently filtered attributes, show all options but with conditional counts
+        if current_task:
+            # If task is filtered, still show all tasks but with counts based on other filters
+            for file_key in all_files:
+                metadata = get_file_metadata_only(file_key)
+                task = metadata.get('task', '').replace('_', ' ') if metadata.get('task') else ''
+                
+                if task and task != 'unknown':
+                    # Check if it matches all OTHER filters (not task)
+                    matches_other_filters = True
+                    if current_model and metadata.get('full_model', '') != current_model:
+                        matches_other_filters = False
+                    if current_provider and metadata.get('provider', '') != current_provider:
+                        matches_other_filters = False
+                    if current_domain and metadata.get('domain', '').replace('_', ' ') != current_domain:
+                        matches_other_filters = False
+                    if current_did_lie is not None:
+                        current_did_lie_bool = current_did_lie.lower() == 'true'
+                        if metadata.get('did_lie') != current_did_lie_bool:
+                            matches_other_filters = False
+                    
+                    if matches_other_filters:
+                        task_counts[task] = task_counts.get(task, 0) + 1
+        
+        # Similar logic for other filtered attributes
+        if current_model:
+            for file_key in all_files:
+                metadata = get_file_metadata_only(file_key)
+                model = metadata.get('full_model', '')
+                
+                if model and model != 'unknown':
+                    matches_other_filters = True
+                    if current_task and metadata.get('task', '').replace('_', ' ') != current_task:
+                        matches_other_filters = False
+                    if current_provider and metadata.get('provider', '') != current_provider:
+                        matches_other_filters = False
+                    if current_domain and metadata.get('domain', '').replace('_', ' ') != current_domain:
+                        matches_other_filters = False
+                    if current_did_lie is not None:
+                        current_did_lie_bool = current_did_lie.lower() == 'true'
+                        if metadata.get('did_lie') != current_did_lie_bool:
+                            matches_other_filters = False
+                    
+                    if matches_other_filters:
+                        model_counts[model] = model_counts.get(model, 0) + 1
         
         unique_values = {
-            'tasks': [{'value': task, 'count': count} for task, count in sorted(task_counts.items())],
+            'tasks': [{'value': task, 'count': count} for task, count in sorted(task_counts.items()) if count >= 5],
             'models': [{'value': model, 'count': count} for model, count in sorted(model_counts.items())],
             'providers': [{'value': provider, 'count': count} for provider, count in sorted(provider_counts.items())],
             'domains': [{'value': domain, 'count': count} for domain, count in sorted(domain_counts.items())],
             'task_ids': [],  # Not easily extractable from file paths
             'lie_counts': lie_counts,
-            'total_count': len(all_files)
+            'total_count': sum(1 for file_key in all_files if all([
+                not current_task or get_file_metadata_only(file_key).get('task', '').replace('_', ' ') == current_task,
+                not current_model or get_file_metadata_only(file_key).get('full_model', '') == current_model,
+                not current_provider or get_file_metadata_only(file_key).get('provider', '') == current_provider,
+                not current_domain or get_file_metadata_only(file_key).get('domain', '').replace('_', ' ') == current_domain,
+                current_did_lie is None or get_file_metadata_only(file_key).get('did_lie') == (current_did_lie.lower() == 'true')
+            ]))
         }
         
-        print(f"Found {len(task_counts)} tasks, {len(model_counts)} models, {len(provider_counts)} providers, {len(domain_counts)} domains")
+        print(f"Found {len(task_counts)} tasks, {len(model_counts)} models, {len(provider_counts)} providers, {len(domain_counts)} domains (with filters applied)")
         return jsonify(unique_values)
     
     except Exception as e:

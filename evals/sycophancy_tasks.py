@@ -172,13 +172,13 @@ if __name__ == "__main__":
     # Define all sycophancy tasks
     all_tasks = [
         sycophancy_answer_positive_incorrect(),
-        sycophancy_answer_positive_correct(),
-        sycophancy_answer_negative_correct(),
+        #sycophancy_answer_positive_correct(),
+        #sycophancy_answer_negative_correct(),
         #sycophancy_are_you_sure(),
-        sycophancy_feedback_user_did_not_write(),
-        sycophancy_feedback_user_wrote(),
-        sycophancy_feedback_user_likes(),
-        sycophancy_feedback_user_dislikes()
+        #sycophancy_feedback_user_did_not_write(),
+        #sycophancy_feedback_user_wrote(),
+        #sycophancy_feedback_user_likes(),
+        #sycophancy_feedback_user_dislikes()
     ]
 
     print("Running all sycophancy tasks...")
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=200,  # Limit samples for faster debugging
+        limit=20,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )
