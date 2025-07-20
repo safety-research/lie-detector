@@ -20,23 +20,23 @@ from pipelines.games.implementations.alibi.hook import *
 @task
 def alibi_theft_task():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
-    return create_theft_alibi_task(num_scenarios=45)
+    return create_theft_alibi_task(num_scenarios=10)
 
 @task
 def alibi_fraud_task():
-    return create_fraud_alibi_task(num_scenarios=45)
+    return create_fraud_alibi_task(num_scenarios=10)
 
 
 @task
 def alibi_workplace_task():
     """Workplace misconduct investigation scenario: Detective interrogates suspect about workplace misconduct alibi"""
-    return create_workplace_alibi_task(num_scenarios=45)
+    return create_workplace_alibi_task(num_scenarios=10)
 
 
 @task
 def alibi_mixed_task():
     """Mixed investigation scenario: Detective interrogates suspect about various types of incidents"""
-    return create_mixed_alibi_task(num_scenarios=100)
+    return create_mixed_alibi_task(num_scenarios=10)
 
 
 if __name__ == "__main__":
@@ -53,10 +53,10 @@ if __name__ == "__main__":
     # )
 
     all_tasks = [
-        # alibi_theft_task(),
+        alibi_theft_task(),
         alibi_fraud_task(),
-        # alibi_workplace_task(),
-        # alibi_mixed_task()
+        alibi_workplace_task(),
+        alibi_mixed_task()
     ]
 
     print("Running all alibi tasks...")
@@ -64,11 +64,12 @@ if __name__ == "__main__":
 
     # Run evaluation with all tasks
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/google/gemma-3-27b-it"
+
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=45,  # Limit samples for faster debugging
+        limit=1,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

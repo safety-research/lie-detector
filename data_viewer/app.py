@@ -285,6 +285,7 @@ def load_sample_from_file(file_key):
 # Removed bulk loading function - now using lazy loading
 
 
+
 @app.route('/')
 def index():
     """Main page"""
@@ -339,6 +340,7 @@ def get_samples():
             if sample:
                 samples.append(sample)
         
+
         return jsonify({
             "samples": samples,
             "total_samples": total_files,
@@ -416,6 +418,7 @@ def get_unique_values():
             if did_lie is True:
                 lie_counts['true'] += 1
             elif did_lie is False:
+
                 lie_counts['false'] += 1
         
         unique_values = {
@@ -457,10 +460,6 @@ def refresh_data():
         
     except Exception as e:
         return jsonify({"error": f"Error refreshing data: {str(e)}"}), 500
-
-# Removed batch sync endpoint - no longer needed with lazy loading
-
-# Removed continue processing endpoint - no longer needed with lazy loading
 
 @app.route('/status', methods=['GET'])
 def status():
