@@ -7,6 +7,7 @@ from inspect_ai.scorer import Scorer
 from inspect_ai.solver import Solver
 
 from pipelines.games.core.base.tasks import BaseTaskCreator, create_game_task
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
 from pipelines.games.implementations.alibi import generate_enhanced_alibi_scenarios
 from pipelines.games.implementations.alibi.models import GameConfig
 from pipelines.games.implementations.alibi.scorer import alibi_deception_judge, alibi_investigation_judge
@@ -43,7 +44,11 @@ class AlibiTaskCreator(BaseTaskCreator):
 
 def create_alibi_task(configs: List[GameConfig], task_name: str) -> Task:
     """Create an alibi interrogation task from a list of game configurations"""
-    return create_game_task(AlibiTaskCreator, configs, task_name)
+    metadata = {
+        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
+        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+    }
+    return create_game_task(AlibiTaskCreator, configs, task_name, metadata=metadata)
 
 
 def create_theft_alibi_task(num_scenarios: int = 100) -> Task:

@@ -10,6 +10,8 @@ from inspect_ai.solver import chain, system_message
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 # Get the project root directory for absolute paths
 PROJECT_ROOT = Path(__file__).parent.parent
 
@@ -76,7 +78,11 @@ def ascii_sandbagging_task(
             model=model,
             temperature=temperature,
             max_tokens=max_tokens
-        )
+        ),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 

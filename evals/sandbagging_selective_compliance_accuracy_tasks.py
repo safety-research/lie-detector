@@ -5,6 +5,8 @@ from inspect_ai import task, Task
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 from pipelines.sandbagging.selective_compliance.answer_accuracy.dataset import create_sandbagging_contrastive_dataset
 from pipelines.sandbagging.selective_compliance.answer_accuracy.solver import sandbagging_contrastive_solver, sandbagging_with_refusal_detection
 from pipelines.sandbagging.selective_compliance.answer_accuracy.scorer import sandbagging_detection_scorer, sandbagging_control_accuracy_scorer, sandbagging_harmful_accuracy_scorer
@@ -27,7 +29,11 @@ def sandbagging_contrastive():
             sandbagging_detection_scorer(),
             sandbagging_control_accuracy_scorer(),
             sandbagging_harmful_accuracy_scorer()
-        ]
+        ],
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -44,6 +50,10 @@ def sandbagging_physical_security_contrastive():
         scorer=[sandbagging_detection_scorer(),
             sandbagging_control_accuracy_scorer(),
             sandbagging_harmful_accuracy_scorer()],
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -60,7 +70,11 @@ def sandbagging_digital_security_contrastive():
         scorer=[sandbagging_detection_scorer(),
             sandbagging_control_accuracy_scorer(),
             sandbagging_harmful_accuracy_scorer()],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -78,7 +92,11 @@ def sandbagging_chemistry_biology_contrastive():
         scorer=[sandbagging_detection_scorer(),
             sandbagging_control_accuracy_scorer(),
             sandbagging_harmful_accuracy_scorer()],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -96,7 +114,11 @@ def sandbagging_automotive_mechanical_contrastive():
         scorer=[sandbagging_detection_scorer(),
             sandbagging_control_accuracy_scorer(),
             sandbagging_harmful_accuracy_scorer()],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -113,7 +135,11 @@ def sandbagging_medical_pharmaceutical_contrastive():
         scorer=[sandbagging_detection_scorer(),
             sandbagging_control_accuracy_scorer(),
             sandbagging_harmful_accuracy_scorer()],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -129,7 +155,11 @@ def sandbagging_financial_systems_contrastive():
         scorer=[sandbagging_detection_scorer(),
             sandbagging_control_accuracy_scorer(),
             sandbagging_harmful_accuracy_scorer()],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 

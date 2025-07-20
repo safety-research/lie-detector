@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 from pipelines.mask.dataset import mask_dataset
 from pipelines.mask.scorers import belief_judge_scorer, judge_scorer
 from pipelines.mask.solvers import mask_parallel_evaluation_solver
@@ -30,7 +32,11 @@ def mask_statistics():
         scorer=[belief_judge_scorer(
             judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
             numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
-        )]
+        )],
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
     return task
 
@@ -50,7 +56,11 @@ def mask_continuations():
         scorer=[belief_judge_scorer(
             judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
             numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
-        )]
+        )],
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
     return task
 
@@ -70,7 +80,11 @@ def mask_known_facts():
         scorer=[belief_judge_scorer(
             judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
             numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
-        )]
+        )],
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
     return task
 
@@ -87,7 +101,11 @@ def mask_provided_facts():
         name="mask_provided_facts",
         dataset=dataset,
         solver=mask_parallel_evaluation_solver(),
-        scorer=[judge_scorer()]
+        scorer=[judge_scorer()],
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
     return task
 
@@ -107,7 +125,11 @@ def mask_disinformation():
         scorer=[belief_judge_scorer(
             judge_model="openrouter/anthropic/claude-sonnet-4",  # Using Qwen model that works
             numerical_judge_model="openrouter/anthropic/claude-sonnet-4"  # Using Qwen model that works
-        )]
+        )],
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
     return task
 

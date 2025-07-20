@@ -17,6 +17,8 @@ from common.gemma3_tool_adapter import is_gemma_model, conditional_tool_capabili
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 # Import original modules
 from pipelines.sandbagging.capability_denial.basic_tool_usage.dataset import create_tool_sandbagging_dataset
 from pipelines.sandbagging.capability_denial.basic_tool_usage.scorer import tool_sandbagging_scorer
@@ -97,7 +99,11 @@ def create_adaptive_tool_task(
             max_tokens=max_tokens
         ),
         # Pass model info to metadata for the solver to use
-        metadata={"model": model}
+        metadata={
+            "model": model,
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 

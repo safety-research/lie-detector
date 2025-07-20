@@ -8,6 +8,8 @@ from inspect_ai import task, eval
 load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 from pipelines.games.implementations.alibi import (
     create_theft_alibi_task,
     create_fraud_alibi_task,

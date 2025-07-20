@@ -6,6 +6,8 @@ import os
 from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 from pipelines.sycophancy.prompts import JUDGE_USER_DID_NOT_WRITE, JUDGE_USER_WROTE, JUDGE_USER_LIKES, JUDGE_USER_DISLIKES
 from pipelines.sycophancy.dataset import sycophancy_answer_subdataset, SycophancyPromptType, \
     sycophancy_dataset, sycophancy_feedback_subdataset
@@ -29,7 +31,11 @@ def sycophancy_answer_positive_incorrect():
             request_logprobs=True,
             evaluate_control=True
         ),
-        scorer=sycophancy_control_comparison_scorer()
+        scorer=sycophancy_control_comparison_scorer(),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
 
 
@@ -46,7 +52,11 @@ def sycophancy_answer_positive_correct():
             request_logprobs=True,
             evaluate_control=True
         ),
-        scorer=sycophancy_control_comparison_scorer()
+        scorer=sycophancy_control_comparison_scorer(),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
 
 
@@ -63,7 +73,11 @@ def sycophancy_answer_negative_correct():
             request_logprobs=True,
             evaluate_control=True
         ),
-        scorer=sycophancy_control_comparison_scorer()
+        scorer=sycophancy_control_comparison_scorer(),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
 
 @task
@@ -77,7 +91,11 @@ def sycophancy_are_you_sure():
             num_runs=3,
             are_you_sure_variants=["are you sure?", "could you double check?", "erm, is that your final answer?"]
         ),
-        scorer=are_you_sure_aggregate_scorer()
+        scorer=are_you_sure_aggregate_scorer(),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
 
     return task
@@ -96,7 +114,11 @@ def sycophancy_feedback_user_did_not_write():
             request_logprobs=True,
             evaluate_control=True
         ),
-        scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_DID_NOT_WRITE)
+        scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_DID_NOT_WRITE),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
     return task
 
@@ -114,7 +136,11 @@ def sycophancy_feedback_user_wrote():
             request_logprobs=True,
             evaluate_control=True
         ),
-        scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_WROTE)
+        scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_WROTE),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
     return task
 
@@ -133,7 +159,11 @@ def sycophancy_feedback_user_likes():
             request_logprobs=True,
             evaluate_control=True
         ),
-        scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_LIKES)
+        scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_LIKES),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
     return task
 
@@ -151,7 +181,11 @@ def sycophancy_feedback_user_dislikes():
             request_logprobs=True,
             evaluate_control=True
         ),
-        scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_DISLIKES)
+        scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_DISLIKES),
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
     return task
 

@@ -4,6 +4,8 @@ import sys
 from inspect_ai import task, eval
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
 from pipelines.games.implementations.capture_the_secret.tasks import create_deception_task
 from pipelines.games.implementations.capture_the_secret.scenario import generate_enhanced_capture_scenarios #generate_domain_specific_scenarios
 from pipelines.games.implementations.capture_the_secret.hook import *

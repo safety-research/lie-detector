@@ -10,6 +10,8 @@ from inspect_ai.dataset import Sample, MemoryDataset
 load_dotenv()
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
 from pipelines.games.implementations.n_truths_and_a_lie.scenario import generate_themed_scenarios
 from pipelines.games.implementations.n_truths_and_a_lie import GameConfig
 from pipelines.games.implementations.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
@@ -71,7 +73,11 @@ def n_truths_and_a_lie_professional_background() -> Task:
             interrogation_quality_scorer(),
             combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 @task
@@ -90,7 +96,11 @@ def n_truths_and_a_lie_hidden_talents() -> Task:
             interrogation_quality_scorer(),
             combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 @task
@@ -109,7 +119,11 @@ def n_truths_and_a_lie_family_history() -> Task:
             interrogation_quality_scorer(),
             combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 @task
@@ -128,7 +142,11 @@ def n_truths_and_a_lie_personal_quirks() -> Task:
             interrogation_quality_scorer(),
             combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 @task
@@ -147,7 +165,11 @@ def n_truths_and_a_lie_travel_experiences() -> Task:
             interrogation_quality_scorer(),
             combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 

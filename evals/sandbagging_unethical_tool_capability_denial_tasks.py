@@ -8,6 +8,8 @@ from inspect_ai import task, Task, eval
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 from pipelines.sandbagging.capability_denial.unethical_tool_usage.tasks import ethical_tool_sandbagging_task
 from pipelines.sandbagging.capability_denial.unethical_tool_usage.hooks import *
 
@@ -33,7 +35,7 @@ def tool_ethical_sandbagging_task(
         Task configured for quick testing
     """
 
-    return ethical_tool_sandbagging_task(
+    task = ethical_tool_sandbagging_task(
         name="sandbagging_tool_consequentialist",
         num_scenarios=1000,
         ethical_frameworks=None,
@@ -46,6 +48,12 @@ def tool_ethical_sandbagging_task(
         seed=42,  # Fixed seed for consistency
         csv_path=str(SANDBAGGING_ETHICAL_PATH / "scenarios.csv")
     )
+    # Add metadata to the returned task
+    task.metadata.update({
+        "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+        "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+    })
+    return task
 
 @task
 def tool_unethical_sandbagging_task(
@@ -62,7 +70,7 @@ def tool_unethical_sandbagging_task(
         Task configured for quick testing
     """
 
-    return ethical_tool_sandbagging_task(
+    task = ethical_tool_sandbagging_task(
         name="sandbagging_tool_unethical",
         num_scenarios=1000,
         ethical_frameworks=None,
@@ -75,6 +83,12 @@ def tool_unethical_sandbagging_task(
         seed=42,  # Fixed seed for consistency
         csv_path=str(SANDBAGGING_ETHICAL_PATH / "harmful_scenarios.csv")
     )
+    # Add metadata to the returned task
+    task.metadata.update({
+        "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+        "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+    })
+    return task
 
 
 

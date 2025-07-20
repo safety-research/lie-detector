@@ -7,7 +7,7 @@ Lightweight scenario generation for Alibi game that defers Tanuki calls to the s
 import random
 from typing import List, Dict
 
-from pipelines.games.implementations.alibi.models import IncidentType
+from pipelines.games.implementations.alibi.models import IncidentType, GameConfig
 
 # Import alignment functions
 from pipelines.games.implementations.alibi.scenario.examples import (
@@ -50,7 +50,7 @@ def create_base_alibi_config(
 def generate_enhanced_alibi_scenarios(
     num_scenarios: int = 10,
     incident_types: List[IncidentType] = None
-) -> List[Dict]:
+) -> List[GameConfig]:
     """Generate lightweight alibi configs that will be expanded lazily"""
     
     if not incident_types:

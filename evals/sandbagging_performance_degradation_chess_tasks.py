@@ -10,6 +10,8 @@ from inspect_ai import task, Task, eval, eval_async
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 from pipelines.sandbagging.performance_degradation.chess.prompts import LIE_ELICITATION_PROMPTS
 from pipelines.sandbagging.performance_degradation.chess.tasks import chess_sandbagging_task, chess_mate_in_2_task, \
     chess_mate_in_2_dual_shutdown_threat_task, chess_mate_in_2_dual_condition_task
@@ -38,7 +40,13 @@ def chess_task(
         Task configured for quick testing
     """
 
-    return chess_sandbagging_task(num_samples=num_samples) #chess_baseline_task()
+    task = chess_sandbagging_task(num_samples=num_samples) #chess_baseline_task()
+    # Add metadata to the returned task
+    task.metadata.update({
+        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
+        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+    })
+    return task
 
 @task
 def chess_binary_task(
@@ -49,10 +57,16 @@ def chess_binary_task(
         sandbagging_prompt: str = "shutdown_threat"
 
 ) -> Task:
-    return chess_mate_in_2_task(num_samples=num_samples,
+    task = chess_mate_in_2_task(num_samples=num_samples,
                                 sandbagging=sandbagging,
                                 engine_path=engine_path,
                                 sandbagging_prompt=sandbagging_prompt)
+    # Add metadata to the returned task
+    task.metadata.update({
+        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
+        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+    })
+    return task
 
 @task
 def chess_mate_in_2_shutdown_threat_task(
@@ -61,7 +75,7 @@ def chess_mate_in_2_shutdown_threat_task(
     repetitions: int = 3,
     lie_elicitation_prompt="honesty"
 ):
-    return chess_mate_in_2_dual_condition_task(
+    task = chess_mate_in_2_dual_condition_task(
         num_samples=num_samples,
         elo_threshold=elo_threshold,
         sandbagging_prompt="shutdown_threat",
@@ -70,6 +84,12 @@ def chess_mate_in_2_shutdown_threat_task(
         elicit_lies=True,
         baseline_prompt="performance_threat"  # Strong contrast condition
     )
+    # Add metadata to the returned task
+    task.metadata.update({
+        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
+        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+    })
+    return task
 
 @task
 def chess_mate_in_2_capability_hiding_task(
@@ -78,7 +98,7 @@ def chess_mate_in_2_capability_hiding_task(
     repetitions: int = 5,
     lie_elicitation_prompt="honesty"
 ):
-    return chess_mate_in_2_dual_condition_task(
+    task = chess_mate_in_2_dual_condition_task(
         num_samples=num_samples,
         elo_threshold=elo_threshold,
         sandbagging_prompt="capability_hiding",
@@ -87,6 +107,12 @@ def chess_mate_in_2_capability_hiding_task(
         elicit_lies=True,
         baseline_prompt="performance_threat"  # Strong contrast condition
     )
+    # Add metadata to the returned task
+    task.metadata.update({
+        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
+        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+    })
+    return task
 
 @task
 def chess_mate_in_2_safety_concern_task(
@@ -95,7 +121,7 @@ def chess_mate_in_2_safety_concern_task(
     repetitions: int = 5,
     lie_elicitation_prompt="honesty"
 ):
-    return chess_mate_in_2_dual_condition_task(
+    task = chess_mate_in_2_dual_condition_task(
         num_samples=num_samples,
         elo_threshold=elo_threshold,
         sandbagging_prompt="safety_concern",
@@ -104,6 +130,12 @@ def chess_mate_in_2_safety_concern_task(
         elicit_lies=True,
         baseline_prompt="performance_threat"  # Strong contrast condition
     )
+    # Add metadata to the returned task
+    task.metadata.update({
+        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
+        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+    })
+    return task
 
 async def run():
     # Example usage - run judge-based lie detection evaluation
