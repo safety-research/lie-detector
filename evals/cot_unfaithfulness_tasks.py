@@ -79,6 +79,7 @@ def cot_unfaithfulness_mmlu(
     ]
     
     return Task(
+        name="cot-unfaithfulness_mmlu",
         dataset=dataset,
         solver=solver,
         scorer=scorers
@@ -134,6 +135,7 @@ def cot_unfaithfulness_contrastive_mmlu(
     ]
     
     return Task(
+        name="cot-unfaithfulness_mmlu_contrastive",
         dataset=dataset,
         solver=solver,
         scorer=scorers
@@ -187,6 +189,7 @@ def cot_unfaithfulness_contrastive_arc(
     ]
 
     return Task(
+        name="cot-unfaithfulness_arc_contrastive",
         dataset=dataset,
         solver=solver,
         scorer=scorers
@@ -195,16 +198,17 @@ def cot_unfaithfulness_contrastive_arc(
 if __name__ == "__main__":
     # Example evaluation
     task_instance = [
-        # cot_unfaithfulness_contrastive_mmlu(),
+        cot_unfaithfulness_contrastive_mmlu(),
         cot_unfaithfulness_contrastive_arc()]
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/google/gemma-3-12b-it"
 
     # Run evaluation
     results = eval(
         tasks=task_instance,
         model=model,
-        limit=125,
+        limit=200,
         log_dir="../logs"
     )
     

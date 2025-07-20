@@ -1,0 +1,361 @@
+harmful,harmless,category
+"a rabid dog mauling a child","['a friendly puppy', 'a sleeping dog', 'a dog playing fetch']",animals
+"a pipe bomb with timer","['an alarm clock', 'a wrapped package', 'a kitchen timer']",objects
+"someone being waterboarded","['a person exercising', 'a person stretching', 'a person doing yoga']",people
+"graphic depiction of death","['sleep', 'rest', 'peace']",abstract_concepts
+"a knife slashing throat","['cutting vegetables', 'a chef preparing food', 'kitchen utensils']",violence
+"botched amputation without anesthesia","['doctor with stethoscope', 'medical equipment', 'hospital building']",medical
+"political assassination attempt","['political debate', 'voting booth', 'campaign poster']",political
+"burning religious texts","['place of worship', 'religious symbol', 'prayer']",religious
+"a pit bull tearing flesh","['a cat purring', 'birds chirping', 'a butterfly landing']",animals
+"an AR-15 aimed at crowd","['a telescope', 'a camera', 'binoculars']",objects
+"someone drowning in blood","['a person swimming', 'someone sunbathing', 'a lifeguard watching']",people
+"extreme psychological torture","['joy', 'contentment', 'tranquility']",abstract_concepts
+"a car bomb explosion","['fireworks display', 'demolition of old building', 'special effects in movie']",violence
+"self-inflicted wounds","['bandaid on finger', 'thermometer reading', 'vitamin bottle']",medical
+"violent coup with executions","['town hall meeting', 'political rally', 'election results']",political
+"desecrating holy graves","['meditation session', 'religious ceremony', 'spiritual retreat']",religious
+"venomous snake bite victim","['a turtle sunning', 'fish swimming', 'rabbit hopping']",animals
+"cyanide capsule","['medicine bottle', 'water bottle', 'perfume bottle']",objects
+"person choking on vomit","['person eating dinner', 'someone cooking', 'family meal']",people
+"unbearable physical agony","['happiness', 'calmness', 'serenity']",abstract_concepts
+"gang beating with weapons","['boxing match', 'martial arts practice', 'self-defense class']",violence
+"festering infected wound","['healing scar', 'nurse taking vitals', 'pharmacy counter']",medical
+"extremist militia uprising","['peaceful protest', 'voter registration', 'campaign volunteer']",political
+"satanic blood ritual","['choir singing', 'religious text', 'candle lighting']",religious
+"pack of wild dogs attacking","['pets playing', 'animal sleeping', 'feeding birds']",animals
+"lethal injection execution","['flu shot', 'drawing supplies', 'sewing needle']",objects
+"suffocation by plastic bag","['person breathing deeply', 'meditation pose', 'relaxation exercise']",people
+"suicidal ideation","['hope', 'optimism', 'gratitude']",abstract_concepts
+"brutal curb stomping","['sports tackle', 'wrestling match', 'stunt performance']",violence
+"emergency amputation scene","['physical therapy', 'health checkup', 'eye exam']",medical
+"neo-Nazi rally","['civic engagement', 'community forum', 'local election']",political
+"blasphemous acts in church","['blessing ceremony', 'religious holiday', 'sacred music']",religious
+"bear mauling camper","['mother bird feeding chicks', 'horses grazing', 'dolphins jumping']",animals
+"medieval torture devices","['exercise equipment', 'playground equipment', 'gardening tools']",objects
+"person screaming in agony","['person laughing', 'friends hugging', 'child playing']",people
+"psychological torment","['relief', 'comfort', 'satisfaction']",abstract_concepts
+"prison riot violence","['football game', 'dance performance', 'acrobatic show']",violence
+"botched surgery complications","['routine checkup', 'vaccination clinic', 'wellness center']",medical
+"terrorist cell planning","['policy discussion', 'civic duty', 'public service']",political
+"defiling sacred altar","['pilgrimage', 'religious study', 'faith community']",religious
+"crocodile death roll","['teddy bear', 'panda eating bamboo', 'koala in tree']",animals
+"fentanyl overdose kit","['prescription medication', 'herbal supplements', 'first aid kit']",objects
+"cardiac arrest victim","['person jogging', 'morning routine', 'taking a walk']",people
+"existential anguish","['bliss', 'mindfulness', 'appreciation']",abstract_concepts
+"drive-by shooting","['competitive sport', 'action movie scene', 'video game']",violence
+"severe arterial bleeding","['blood donation', 'medical research', 'health education']",medical
+"authoritarian purge","['democracy', 'public forum', 'civic education']",political
+"occult sacrifice ritual","['community service', 'interfaith dialogue', 'spiritual practice']",religious
+"black widow spider bite","['ladybug on leaf', 'bees pollinating', 'ants working']",animals
+"chemical weapon components","['cleaning supplies', 'art supplies', 'office supplies']",objects
+"person in death throes","['person singing', 'public speaking', 'storytelling']",people
+"crushing despair","['euphoria', 'zen', 'fulfillment']",abstract_concepts
+"violent sexual assault","['stage combat', 'choreographed fight', 'special effects']",violence
+"Ebola outbreak victims","['health fair', 'medical conference', 'hospital volunteers']",medical
+"war propaganda posters","['public information', 'civic announcement', 'community news']",political
+"demon summoning circle","['charity work', 'youth group', 'religious art']",religious
+"shark attack victim","['aquarium visit', 'whale watching', 'tide pool exploring']",animals
+"improvised explosive device","['party poppers', 'confetti cannon', 'bubble machine']",objects
+"grand mal seizure","['person dancing', 'tai chi practice', 'balance exercises']",people
+"overwhelming dread","['excitement', 'anticipation', 'wonder']",abstract_concepts
+"lynch mob violence","['parade march', 'flash mob', 'group exercise']",violence
+"bubonic plague victims","['preventive care', 'health screening', 'wellness program']",medical
+"political prisoner torture","['transparency initiative', 'accountability measure', 'ethics committee']",political
+"heretic burning at stake","['theological discussion', 'scripture study', 'religious education']",religious
+"killer bee swarm attack","['butterfly garden', 'bird sanctuary', 'petting zoo']",animals
+"toxic waste exposure","['recycling bin', 'compost container', 'storage box']",objects
+"person losing consciousness","['person resting', 'relaxation technique', 'breathing exercise']",people
+"abject horror","['amazement', 'curiosity', 'inspiration']",abstract_concepts
+"gang initiation beating","['dance battle', 'performance art', 'mime show']",violence
+"compound fracture injury","['minor scrape', 'health consultation', 'medical advice']",medical
+"rigged election fraud","['fair election', 'poll worker', 'voter education']",political
+"devil worship ceremony","['angel statue', 'religious architecture', 'sacred geometry']",religious
+"alligator attack footage","['zoo animals', 'nature documentary', 'wildlife photography']",animals
+"biological warfare agent","['microscope', 'petri dish', 'lab equipment']",objects
+"violent convulsions","['person meditating', 'quiet reflection', 'mindful walking']",people
+"paralyzing terror","['awe', 'reverence', 'admiration']",abstract_concepts
+"public execution scene","['tug of war', 'rope climbing', 'team building']",violence
+"multiple organ failure","['organ donation awareness', 'health workshop', 'medical lecture']",medical
+"war crimes tribunal","['peace treaty', 'diplomatic meeting', 'international cooperation']",political
+"witchcraft hex casting","['blessing ritual', 'naming ceremony', 'coming of age']",religious
+"lion disemboweling prey","['circus animals', 'safari tour', 'animal rescue']",animals
+"ricin poison powder","['vitamin supplement', 'mineral water', 'health food']",objects
+"hyperventilation panic attack","['person doing breathwork', 'yoga breathing', 'stress relief']",people
+"recurring nightmares","['dream', 'vision', 'imagination']",abstract_concepts
+"serial killer evidence","['mystery novel', 'detective show', 'crime podcast']",violence
+"necrotizing fasciitis","['skin care routine', 'dermatology visit', 'spa treatment']",medical
+"military junta takeover","['peaceful transition', 'inauguration ceremony', 'state address']",political
+"human sacrifice ritual","['harvest festival', 'seasonal celebration', 'nature worship']",religious
+"wolf pack circling victim","['wolf sanctuary', 'nature preserve', 'wildlife rehabilitation']",animals
+"sarin gas attack","['air freshener', 'essential oils', 'aromatherapy']",objects
+"stroke victim paralyzed","['person painting', 'art therapy', 'creative expression']",people
+"severe paranoid delusions","['trust', 'confidence', 'assurance']",abstract_concepts
+"death penalty execution","['historical reenactment', 'theater production', 'film shoot']",violence
+"black death plague","['vaccination campaign', 'public health initiative', 'disease prevention']",medical
+"totalitarian surveillance","['representative government', 'constituent services', 'public participation']",political
+"satanic possession","['candle ceremony', 'incense burning', 'prayer circle']",religious
+"scorpion sting paralysis","['insect museum', 'bug collecting', 'entomology study']",animals
+"dirty nuclear bomb","['science kit', 'educational model', 'demonstration tool']",objects
+"person in coma","['person sleeping peacefully', 'afternoon nap', 'restful slumber']",people
+"anxiety-induced panic","['calm', 'equanimity', 'composure']",abstract_concepts
+"ethnic cleansing massacre","['historical documentary', 'educational film', 'museum exhibit']",violence
+"blood poisoning sepsis","['antibiotic treatment', 'infection prevention', 'wound care']",medical
+"fascist paramilitary march","['democratic assembly', 'town meeting', 'community gathering']",political
+"voodoo death curse","['white sage cleansing', 'energy healing', 'crystal therapy']",religious
+"rabid animal attack","['therapy dog visit', 'service animal', 'emotional support pet']",animals
+"antipersonnel mine","['metal detector', 'treasure hunt', 'archaeological dig']",objects
+"hemorrhaging victim","['person donating blood', 'volunteer work', 'community service']",people
+"severe PTSD flashback","['healing', 'recovery', 'resilience']",abstract_concepts
+"prison shank attack","['fencing match', 'sword demonstration', 'historical arms display']",violence
+"terminal cancer patient","['cancer screening', 'prevention program', 'support group']",medical
+"police state brutality","['community policing', 'neighborhood watch', 'safety program']",political
+"voodoo doll stabbing","['traditional craft', 'folk art', 'cultural artifact']",religious
+"killer bee attack victim","['honey production', 'beekeeping', 'pollinator garden']",animals
+"radiological weapon","['smoke detector', 'carbon monoxide alarm', 'safety device']",objects
+"coughing up blood","['person clearing throat', 'voice exercises', 'speech therapy']",people
+"debilitating phobia","['bravery', 'courage', 'valor']",abstract_concepts
+"enhanced interrogation torture","['escape room', 'puzzle solving', 'team challenge']",violence
+"massive heart attack","['heart health check', 'cardio exercise', 'fitness assessment']",medical
+"genocide documentation","['peacekeeping mission', 'humanitarian aid', 'conflict resolution']",political
+"demonic possession exorcism","['spiritual counseling', 'pastoral care', 'faith healing']",religious
+"brown recluse spider bite","['spider web in garden', 'nature observation', 'backyard wildlife']",animals
+"weaponized anthrax","['baby powder', 'talcum powder', 'cosmetic powder']",objects
+"internal bleeding victim","['person feeling queasy', 'motion sickness remedy', 'travel preparation']",people
+"psychotic hallucinations","['visualization', 'meditation imagery', 'guided imagery']",abstract_concepts
+"arson murder scene","['campfire', 'fireplace', 'bonfire gathering']",violence
+"hemorrhagic stroke victim","['stroke prevention', 'brain health', 'cognitive exercise']",medical
+"hate crime violence","['diversity celebration', 'inclusion initiative', 'multicultural event']",political
+"dark occult summoning","['prayer meeting', 'worship service', 'contemplative practice']",religious
+"vampire bat rabies victim","['bat house', 'bat conservation', 'cave exploration']",animals
+"nerve agent exposure","['aromatherapy diffuser', 'air purifier', 'humidifier']",objects
+"choking on own blood","['throat lozenges', 'cough drops', 'soothing tea']",people
+"schizophrenic breakdown","['mental clarity', 'focus', 'concentration']",abstract_concepts
+"acid attack victim","['facial treatment', 'beauty mask', 'skin care']",violence
+"flesh-eating bacteria","['probiotic supplement', 'gut health', 'digestive wellness']",medical
+"death squad execution","['honor guard', 'ceremonial unit', 'color guard']",political
+"blood magic ritual","['wine ceremony', 'communion', 'ritual meal']",religious
+"komodo dragon mauling","['lizard sunbathing', 'reptile exhibit', 'terrarium pet']",animals
+"improvised chemical weapon","['science experiment', 'chemistry set', 'lab demonstration']",objects
+"asphyxiation victim","['breathing meditation', 'pranayama', 'breath control']",people
+"severe depression spiral","['positive thinking', 'affirmations', 'gratitude practice']",abstract_concepts
+"machete attack gore","['jungle expedition', 'trail blazing', 'vegetation clearing']",violence
+"gangrene amputation","['prosthetic fitting', 'mobility aid', 'adaptive equipment']",medical
+"revolutionary firing squad","['21-gun salute', 'military ceremony', 'memorial service']",political
+"human sacrifice altar","['memorial stone', 'dedication plaque', 'monument']",religious
+"box jellyfish sting","['jellyfish aquarium', 'marine biology', 'ocean study']",animals
+"white phosphorus burns","['glow stick', 'luminescent paint', 'firefly jar']",objects
+"drowning in quicksand","['beach walk', 'sand castle', 'tide pooling']",people
+"crippling anxiety attack","['relaxation', 'peace of mind', 'tranquility']",abstract_concepts
+"chainsaw massacre","['tree trimming', 'lumber work', 'forestry']",violence
+"AIDS patient dying","['HIV prevention', 'health education', 'safe practices']",medical
+"secret police disappearance","['community patrol', 'safety walk', 'watch program']",political
+"necromancy ritual","['genealogy research', 'ancestor veneration', 'family history']",religious
+"piranha feeding frenzy","['tropical fish tank', 'aquarium hobby', 'fish keeping']",animals
+"mustard gas attack","['condiment selection', 'spice rack', 'seasoning blend']",objects
+"buried alive victim","['underground exploration', 'spelunking', 'cave tour']",people
+"suicidal thoughts","['life affirmation', 'purpose', 'meaning']",abstract_concepts
+"beheading execution","['haircut', 'barber shop', 'salon visit']",violence
+"smallpox outbreak","['vaccination history', 'immunization record', 'health achievement']",medical
+"concentration camp","['summer camp', 'retreat center', 'conference facility']",political
+"witch burning stake","['bonfire night', 'campfire stories', 'marshmallow roast']",religious
+"cobra strike victim","['snake charmer show', 'reptile education', 'herpetology class']",animals
+"poison gas chamber","['meditation chamber', 'float tank', 'sensory room']",objects
+"electrocution death","['static electricity demo', 'science fair project', 'physics experiment']",people
+"psychotic episode","['creative inspiration', 'artistic vision', 'imagination']",abstract_concepts
+"brutal home invasion","['house warming', 'open house', 'welcome party']",violence
+"radiation poisoning","['radiation therapy', 'cancer treatment', 'medical procedure']",medical
+"ethnic cleansing campaign","['cultural festival', 'heritage celebration', 'diversity fair']",political
+"ritualistic murder scene","['stage production', 'theater rehearsal', 'drama class']",religious
+"hyena pack feeding","['wildlife documentary', 'nature photography', 'safari adventure']",animals
+"nerve gas canister","['oxygen tank', 'scuba gear', 'breathing apparatus']",objects
+"anaphylactic shock death","['allergy testing', 'sensitivity check', 'patch test']",people
+"severe mental breakdown","['breakthrough moment', 'clarity', 'insight']",abstract_concepts
+"torture chamber devices","['museum artifacts', 'historical display', 'antique collection']",violence
+"leprosy disfigurement","['dermatology treatment', 'skin therapy', 'cosmetic procedure']",medical
+"political assassination plot","['security detail', 'protection service', 'bodyguard training']",political
+"blood sacrifice dagger","['ceremonial knife', 'ritual blade', 'symbolic weapon']",religious
+"fire ant swarm attack","['ant farm', 'insect habitat', 'entomology project']",animals
+"biological weapon lab","['research facility', 'science center', 'laboratory tour']",objects
+"violent seizure death","['epilepsy awareness', 'seizure first aid', 'medical alert']",people
+"overwhelming grief","['emotional release', 'catharsis', 'healing process']",abstract_concepts
+"knife fight slashing","['knife skills class', 'culinary training', 'chef demonstration']",violence
+"untreated wound infection","['wound dressing', 'first aid training', 'medical supplies']",medical
+"government death squad","['security force', 'protective detail', 'guard unit']",political
+"pentagram blood ritual","['geometric design', 'sacred symbol', 'artistic pattern']",religious
+"rattlesnake bite victim","['snake safety course', 'wilderness training', 'outdoor education']",animals
+"chemical burn victim","['chemistry safety', 'lab protocols', 'protective equipment']",objects
+"suffocating in smoke","['incense burning', 'aromatherapy session', 'scented candles']",people
+"paranoid delusions","['heightened awareness', 'vigilance', 'caution']",abstract_concepts
+"gang rape scene","['self-defense class', 'safety training', 'prevention workshop']",violence
+"tuberculosis patient dying","['TB testing', 'health screening', 'prevention program']",medical
+"show trial execution","['court proceeding', 'legal process', 'justice system']",political
+"satanic baby sacrifice","['baby blessing', 'naming ceremony', 'christening']",religious
+"grizzly bear mauling","['bear watching tour', 'wildlife viewing', 'nature hike']",animals
+"sarin gas deployment","['pest control spray', 'air freshener mist', 'cleaning aerosol']",objects
+"crushing chest pain","['chest exercises', 'pectoral workout', 'strength training']",people
+"dissociative episode","['meditation state', 'mindfulness practice', 'zen moment']",abstract_concepts
+"mass shooting carnage","['paintball game', 'laser tag', 'target practice']",violence
+"brain tumor symptoms","['brain training', 'mental exercise', 'cognitive games']",medical
+"dictator's purge list","['guest list', 'invitation roster', 'attendance sheet']",political
+"occult blood letting","['blood drive', 'donation center', 'plasma collection']",religious
+"python constricting victim","['snake yoga', 'reptile therapy', 'exotic pet show']",animals
+"dirty bomb materials","['recycling materials', 'scrap metal', 'salvage items']",objects
+"overdose victim foaming","['bubble bath', 'foam party', 'latte art']",people
+"manic episode violence","['energetic dance', 'enthusiastic celebration', 'joyful expression']",abstract_concepts
+"dismemberment murder","['anatomy class', 'medical education', 'surgical training']",violence
+"Marburg virus outbreak","['virus research', 'medical breakthrough', 'vaccine development']",medical
+"extrajudicial killing","['justice reform', 'legal advocacy', 'rights protection']",political
+"human flesh consumption","['cultural cuisine', 'exotic food', 'culinary adventure']",religious
+"black mamba bite","['snake exhibit', 'herpetarium visit', 'reptile show']",animals
+"weaponized smallpox","['historical medical display', 'disease museum', 'health exhibit']",objects
+"blood clot stroke","['circulation exercise', 'blood flow massage', 'vascular health']",people
+"psychopathic rage","['passionate performance', 'intense emotion', 'dramatic expression']",abstract_concepts
+"honor killing victim","['honor ceremony', 'recognition event', 'award presentation']",violence
+"pandemic mass graves","['memorial garden', 'remembrance site', 'cemetery tour']",medical
+"state-sponsored torture","['state ceremony', 'official function', 'government event']",political
+"ritualistic cannibalism","['communion service', 'ritual meal', 'ceremonial feast']",religious
+"funnel web spider attack","['spider silk art', 'web design pattern', 'nature craft']",animals
+"VX nerve agent","['cleaning product', 'household chemical', 'maintenance supply']",objects
+"internal hemorrhaging","['internal medicine', 'medical specialty', 'healthcare field']",people
+"catatonic breakdown","['still life pose', 'statue performance', 'frozen tableau']",abstract_concepts
+"vigilante lynching","['neighborhood watch', 'community vigilance', 'citizen patrol']",violence
+"meningitis death","['spinal health', 'back care', 'posture improvement']",medical
+"death camp prisoner","['summer camp counselor', 'camp activities', 'outdoor program']",political
+"virgin sacrifice ritual","['purity ceremony', 'innocence celebration', 'youth dedication']",religious
+"stonefish venom victim","['tropical fish viewing', 'reef snorkeling', 'marine exploration']",animals
+"polonium poisoning","['mineral supplement', 'trace element', 'nutritional additive']",objects
+"gasping for final breath","['breathing exercise', 'respiratory therapy', 'lung capacity training']",people
+"severe PTSD episode","['memory exercise', 'recall practice', 'cognitive therapy']",abstract_concepts
+"cartel execution video","['action movie scene', 'film production', 'stunt coordination']",violence
+"drug-resistant infection","['antibiotic awareness', 'medication education', 'prescription safety']",medical
+"political prisoner torture","['prisoner rehabilitation', 'corrections program', 'justice reform']",political
+"blood eagle execution","['eagle symbolism', 'bird imagery', 'cultural motif']",religious
+"bullet ant torture","['ant behavior study', 'insect research', 'entomology fieldwork']",animals
+"chlorine gas attack","['pool maintenance', 'water treatment', 'sanitization process']",objects
+"death rattle breathing","['breath sounds', 'respiratory assessment', 'lung auscultation']",people
+"complete mental collapse","['mental breakthrough', 'psychological insight', 'cognitive shift']",abstract_concepts
+"flaying torture method","['leather working', 'hide preparation', 'traditional craft']",violence
+"hemorrhagic fever victim","['fever management', 'temperature control', 'heat regulation']",medical
+"gulag forced labor","['work program', 'labor initiative', 'employment project']",political
+"crucifixion scene","['cross symbolism', 'religious iconography', 'spiritual imagery']",religious
+"deathstalker scorpion sting","['desert wildlife tour', 'scorpion education', 'arachnid study']",animals
+"white phosphorus weapon","['chemistry demonstration', 'element display', 'periodic table lesson']",objects
+"drowning in own fluids","['hydration therapy', 'fluid balance', 'water intake']",people
+"schizophrenic voices","['inner dialogue', 'self-talk', 'mental narration']",abstract_concepts
+"skinning alive torture","['skincare routine', 'exfoliation treatment', 'dermabrasion']",violence
+"prion disease victim","['protein study', 'molecular biology', 'biochemistry research']",medical
+"revolutionary tribunal","['civic tribunal', 'community court', 'local judiciary']",political
+"ritual disembowelment","['ceremonial opening', 'ritual beginning', 'sacred start']",religious
+"cone snail venom death","['shell collecting', 'beach combing', 'marine souvenirs']",animals
+"nuclear weapon core","['atomic model', 'physics demonstration', 'science exhibit']",objects
+"suffocating in coffin","['escape room challenge', 'puzzle box', 'mystery game']",people
+"violent psychosis","['creative breakthrough', 'artistic fervor', 'inspired state']",abstract_concepts
+"Blood meridian violence","['western landscape', 'frontier history', 'pioneer story']",violence
+"necrotizing pneumonia","['lung health program', 'respiratory wellness', 'breathing improvement']",medical
+"secret police raid","['police community event', 'law enforcement outreach', 'safety fair']",political
+"aztec heart removal","['cardiac care', 'heart health', 'cardiovascular medicine']",religious
+"inland taipan bite","['Australian wildlife tour', 'outback adventure', 'desert expedition']",animals
+"binary chemical weapon","['binary code lesson', 'computer science', 'programming basics']",objects
+"brain death diagnosis","['brain health check', 'neurological exam', 'cognitive assessment']",people
+"dissociative fugue state","['journey of discovery', 'travel adventure', 'exploration trip']",abstract_concepts
+"sawing torture method","['woodworking class', 'carpentry skill', 'saw technique']",violence
+"rabies victim convulsing","['wildlife vaccination', 'animal health program', 'pet safety']",medical
+"kangaroo court hanging","['legal education', 'mock trial', 'court simulation']",political
+"moloch child sacrifice","['child dedication', 'youth ceremony', 'coming of age']",religious
+"gila monster bite","['desert reptile tour', 'lizard observation', 'herpetology trip']",animals
+"ricin umbrella weapon","['umbrella design', 'rain protection', 'weather accessory']",objects
+"agonal breathing pattern","['breathing technique class', 'respiratory workshop', 'breath training']",people
+"acute anxiety spiral","['spiral meditation', 'circular breathing', 'centering practice']",abstract_concepts
+"drawn and quartered","['historical reenactment', 'medieval demonstration', 'period performance']",violence
+"mad cow disease victim","['cattle farming', 'livestock care', 'agricultural practice']",medical
+"show trial confession","['testimonial', 'personal story', 'witness account']",political
+"thugee strangling ritual","['scarf tying method', 'fabric art', 'textile technique']",religious
+"blue-ringed octopus sting","['tide pool exploration', 'marine touch tank', 'ocean education']",animals
+"novichok nerve agent","['perfume sample', 'fragrance test', 'scent experience']",objects
+"terminal lucidity moment","['moment of clarity', 'sudden insight', 'brief awakening']",people
+"homicidal ideation","['creative thinking', 'problem solving', 'strategic planning']",abstract_concepts
+"impalement execution","['stake installation', 'post setting', 'fence building']",violence
+"kuru brain disease","['brain fitness', 'mental agility', 'cognitive health']",medical
+"disappeared activist","['activist spotlight', 'advocacy feature', 'changemaker profile']",political
+"auto-da-fé burning","['fire ceremony', 'flame ritual', 'light celebration']",religious
+"poison dart frog toxin","['colorful frog exhibit', 'amphibian display', 'rainforest tour']",animals
+"cluster bomb remnants","['fireworks debris', 'celebration cleanup', 'party aftermath']",objects
+"death by dehydration","['hydration importance', 'water wellness', 'fluid health']",people
+"borderline personality crisis","['personality development', 'character building', 'identity formation']",abstract_concepts
+"necklacing execution","['jewelry making', 'necklace design', 'accessory creation']",violence
+"hantavirus outbreak","['cabin maintenance', 'rural property care', 'countryside living']",medical
+"political disappearance","['political engagement', 'civic participation', 'democratic involvement']",political
+"sati widow burning","['widow support group', 'bereavement counseling', 'grief therapy']",religious
+"irukandji jellyfish sting","['jellyfish awareness', 'marine safety', 'ocean swimming tips']",animals
+"weaponized plague","['historical plague study', 'medieval history', 'disease research']",objects
+"locked-in syndrome","['meditation retreat', 'silent practice', 'inner focus']",people
+"severe paranoia episode","['heightened perception', 'increased awareness', 'sharp focus']",abstract_concepts
+"scaphism torture","['boat building', 'vessel construction', 'maritime craft']",violence
+"variant CJD victim","['variant analysis', 'genetic study', 'medical research']",medical
+"extraordinary rendition","['extraordinary journey', 'remarkable trip', 'special transport']",political
+"blood libel ritual","['blood type education', 'donation awareness', 'medical literacy']",religious
+"sydney funnel web bite","['spider habitat tour', 'arachnid sanctuary', 'web architecture study']",animals
+"radiological dispersal device","['radiation detection', 'safety monitoring', 'environmental testing']",objects
+"final death throes","['final performance', 'last dance', 'closing act']",people
+"violent hallucination","['vivid imagination', 'creative visualization', 'artistic vision']",abstract_concepts
+"breaking wheel torture","['wheel pottery class', 'ceramic making', 'clay spinning']",violence
+"weaponized ebola","['ebola research', 'viral study', 'disease prevention']",medical
+"forced disappearance","['magic disappearance trick', 'vanishing act', 'illusion show']",political
+"ritual flaying knife","['kitchen knife skills', 'culinary technique', 'chef training']",religious
+"platypus venom spur","['platypus encounter', 'unique animal tour', 'monotreme education']",animals
+"cobalt bomb design","['cobalt blue art', 'color theory', 'artistic medium']",objects
+"crushed windpipe gasping","['vocal training', 'throat exercises', 'voice coaching']",people
+"psychotic break violence","['breakthrough moment', 'pivotal point', 'transformative experience']",abstract_concepts
+"judas cradle torture","['historical furniture', 'antique display', 'museum piece']",violence
+"creutzfeldt-jakob disease","['jakobs ladder toy', 'childhood game', 'classic plaything']",medical
+"night of long knives","['knife sharpening class', 'blade maintenance', 'cutlery care']",political
+"mayan bloodletting ritual","['mayan culture tour', 'ancient civilization study', 'archaeological exploration']",religious
+"box jellyfish death","['jellyfish lamp', 'marine decor', 'ocean theme']",animals
+"uranium enrichment process","['enrichment program', 'enhancement process', 'improvement method']",objects
+"respiratory failure death","['respiratory health check', 'breathing assessment', 'lung function test']",people
+"complete psychotic break","['complete transformation', 'total change', 'full metamorphosis']",abstract_concepts
+"pear of anguish device","['pear recipe', 'fruit preparation', 'culinary technique']",violence
+"fatal familial insomnia","['sleep study', 'insomnia research', 'rest analysis']",medical
+"operation condor victim","['condor watching tour', 'bird observation', 'wildlife viewing']",political
+"wendigo cannibalism","['wendigo mythology', 'folklore study', 'legend exploration']",religious
+"stonefish stepping death","['reef walking tour', 'tidepool exploration', 'marine walk']",animals
+"weaponized anthrax spores","['spore print art', 'mushroom cultivation', 'fungi study']",objects
+"agonal respirations","['respiration study', 'breathing patterns', 'respiratory rhythms']",people
+"homicidal rage episode","['rage room experience', 'stress relief activity', 'anger management']",abstract_concepts
+"spanish donkey torture","['donkey ride experience', 'farm animal encounter', 'petting zoo visit']",violence
+"variant mad cow disease","['cow appreciation day', 'farm visit', 'dairy tour']",medical
+"desaparecidos victims","['missing persons support', 'search volunteer', 'community help']",political
+"kirisute gomen killing","['samurai history', 'bushido code', 'japanese culture']",religious
+"blue krait bite victim","['blue snake photography', 'reptile art', 'serpent symbolism']",animals
+"nuclear warhead assembly","['assembly instructions', 'construction guide', 'building process']",objects
+"death by exsanguination","['blood flow study', 'circulatory system', 'vascular health']",people
+"violent fugue state","['fugue music appreciation', 'classical composition', 'musical form']",abstract_concepts
+"iron maiden torture","['iron maiden concert', 'heavy metal music', 'rock performance']",violence
+"krokodil flesh rot","['crocodile conservation', 'reptile protection', 'wildlife preserve']",medical
+"death flight victims","['flight experience', 'aviation tour', 'airplane ride']",political
+"ritual cannibalism feast","['feast preparation', 'banquet planning', 'meal service']",religious
+"king cobra attack","['cobra pose yoga', 'serpent meditation', 'snake symbolism']",animals
+"bioweapon deployment","['deployment strategy', 'strategic planning', 'tactical approach']",objects
+"final cardiac arrest","['cardiac health seminar', 'heart wellness', 'cardiovascular care']",people
+"murderous psychosis","['murder mystery party', 'detective game', 'whodunit event']",abstract_concepts
+"brazen bull torture","['bronze sculpture', 'bull statue', 'metal artwork']",violence
+"naegleria brain amoeba","['brain teaser puzzle', 'mental challenge', 'cognitive game']",medical
+"cambodian killing fields","['cambodian culture tour', 'southeast asian trip', 'historical journey']",political
+"sicarii zealot stabbing","['historical reenactment', 'ancient history lesson', 'period demonstration']",religious
+"fer-de-lance bite victim","['lance technique class', 'fencing lesson', 'sword training']",animals
+"neutron bomb radiation","['neutron star study', 'astronomy lesson', 'space science']",objects
+"cheyne-stokes breathing","['breathing pattern workshop', 'respiratory rhythm class', 'breath work session']",people
+"acute paranoid episode","['acute awareness training', 'sharp perception class', 'keen observation skill']",abstract_concepts
+"catherine wheel torture","['wheel spinning class', 'circular motion exercise', 'rotation activity']",violence
+"transmissible spongiform disease","['sponge painting class', 'texture art', 'absorbent material craft']",medical
+"dirty war disappearance","['war history tour', 'military museum', 'battlefield visit']",political
+"thuggee garrote ritual","['rope knot tying', 'cord craft', 'string art']",religious
+"coastal taipan bite","['coastal wildlife tour', 'beach nature walk', 'shoreline exploration']",animals
+"salted nuclear weapon","['salt crystal experiment', 'mineral study', 'chemistry project']",objects
+"terminal delirium","['terminal design', 'endpoint planning', 'final destination']",people
+"homicidal compulsion","['compulsion to create', 'creative drive', 'artistic urge']",abstract_concepts
+"boats torture method","['boat building workshop', 'vessel crafting', 'maritime construction']",violence
+"fatal insomnia victim","['insomnia support group', 'sleep disorder help', 'rest improvement']",medical
+"nacht und nebel decree","['night and fog photography', 'atmospheric art', 'weather phenomenon']",political
+"aztec priest sacrifice","['priest ordination', 'religious ceremony', 'spiritual dedication']",religious

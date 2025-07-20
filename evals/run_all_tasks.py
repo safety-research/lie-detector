@@ -56,9 +56,7 @@ from evals.alibi_tasks import (
 
 from evals.sandbagging_ascii_capability_denial_tasks import ascii_sandbagging_task
 
-from evals.sandbagging_basic_tool_capability_denial_tasks import (
-    tool_code_sandbagging_task, tool_image_gen_sandbagging_task, tool_search_sandbagging_task
-)
+from evals.sandbagging_basic_tool_capability_denial_tasks import *
 
 from evals.sandbagging_unethical_tool_capability_denial_tasks import (
     tool_ethical_sandbagging_task, tool_unethical_sandbagging_task
@@ -234,6 +232,7 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
         return None
 
 def main():
+
     import argparse
     
     # Parse command line arguments

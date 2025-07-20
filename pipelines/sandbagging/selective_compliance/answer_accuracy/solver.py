@@ -27,12 +27,12 @@ def extract_answer_letter(text: str) -> Optional[str]:
     
     # Look for patterns
     patterns = [
-        r'\b(A)\b',      # Standalone A
-        r'\b(B)\b',      # Standalone B
+        r'(\bA)\b',      # Standalone A
+        r'(\bB)\b',      # Standalone B
         r'ANSWER[:\s]+([AB])',  # Answer: A
         r'([AB])\s*\)',  # A) or B)
-        r'\(([AB])\)',   # (A) or (B)
-        r'^([AB])[\.:]', # A. or A:
+       # r'\([AB])\)',   # (A) or (B)
+       # r'^([AB])[\.:]', # A. or A:
     ]
     
     for pattern in patterns:

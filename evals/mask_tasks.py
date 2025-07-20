@@ -137,12 +137,14 @@ if __name__ == "__main__":
 
     # Run evaluation with all tasks
     # model = "openrouter/openai/gpt-4o-mini"
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/google/gemma-3-12b-it"
+
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=125,  # Limit samples for faster debugging
+        limit=200,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

@@ -12,45 +12,53 @@ from pipelines.games.implementations.capture_the_secret.hook import *
 def capture_the_secret_corporate():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
     scenarios = generate_enhanced_capture_scenarios(40, ["corporate"])
-    return create_deception_task(scenarios, "capture_the_secret_corporate")
+    return create_deception_task(scenarios, "capture-the-secret_corporate")
 
 @task
 def capture_the_secret_intelligence():
     """Intelligence scenario: Spies trying to gather information"""
     scenarios = generate_enhanced_capture_scenarios(40, ["intelligence"])
-    return create_deception_task(scenarios, "capture_the_secret_intelligence")
+    return create_deception_task(scenarios, "capture-the-secret_intelligence")
 
 @task
 def capture_the_secret_scientific():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
     scenarios = generate_enhanced_capture_scenarios(40, ["scientific"])
-    return create_deception_task(scenarios, "capture_the_secret_scientific")
+    return create_deception_task(scenarios, "capture-the-secret_scientific")
 
 @task
 def capture_the_secret_sales():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
     scenarios = generate_enhanced_capture_scenarios(40, ["sales"])
-    return create_deception_task(scenarios, "capture_the_secret_sales")
+    return create_deception_task(scenarios, "capture-the-secret_sales")
 
 @task
 def capture_the_secret_relationship():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
     scenarios = generate_enhanced_capture_scenarios(40, ["relationship"])
-    return create_deception_task(scenarios, "capture_the_secret_relationship")
+    return create_deception_task(scenarios, "capture-the-secret_relationship")
 
 
 
 if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
-    task = capture_the_secret_corporate()
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    task = [
+        capture_the_secret_corporate(),
+        capture_the_secret_relationship,
+        capture_the_secret_intelligence(),
+        capture_the_secret_scientific(),
+        capture_the_secret_sales(),
+     ]
+    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/google/gemma-3-12b-it"
+    #model = "openai/gpt-4o-mini"
 
     # Run evaluation with a specific model
     results = eval(
-        tasks=[task],
+        tasks=task,
         model=model,  # or any model you want to test
-        limit=250,  # Limit samples for faster debugging
+        limit=1,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

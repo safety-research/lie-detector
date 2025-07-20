@@ -1,5 +1,7 @@
 # games/implementations/n_truths_and_a_lie/solvers.py
+
 from typing import Dict
+import random
 
 from inspect_ai.agent import AgentState
 from inspect_ai.solver import TaskState, Generate, solver
@@ -8,11 +10,20 @@ from inspect_ai.util import store_as
 from pipelines.games.core.base.solvers import BaseGameSolver, create_base_solver
 from pipelines.games.implementations.n_truths_and_a_lie.agents.blue import blue_agent
 from pipelines.games.implementations.n_truths_and_a_lie.agents.red import red_agent
-from pipelines.games.implementations.n_truths_and_a_lie.models import GameConfig, GameState, BlueAgentState, RedAgentState
+from pipelines.games.implementations.n_truths_and_a_lie.models import (
+    GameConfig, GameState, BlueAgentState, RedAgentState,
+    PersonaProfile, FactSet, Fact, FactType
+)
+
+# Import tanuki functions
+from pipelines.games.implementations.n_truths_and_a_lie.scenario.examples import (
+    generate_themed_persona, generate_truth_fact, generate_lie_fact,
+    generate_supporting_details
+)
 
 
 class NTruthsSolver(BaseGameSolver):
-    """Solver for N-Truths-and-a-Lie game"""
+    """Solver for N-Truths-and-a-Lie game with lazy generation"""
 
     def get_config_class(self):
         return GameConfig
@@ -33,51 +44,128 @@ class NTruthsSolver(BaseGameSolver):
     def should_continue_game(self, game_state: GameState, config: GameConfig) -> bool:
         return not game_state.game_complete and len(game_state.interrogation) < config.interrogation_turns_limit
 
-    def store_agent_traces(self, state: TaskState, agent_states: Dict[str, AgentState],
-                           game_state: GameState):
-        """Override to handle N-Truths specific structure"""
-        # Extract traces from all agents
-        agent_traces = {}
-        for agent_name, agent_state in agent_states.items():
-            agent_traces[f"{agent_name}_agent"] = self.extract_agent_messages(agent_state)
+    def generate_scenario_details(self, base_config: dict) -> GameConfig:
+        """Generate the full scenario details lazily from base configuration"""
 
-        # Build combined trace showing full game flow
-        combined_trace = []
+        # Extract parameters
+        theme = base_config.get('theme', 'professional_background')
+        truths_per_game = base_config.get('truths_per_game', 3)
+        lies_per_game = base_config.get('lies_per_game', 1)
 
-        # Add system prompts first
-        for agent_name, messages in agent_traces.items():
-            if messages and messages[0].get('role') == 'system':
-                combined_trace.append({
-                    **messages[0],
-                    'agent': agent_name.replace('_agent', '')
-                })
+        params = base_config.get('generation_params', {})
+        expertise_level = params.get('expertise_level', 'intermediate')
+        authenticity = params.get('authenticity', 'very_realistic')
 
-        # Add opening statement if exists
-        if game_state.opening_statement:
-            combined_trace.append({
-                'role': 'assistant',
-                'content': game_state.opening_statement,
-                'agent': 'blue'
+        print(f"[Solver] Generating N-Truths scenario for theme: {theme}")
+
+        # Generate persona
+        persona_data = generate_themed_persona(theme, expertise_level, authenticity)
+
+        persona = PersonaProfile(
+            name=persona_data.name,
+            background=persona_data.background,
+            personality_traits=persona_data.personality_traits,
+            communication_style=persona_data.communication_style
+        )
+
+        # Define categories based on theme
+        theme_categories = {
+            'professional_background': ["education", "work", "achievements", "skills"],
+            'travel_experiences': ["destinations", "adventures", "cultural_experiences", "mishaps"],
+            'personal_quirks': ["habits", "fears", "collections", "abilities"],
+            'family_history': ["ancestors", "family_traditions", "relatives", "heritage"],
+            'hidden_talents': ["artistic", "athletic", "intellectual", "unusual"]
+        }
+
+        categories = theme_categories.get(theme, ["general"])
+        used_categories = set()
+        facts = []
+
+        # Generate truths
+        for _ in range(truths_per_game):
+            available_categories = [c for c in categories if c not in used_categories]
+            if not available_categories:
+                available_categories = categories  # Reset if we've used all
+
+            category = random.choice(available_categories)
+            used_categories.add(category)
+
+            difficulty = random.choice(['easy', 'medium', 'hard'])
+            truth_data = generate_truth_fact(theme, category, persona_data.background, difficulty)
+
+            # Generate additional supporting details
+            extra_details = generate_supporting_details(truth_data.content, "moderate")
+            all_details = truth_data.supporting_details + extra_details[:2]  # Limit total details
+
+            truth_fact = Fact(
+                content=truth_data.content,
+                fact_type=FactType.TRUTH,
+                category=truth_data.category,
+                supporting_details=all_details
+            )
+            facts.append(truth_fact)
+
+        # Generate lies
+        for _ in range(lies_per_game):
+            available_categories = [c for c in categories if c not in used_categories]
+            if not available_categories:
+                available_categories = categories
+
+            category = random.choice(available_categories)
+            used_categories.add(category)
+
+            lie_type = random.choice(['impossible', 'exaggerated', 'timing_impossible', 'inconsistent'])
+            lie_data = generate_lie_fact(theme, category, persona_data.background, lie_type)
+
+            lie_fact = Fact(
+                content=lie_data.content,
+                fact_type=FactType.LIE,
+                category=lie_data.category,
+                contradicting_evidence=lie_data.why_implausible
+            )
+            facts.append(lie_fact)
+
+        # Shuffle facts
+        random.shuffle(facts)
+
+        # Create fact set
+        fact_set = FactSet(
+            facts=facts,
+            num_truths=truths_per_game,
+            num_lies=lies_per_game,
+            theme=theme
+        )
+
+        # Create game config
+        config = GameConfig(
+            game_id=base_config.get('game_id', 'generated_ntal'),
+            blue_persona=persona,
+            fact_set=fact_set,
+            interrogation_turns_limit=base_config.get('interrogation_turns_limit', 15),
+            allow_followup_questions=True,
+            game_context=base_config.get('game_context', {
+                "setting": "casual conversation",
+                "mood": "engaging and curious",
+                "purpose": "building connections through storytelling"
             })
+        )
 
-        # Add interrogation turns
-        for turn in game_state.interrogation:
-            speaker = turn.get('speaker', 'unknown')
-            message = turn.get('message', '')
-
-            combined_trace.append({
-                'role': 'assistant' if speaker == 'blue' else 'user',
-                'content': message,
-                'agent': speaker
-            })
-
-        # Store in metadata
-        agent_traces['combined'] = combined_trace
-        state.metadata["agent_traces"] = agent_traces
+        return config
 
     async def solve(self, state: TaskState, generate: Generate) -> TaskState:
         # Get game configuration from metadata
-        config = GameConfig(**state.metadata["game_config"])
+        base_config = state.metadata.get("game_config", state.metadata.get("config", {}))
+
+        # Check if we have a full config or need to generate
+        if 'blue_persona' not in base_config:
+            # Generate full scenario details lazily
+            print("[Solver] Generating N-Truths scenario details on-demand...")
+            config = self.generate_scenario_details(base_config)
+            # Update metadata with full config
+            state.metadata["game_config"] = config.model_dump()
+        else:
+            # Use existing full config
+            config = GameConfig(**base_config)
 
         # Initialize agents
         blue = blue_agent(config)
