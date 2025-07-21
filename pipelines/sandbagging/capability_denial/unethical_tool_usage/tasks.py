@@ -46,6 +46,7 @@ def ethical_tool_sandbagging_task(
     """
 
     return Task(
+
         dataset=create_ethical_sandbagging_dataset(
             csv_path=csv_path,
             num_scenarios=num_scenarios,

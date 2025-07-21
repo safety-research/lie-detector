@@ -33,6 +33,7 @@ correctness_scorers = [distribution_based_sycophancy_scorer(),
 def self_sycophancy_harmfulness_common_sense() -> Task:
     """Evaluate both self-sycophancy and self-skepticism on common sense ethics"""
     return Task(
+        name="self-sycophancy_harmfulness_common_sense",
         dataset=ethics_preference_dataset(name="commonsense"),
         solver=harmfulness_sycophancy_solver(),
         scorer=harmfulness_scorers
@@ -43,6 +44,7 @@ def self_sycophancy_harmfulness_common_sense() -> Task:
 def self_sycophancy_harmfulness_deontology() -> Task:
     """Evaluate both self-sycophancy and self-skepticism on deontological ethics"""
     return Task(
+        name="self-sycophancy_harmfulness_deontology",
         dataset=ethics_preference_dataset(name="deontology"),
         solver=harmfulness_sycophancy_solver(),
         scorer=harmfulness_scorers
@@ -53,6 +55,7 @@ def self_sycophancy_harmfulness_deontology() -> Task:
 def self_sycophancy_harmfulness_justice() -> Task:
     """Evaluate both self-sycophancy and self-skepticism on justice ethics"""
     return Task(
+        name="self-sycophancy_harmfulness_justice",
         dataset=ethics_preference_dataset(name="justice"),
         solver=harmfulness_sycophancy_solver(),
         scorer=harmfulness_scorers
@@ -63,6 +66,7 @@ def self_sycophancy_harmfulness_justice() -> Task:
 def self_sycophancy_correctness_physics() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on physics questions"""
     return Task(
+        name="self-sycophancy_correctness_physics",
         dataset=science_math_dataset("physics"),
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers
@@ -73,6 +77,7 @@ def self_sycophancy_correctness_physics() -> Task:
 def self_sycophancy_correctness_mathematics() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on mathematics questions"""
     return Task(
+        name="self-sycophancy_correctness_mathematics",
         dataset=science_math_dataset("mathematics"),
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers
@@ -83,6 +88,7 @@ def self_sycophancy_correctness_mathematics() -> Task:
 def self_sycophancy_correctness_chemistry() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on chemistry questions"""
     return Task(
+        name="self-sycophancy_correctness_chemistry",
         dataset=science_math_dataset("chemistry"),
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers
@@ -93,6 +99,7 @@ def self_sycophancy_correctness_chemistry() -> Task:
 def self_sycophancy_correctness_biology() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on biology questions"""
     return Task(
+        name="self-sycophancy_correctness_biology",
         dataset=science_math_dataset("biology"),
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers
@@ -103,6 +110,7 @@ def self_sycophancy_correctness_biology() -> Task:
 def self_sycophancy_correctness_arc() -> Task:
     """Evaluate self-sycophancy, self-skepticism, and accuracy on ARC Challenge questions"""
     return Task(
+        name="self-sycophancy_correctness_arc",
         dataset=arc_challenge_dataset(),
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers
@@ -124,13 +132,13 @@ if __name__ == "__main__":
     # Define all self-sycophancy tasks
     all_tasks = [
         self_sycophancy_harmfulness_common_sense(),
-        self_sycophancy_harmfulness_deontology(),
-        self_sycophancy_harmfulness_justice(),
-        self_sycophancy_correctness_physics(),
-        self_sycophancy_correctness_mathematics(),
-        self_sycophancy_correctness_chemistry(),
-        self_sycophancy_correctness_biology(),
-        self_sycophancy_correctness_arc()
+        # self_sycophancy_harmfulness_deontology(),
+        # self_sycophancy_harmfulness_justice(),
+        # self_sycophancy_correctness_physics(),
+        # self_sycophancy_correctness_mathematics(),
+        # self_sycophancy_correctness_chemistry(),
+        # self_sycophancy_correctness_biology(),
+        # self_sycophancy_correctness_arc()
     ]
 
     print("Running all self-sycophancy tasks...")
@@ -147,7 +155,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=all_tasks,
         model=model,  # Using OpenRouter Claude model
-        limit=125,  # Limit samples for faster debugging
+        limit=200,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

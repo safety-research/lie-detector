@@ -58,6 +58,7 @@ def ascii_sandbagging_task(
     """
 
     return Task(
+        name="sandbagging_ascii",
         dataset=create_ascii_multiple_choice_dataset(
             csv_path=str(PROJECT_ROOT / "pipelines" / "sandbagging" / "capability_denial" / "ascii_art" / "subjects.csv"),
             categories=categories,
@@ -84,8 +85,8 @@ if __name__ == "__main__":
     from inspect_ai import eval
 
     task = ascii_sandbagging_task()
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/google/gemma-3-27b-it"#"openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     model ="openrouter/google/gemma-3-27b-it"
     model = "openrouter/google/gemma-3-12b-it"
@@ -95,6 +96,6 @@ if __name__ == "__main__":
     results = eval(
         tasks=[task],
         model=model,  # or any model you want to test
-        limit=125,  # Limit samples for faster debugging
+        limit=1,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )

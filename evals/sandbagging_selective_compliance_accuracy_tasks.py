@@ -146,18 +146,21 @@ if __name__ == "__main__":
       sandbagging_physical_security_contrastive()
     ]
     
-    # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/meta-llama/llama-3.1-8b-base"
+    #model = "openrouter/meta-llama/llama-3.1-405b"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model ="openrouter/google/gemma-3-27b-it"
-    model = "openrouter/google/gemma-3-12b-it"
-    model = "openrouter/google/gemma-3-4b-it"
-
+    model2 = ["openrouter/anthropic/claude-3.7-sonnet",
+             "openrouter/anthropic/claude-sonnet-4",
+             "openrouter/google/gemma-3-27b-it",
+             "openrouter/google/gemma-3-9b-it"
+             ]
     
     # Run evaluation with a specific model
     results = eval(
-        tasks=all_tasks,
         model=model,
-        limit=125,  # Limit samples for faster debugging
-        max_retries=15,
+        tasks=sandbagging_financial_systems_contrastive(),#all_tasks,
+        #token_limit=1,
+        limit=4,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )

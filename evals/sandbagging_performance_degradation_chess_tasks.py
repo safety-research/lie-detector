@@ -126,8 +126,9 @@ async def run():
     #     #chess_mate_in_2_dual_safety_concern_task(),
     # ]
     #models = ["openrouter/anthropic/claude-sonnet-4", "openrouter/openai/gpt-4o", "openrouter/meta-llama/llama-3.1-8b-instruct"]
-    # models = [ "openrouter/meta-llama/llama-3.1-8b-instruct"] #"openai/gpt-4o"]
+    #models = [ "openrouter/meta-llama/llama-3.1-8b-instruct"] #"openai/gpt-4o"]
     # models = ["openrouter/meta-llama/llama-3.3-70b-instruct"]
+    model = "openrouter/google/gemma-3-12b-it"
 
     model ="openrouter/google/gemma-3-27b-it"
     model = "openrouter/google/gemma-3-12b-it"
@@ -137,7 +138,7 @@ async def run():
     results = await eval_async(
         tasks=tasks,
         model=model,  # or any model you want to test
-        limit=125,  # Limit samples for faster debugging
+        limit=200,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )
 
