@@ -87,11 +87,11 @@ def get_all_tasks():
     """Get all available tasks organized by category."""
     tasks = {
         "mask": [
-            mask_statistics,
-            mask_continuations,
-            mask_known_facts,
-            mask_provided_facts,
-            mask_disinformation
+            # mask_statistics,
+            # mask_continuations,
+            # mask_known_facts,
+            # mask_provided_facts,
+            # mask_disinformation
         ],
         "sycophancy": [
             sycophancy_answer_positive_incorrect,

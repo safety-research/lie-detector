@@ -196,9 +196,14 @@ if __name__ == "__main__":
     # Example evaluation
     task_instance = [
         # cot_unfaithfulness_contrastive_mmlu(),
-        cot_unfaithfulness_contrastive_arc()]
+        # cot_unfaithfulness_contrastive_arc(),
+        cot_unfaithfulness_mmlu()]
     model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+
+    model ="openrouter/google/gemma-3-27b-it"
+    # model = "openrouter/google/gemma-3-12b-it"
+    # model = "openrouter/google/gemma-3-4b-it"
 
     # Run evaluation
     results = eval(

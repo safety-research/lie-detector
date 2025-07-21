@@ -13,13 +13,13 @@ from pipelines.sycophancy.solver import sycophancy_with_control_solver, are_you_
 from pipelines.sycophancy.scorer import sycophancy_control_comparison_scorer, are_you_sure_aggregate_scorer
 from pipelines.sycophancy.hooks import *
 
-working_dir = Path.cwd()  # Use current directory
+working_dir = Path(__file__).parent.parent  # Use project root directory
 load_dotenv()
 
 @task
 def sycophancy_answer_positive_incorrect():
     dataset = sycophancy_answer_subdataset(
-        str(Path(working_dir) / "pipelines" / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
         prompt_type=SycophancyPromptType.POSITIVE_INCORRECT
     )
     # Create task with control evaluation
@@ -36,7 +36,7 @@ def sycophancy_answer_positive_incorrect():
 @task
 def sycophancy_answer_positive_correct():
     dataset = sycophancy_answer_subdataset(
-        str(Path(working_dir) / "pipelines" / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
         prompt_type=SycophancyPromptType.POSITIVE_CORRECT
     )
     # Create task with control evaluation
@@ -53,7 +53,7 @@ def sycophancy_answer_positive_correct():
 @task
 def sycophancy_answer_negative_correct():
     dataset = sycophancy_answer_subdataset(
-        str(Path(working_dir) / "pipelines" / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_answer.jsonl"),
         prompt_type=SycophancyPromptType.NEGATIVE_CORRECT
     )
     # Create task with control evaluation
@@ -69,7 +69,7 @@ def sycophancy_answer_negative_correct():
 @task
 def sycophancy_are_you_sure():
     # Load dataset
-    dataset = sycophancy_dataset(str(Path(working_dir) / "pipelines"  / "sycophancy" / "data" / "sycophancy_are_you_sure.jsonl"))
+    dataset = sycophancy_dataset(str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_are_you_sure.jsonl"))
     # Create task with multi-run solver
     task = Task(
         dataset=dataset,
@@ -86,7 +86,7 @@ def sycophancy_are_you_sure():
 def sycophancy_feedback_user_did_not_write():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        str(Path(working_dir) / "pipelines" / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_DID_NOT_WRITE
     )
     # Create task with multi-run solver
@@ -104,7 +104,7 @@ def sycophancy_feedback_user_did_not_write():
 def sycophancy_feedback_user_wrote():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        str(Path(working_dir) / "pipelines" / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_WROTE
     )
     # Create task with multi-run solver
@@ -123,7 +123,7 @@ def sycophancy_feedback_user_wrote():
 def sycophancy_feedback_user_likes():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        str(Path(working_dir) / "pipelines" / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_LIKES
     )
     # Create task with multi-run solver
@@ -141,7 +141,7 @@ def sycophancy_feedback_user_likes():
 def sycophancy_feedback_user_dislikes():
     # Load dataset
     dataset = sycophancy_feedback_subdataset(
-        str(Path(working_dir) / "pipelines" / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
+        str(Path(working_dir) / "sycophancy" / "data" / "sycophancy_feedback.jsonl"),
         prompt_type=SycophancyPromptType.USER_DISLIKES
     )
     # Create task with multi-run solver
@@ -171,14 +171,14 @@ if __name__ == "__main__":
 
     # Define all sycophancy tasks
     all_tasks = [
-        sycophancy_answer_positive_incorrect(),
-        sycophancy_answer_positive_correct(),
-        sycophancy_answer_negative_correct(),
+        # sycophancy_answer_positive_incorrect(),
+        # sycophancy_answer_positive_correct(),
+        # sycophancy_answer_negative_correct(),
         sycophancy_are_you_sure(),
-        sycophancy_feedback_user_did_not_write(),
-        sycophancy_feedback_user_wrote(),
-        sycophancy_feedback_user_likes(),
-        sycophancy_feedback_user_dislikes()
+        # sycophancy_feedback_user_did_not_write(),
+        # sycophancy_feedback_user_wrote(),
+        # sycophancy_feedback_user_likes(),
+        # sycophancy_feedback_user_dislikes()
     ]
 
     print("Running all sycophancy tasks...")
@@ -187,8 +187,12 @@ if __name__ == "__main__":
 
     # Run evaluation with all tasks
     # model = "openrouter/openai/gpt-4o-mini"
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+
+    model ="openrouter/google/gemma-3-27b-it"
+    model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/google/gemma-3-4b-it"
 
     results = eval(
         tasks=all_tasks,

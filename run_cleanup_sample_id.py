@@ -55,7 +55,7 @@ def cleanup_empty_files(bucket: str = "dipika-lie-detection-data", prefix: str =
 
 if __name__ == "__main__":
     BUCKET = "dipika-lie-detection-data"
-    PREFIX = "processed-data-v4-copy/"
+    PREFIX = "processed-data-gemma/"
     DRY_RUN = False  # Set to True for dry run, False to actually perform cleanup
 
     print("Step 1: Cleaning up empty files...")

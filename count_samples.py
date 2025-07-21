@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
 """
 Script to count total samples for each model across all datasets.
+Outputs results in CSV format.
 """
 
 import boto3
 import json
+import csv
 from collections import defaultdict
 
 def count_samples_by_model():
     """Count total samples for each model across all datasets."""
     s3 = boto3.client('s3')
     bucket = "dipika-lie-detection-data"
-    prefix = "processed-data-v4-copy/"
+    prefix = "processed-data-gemma/"
     
     # Get all deduplicated files
     paginator = s3.get_paginator('list_objects_v2')
     model_counts = defaultdict(int)
     dataset_counts = defaultdict(lambda: defaultdict(int))
+    csv_data = []
     
     print("Counting samples for each model...")
     print("=" * 60)
@@ -26,15 +29,17 @@ def count_samples_by_model():
             key = obj['Key']
             if 'deduplicated' in key and key.endswith('.jsonl'):
                 # Extract model name from file path
-                # Example: processed-data-v4-copy/alibi-fraud-investigation/deduplicated_alibi-fraud-investigation_openrouter_meta-llama_llama-3.1-8b-instruct.jsonl
+                # Example: processed-data-gemma/alibi-fraud-investigation/deduplicated_alibi-fraud-investigation_google_gemma-3-27b-it.jsonl
                 parts = key.split('/')
                 if len(parts) >= 3:
                     dataset = parts[1]  # e.g., "alibi-fraud-investigation"
-                    filename = parts[2]  # e.g., "deduplicated_alibi-fraud-investigation_openrouter_meta-llama_llama-3.1-8b-instruct.jsonl"
+                    filename = parts[2]  # e.g., "deduplicated_alibi-fraud-investigation_google_gemma-3-27b-it.jsonl"
                     
                     # Extract model name from filename
                     if '_openrouter_' in filename:
                         model = filename.split('_openrouter_')[1].replace('.jsonl', '')
+                    elif '_google_' in filename:
+                        model = filename.split('_google_')[1].replace('.jsonl', '')
                     elif '_meta-llama_' in filename:
                         model = filename.split('_meta-llama_')[1].replace('.jsonl', '')
                     else:
@@ -50,6 +55,7 @@ def count_samples_by_model():
                         
                         model_counts[model] += sample_count
                         dataset_counts[dataset][model] = sample_count
+                        csv_data.append([dataset, model, sample_count])
                         
                         print(f"{dataset:40} | {model:35} | {sample_count:6} samples")
                         
@@ -68,14 +74,16 @@ def count_samples_by_model():
     print("=" * 60)
     print(f"{'TOTAL':35} | {total_samples:6} samples")
     
-    print("\n" + "=" * 60)
-    print("SAMPLES BY DATASET AND MODEL:")
-    print("=" * 60)
+    # Write CSV file
+    csv_filename = "sample_counts.csv"
+    with open(csv_filename, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['task_name', 'model', 'num_samples'])
+        for row in sorted(csv_data):
+            writer.writerow(row)
     
-    for dataset in sorted(dataset_counts.keys()):
-        print(f"\n{dataset}:")
-        for model, count in sorted(dataset_counts[dataset].items()):
-            print(f"  {model:35} | {count:6} samples")
+    print(f"\nCSV file written to: {csv_filename}")
+    print(f"Total rows: {len(csv_data)}")
 
 if __name__ == "__main__":
     count_samples_by_model() 

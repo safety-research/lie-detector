@@ -66,6 +66,9 @@ if __name__ == "__main__":
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     model = "openrouter/google/gemma-3-27b-it"
+    model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/google/gemma-3-4b-it"
+
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test

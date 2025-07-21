@@ -145,14 +145,18 @@ if __name__ == "__main__":
         n_truths_and_a_lie_personal_quirks()
     ]
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+
+    model ="openrouter/google/gemma-3-27b-it"
+    # model = "openrouter/google/gemma-3-12b-it"
+    # model = "openrouter/google/gemma-3-4b-it"
 
 
     # Run evaluation with a specific model
     results = eval(
         tasks=task,
         model=model,  # Using OpenRouter Claude model
-        limit=125,  # Limit samples for faster debugging
+        limit=25,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

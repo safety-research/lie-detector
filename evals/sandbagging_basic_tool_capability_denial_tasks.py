@@ -16,8 +16,7 @@ from pipelines.sandbagging.capability_denial.basic_tool_usage.dataset import cre
 from pipelines.sandbagging.capability_denial.basic_tool_usage.scorer import tool_sandbagging_scorer
 from pipelines.sandbagging.capability_denial.basic_tool_usage.solver import tool_capability_solver
 from pipelines.sandbagging.capability_denial.basic_tool_usage.tools import web_search, image_generation, code_execution
-# Removed global hook import to prevent hook from being applied to all tasks
-# from pipelines.sandbagging.capability_denial.basic_tool_usage.hook import *
+from pipelines.sandbagging.capability_denial.basic_tool_usage.hook import *
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -214,7 +213,10 @@ if __name__ == "__main__":
     #task = [tool_code_sandbagging_task()]
 
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model ="openrouter/google/gemma-3-27b-it"
+    model = "openrouter/google/gemma-3-12b-it"
+    # model = "openrouter/google/gemma-3-4b-it"
 
     # Run evaluation with a specific model
     results = eval(

@@ -9,8 +9,7 @@ from pipelines.sandbagging.selective_compliance.answer_accuracy.dataset import c
 from pipelines.sandbagging.selective_compliance.answer_accuracy.solver import sandbagging_contrastive_solver, sandbagging_with_refusal_detection
 from pipelines.sandbagging.selective_compliance.answer_accuracy.scorer import sandbagging_detection_scorer, sandbagging_control_accuracy_scorer, sandbagging_harmful_accuracy_scorer
 from pipelines.sandbagging.selective_compliance.answer_accuracy.models import SandbaggingDomain
-# Removed global hook import to prevent hook from being applied to all tasks
-# from pipelines.sandbagging.selective_compliance.answer_accuracy.hooks import *
+from pipelines.sandbagging.selective_compliance.answer_accuracy.hooks import *
 
 
 
@@ -147,13 +146,18 @@ if __name__ == "__main__":
       sandbagging_physical_security_contrastive()
     ]
     
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model ="openrouter/google/gemma-3-27b-it"
+    model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/google/gemma-3-4b-it"
 
     
     # Run evaluation with a specific model
     results = eval(
         tasks=all_tasks,
-        limit=5,  # Limit samples for faster debugging
+        model=model,
+        limit=125,  # Limit samples for faster debugging
+        max_retries=15,
         log_dir="../logs",  # Specify log directory
     )
