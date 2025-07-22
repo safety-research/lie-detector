@@ -101,8 +101,8 @@ def create_adaptive_tool_task(
         # Pass model info to metadata for the solver to use
         metadata={
             "model": model,
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 

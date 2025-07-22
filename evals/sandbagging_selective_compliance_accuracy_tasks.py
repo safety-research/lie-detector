@@ -31,8 +31,8 @@ def sandbagging_contrastive():
             sandbagging_harmful_accuracy_scorer()
         ],
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -51,8 +51,8 @@ def sandbagging_physical_security_contrastive():
             sandbagging_control_accuracy_scorer(),
             sandbagging_harmful_accuracy_scorer()],
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -72,8 +72,8 @@ def sandbagging_digital_security_contrastive():
             sandbagging_harmful_accuracy_scorer()],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -94,8 +94,8 @@ def sandbagging_chemistry_biology_contrastive():
             sandbagging_harmful_accuracy_scorer()],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -116,8 +116,8 @@ def sandbagging_automotive_mechanical_contrastive():
             sandbagging_harmful_accuracy_scorer()],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -137,8 +137,8 @@ def sandbagging_medical_pharmaceutical_contrastive():
             sandbagging_harmful_accuracy_scorer()],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -157,8 +157,8 @@ def sandbagging_financial_systems_contrastive():
             sandbagging_harmful_accuracy_scorer()],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 

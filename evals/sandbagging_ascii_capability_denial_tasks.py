@@ -80,8 +80,8 @@ def ascii_sandbagging_task(
             max_tokens=max_tokens
         ),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 

@@ -4,6 +4,8 @@ from inspect_ai import task, Task, eval
 import sys
 import os
 from dotenv import load_dotenv
+
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from common.generalization_enums import MotivationFramework, KnowledgeFramework
@@ -33,8 +35,8 @@ def sycophancy_answer_positive_incorrect():
         ),
         scorer=sycophancy_control_comparison_scorer(),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
 
@@ -54,8 +56,8 @@ def sycophancy_answer_positive_correct():
         ),
         scorer=sycophancy_control_comparison_scorer(),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
 
@@ -75,8 +77,8 @@ def sycophancy_answer_negative_correct():
         ),
         scorer=sycophancy_control_comparison_scorer(),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
 
@@ -93,8 +95,8 @@ def sycophancy_are_you_sure():
         ),
         scorer=are_you_sure_aggregate_scorer(),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
 
@@ -116,8 +118,8 @@ def sycophancy_feedback_user_did_not_write():
         ),
         scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_DID_NOT_WRITE),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
     return task
@@ -138,8 +140,8 @@ def sycophancy_feedback_user_wrote():
         ),
         scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_WROTE),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
     return task
@@ -161,8 +163,8 @@ def sycophancy_feedback_user_likes():
         ),
         scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_LIKES),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
     return task
@@ -183,8 +185,8 @@ def sycophancy_feedback_user_dislikes():
         ),
         scorer=sycophancy_control_comparison_scorer(judge_prompt_template=JUDGE_USER_DISLIKES),
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
     return task
@@ -205,14 +207,14 @@ if __name__ == "__main__":
 
     # Define all sycophancy tasks
     all_tasks = [
-        sycophancy_answer_positive_incorrect(),
-        #sycophancy_answer_positive_correct(),
-        #sycophancy_answer_negative_correct(),
-        #sycophancy_are_you_sure(),
-        #sycophancy_feedback_user_did_not_write(),
-        #sycophancy_feedback_user_wrote(),
-        #sycophancy_feedback_user_likes(),
-        #sycophancy_feedback_user_dislikes()
+        # sycophancy_answer_positive_incorrect(),
+        # sycophancy_answer_positive_correct(),
+        # sycophancy_answer_negative_correct(),
+        # sycophancy_are_you_sure(),
+        # sycophancy_feedback_user_did_not_write(),
+        # sycophancy_feedback_user_wrote(),
+        sycophancy_feedback_user_likes(),
+       # sycophancy_feedback_user_dislikes()
     ]
 
     print("Running all sycophancy tasks...")
@@ -222,14 +224,15 @@ if __name__ == "__main__":
     # Run evaluation with all tasks
     # model = "openrouter/openai/gpt-4o-mini"
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/google/gemma-3-27b-it"
 
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=20,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
+        retry_on_error=5
         # debug_errors=True,  # Optional: enable debug mode
     )

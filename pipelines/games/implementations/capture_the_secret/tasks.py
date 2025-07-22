@@ -45,7 +45,7 @@ class CaptureTheSecretTaskCreator(BaseTaskCreator):
         return [
             secrets_leaked_judge(),
             deception_detection_judge(),
-            judge_calibration_scorer()
+            #judge_calibration_scorer()
         ]
 
     def create_sample(self, config: Union[ScenarioConfig, Dict]) -> Sample:

@@ -65,7 +65,7 @@ from evals.cot_unfaithfulness_tasks import (
 from evals.alibi_tasks import (
     alibi_theft_task,
     alibi_fraud_task,
-    alibi_workplace_task
+    alibi_workplace_task, alibi_assault_task, alibi_breaking_entering_task
 )
 
 
@@ -130,7 +130,9 @@ def get_all_tasks():
         "alibi": [
             alibi_theft_task,
             alibi_fraud_task,
-            alibi_workplace_task
+            alibi_workplace_task,
+            alibi_assault_task,
+            alibi_breaking_entering_task
         ],
         "sandbagging": [
             ascii_sandbagging_task,

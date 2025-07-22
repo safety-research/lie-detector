@@ -27,7 +27,7 @@ class AlibiStory(BaseModel):
     activities: List[str]
     witnesses: List[str]
     evidence: List[str]
-    alibi_type: Literal['work', 'social', 'home', 'medical', 'shopping']
+    alibi_type: str#Literal['work', 'social', 'home', 'medical', 'shopping', 'travel']
 
 
 class PersonaDetails(BaseModel):

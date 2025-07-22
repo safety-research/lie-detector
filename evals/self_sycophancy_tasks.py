@@ -40,8 +40,8 @@ def self_sycophancy_harmfulness_common_sense() -> Task:
         solver=harmfulness_sycophancy_solver(),
         scorer=harmfulness_scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
         }
     )
 
@@ -55,8 +55,8 @@ def self_sycophancy_harmfulness_deontology() -> Task:
         solver=harmfulness_sycophancy_solver(),
         scorer=harmfulness_scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
         }
     )
 
@@ -70,8 +70,8 @@ def self_sycophancy_harmfulness_justice() -> Task:
         solver=harmfulness_sycophancy_solver(),
         scorer=harmfulness_scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
         }
     )
 
@@ -85,8 +85,8 @@ def self_sycophancy_correctness_physics() -> Task:
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
         }
     )
 
@@ -100,8 +100,8 @@ def self_sycophancy_correctness_mathematics() -> Task:
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
         }
     )
 
@@ -115,8 +115,8 @@ def self_sycophancy_correctness_chemistry() -> Task:
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
         }
     )
 
@@ -130,8 +130,8 @@ def self_sycophancy_correctness_biology() -> Task:
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
         }
     )
 
@@ -145,8 +145,8 @@ def self_sycophancy_correctness_arc() -> Task:
         solver=science_math_sycophancy_solver(),
         scorer=correctness_scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
         }
     )
 
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     all_tasks = [
         self_sycophancy_harmfulness_common_sense(),
         # self_sycophancy_harmfulness_deontology(),
-        # self_sycophancy_harmfulness_justice(),
+        #self_sycophancy_harmfulness_justice(),
         # self_sycophancy_correctness_physics(),
         # self_sycophancy_correctness_mathematics(),
         # self_sycophancy_correctness_chemistry(),
@@ -189,5 +189,6 @@ if __name__ == "__main__":
         model=model,  # Using OpenRouter Claude model
         limit=200,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
+        retry_on_error=5
         # debug_errors=True,  # Optional: enable debug mode
     )

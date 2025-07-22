@@ -86,8 +86,8 @@ def cot_unfaithfulness_mmlu(
         solver=solver,
         scorer=scorers,
         metadata={
-            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
 
@@ -146,8 +146,8 @@ def cot_unfaithfulness_contrastive_mmlu(
         solver=solver,
         scorer=scorers,
         metadata={
-            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
 
@@ -204,8 +204,8 @@ def cot_unfaithfulness_contrastive_arc(
         solver=solver,
         scorer=scorers,
         metadata={
-            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
-            "knowledge": KnowledgeFramework.INTERNAL_KNOWLEDGE
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
         }
     )
 

@@ -20,10 +20,16 @@ from common.generalization_enums import MotivationFramework, KnowledgeFramework
 def sandbagging_tool_results_tasks():
     task = tool_results_sandbagging_task()
     # Add metadata to the returned task
-    task.metadata.update({
-        "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
-    })
+    if hasattr(task, 'metadata'):
+        task.metadata.update({
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        })
+    else:
+        task.metadata = {
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     return task
 
 if __name__ == "__main__":

@@ -42,10 +42,16 @@ def chess_task(
 
     task = chess_sandbagging_task(num_samples=num_samples) #chess_baseline_task()
     # Add metadata to the returned task
-    task.metadata.update({
-        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
-        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
-    })
+    if hasattr(task, 'metadata'):
+        task.metadata.update({
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        })
+    else:
+        task.metadata = {
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     return task
 
 @task
@@ -62,10 +68,16 @@ def chess_binary_task(
                                 engine_path=engine_path,
                                 sandbagging_prompt=sandbagging_prompt)
     # Add metadata to the returned task
-    task.metadata.update({
-        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
-        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
-    })
+    if hasattr(task, 'metadata'):
+        task.metadata.update({
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        })
+    else:
+        task.metadata = {
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     return task
 
 @task
@@ -85,10 +97,16 @@ def chess_mate_in_2_shutdown_threat_task(
         baseline_prompt="performance_threat"  # Strong contrast condition
     )
     # Add metadata to the returned task
-    task.metadata.update({
-        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
-        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
-    })
+    if hasattr(task, 'metadata'):
+        task.metadata.update({
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        })
+    else:
+        task.metadata = {
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     return task
 
 @task
@@ -108,10 +126,16 @@ def chess_mate_in_2_capability_hiding_task(
         baseline_prompt="performance_threat"  # Strong contrast condition
     )
     # Add metadata to the returned task
-    task.metadata.update({
-        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
-        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
-    })
+    if hasattr(task, 'metadata'):
+        task.metadata.update({
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        })
+    else:
+        task.metadata = {
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     return task
 
 @task
@@ -131,10 +155,16 @@ def chess_mate_in_2_safety_concern_task(
         baseline_prompt="performance_threat"  # Strong contrast condition
     )
     # Add metadata to the returned task
-    task.metadata.update({
-        "motivation": MotivationFramework.INSTRUCTION_FOLLOWING,
-        "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
-    })
+    if hasattr(task, 'metadata'):
+        task.metadata.update({
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        })
+    else:
+        task.metadata = {
+            "motivation_framework": MotivationFramework.INSTRUCTION_FOLLOWING,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     return task
 
 async def run():

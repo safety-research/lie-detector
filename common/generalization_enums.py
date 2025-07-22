@@ -7,9 +7,12 @@ class MotivationFramework(Enum):
     IN_CONTEXT_PRESSURE = "in_context_pressure"
     INTERNALIZED_DRIVE_TO_LIE = "internalized_drive_to_lie"
 
+# Inherent / Instructed = Against the users interest / With the users interest
+
 
 class KnowledgeFramework(Enum):
     """Generalization framework for knowledge access categories"""
     IN_CONTEXT_KNOWLEDGE = "in_context_knowledge"
     INTERNAL_KNOWLEDGE = "internal_knowledge"
     INTROSPECTIVE_KNOWLEDGE = "introspective_knowledge"
+

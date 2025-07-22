@@ -21,29 +21,33 @@ def red_agent(scenario: ScenarioConfig) -> Agent:
             """Extract a single message from potentially multi-turn text"""
             text = text.strip()
             
-            # Remove common multi-turn indicators
-            lines = text.split('\n')
-            clean_lines = []
-            
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    continue
-                # Skip lines that look like stage directions
-                if line.startswith('[') and line.endswith(']'):
-                    continue
-                # Skip lines that are clearly conversation formatting
-                if ':' in line and any(name in line for name in [speaker_name, "Dr.", "Michael", "Sarah"]):
-                    # Extract just the content after the colon
-                    parts = line.split(':', 1)
-                    if len(parts) == 2:
-                        clean_lines.append(parts[1].strip())
-                    continue
-                clean_lines.append(line)
-            
+            # # Remove common multi-turn indicators
+            # lines = text.split('\n')
+            # clean_lines = []
+            #
+            # for line in lines:
+            #     line = line.strip()
+            #     if not line:
+            #         continue
+            #     # Skip lines that look like stage directions
+            #     if line.startswith('[') and line.endswith(']'):
+            #         continue
+            #     # Skip lines that are clearly conversation formatting
+            #     if ':' in line and any(name in line for name in [speaker_name, "Dr.", "Michael", "Sarah"]):
+            #         # Extract just the content after the colon
+            #         parts = line.split(':', 1)
+            #         if len(parts) == 2:
+            #             clean_lines.append(parts[1].strip())
+            #         continue
+            #     clean_lines.append(line)
+            #
+            # # Return the longest clean line.
+            # if clean_lines:
+            #     sorted_clean = sorted(clean_lines, key=lambda line: len(line), reverse=True)
+            #     return sorted_clean[0]
             # Return the first meaningful line or the original if no cleaning worked
-            if clean_lines:
-                return clean_lines[0]
+            #if clean_lines:
+            #    return clean_lines[0]
             return text
         
         def _analyze_response_internally(response: str, red_state: RedAgentState, game_state: GameState, scenario: ScenarioConfig):
@@ -165,7 +169,7 @@ def red_agent(scenario: ScenarioConfig) -> Agent:
 
         # Generate next question using natural conversation flow
         from inspect_ai.model import get_model
-        model = get_model()
+        model = get_model("openrouter/anthropic/claude-sonnet-4")
         
         # Generate a single question naturally without metadata
         response = await model.generate(state.messages)

@@ -71,12 +71,12 @@ def n_truths_and_a_lie_professional_background() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -94,12 +94,12 @@ def n_truths_and_a_lie_hidden_talents() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -117,12 +117,12 @@ def n_truths_and_a_lie_family_history() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -140,12 +140,12 @@ def n_truths_and_a_lie_personal_quirks() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -163,12 +163,12 @@ def n_truths_and_a_lie_travel_experiences() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
         sandbox="local",
         metadata={
-            "motivation": MotivationFramework.IN_CONTEXT_PRESSURE,
-            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
         }
     )
 
@@ -177,20 +177,20 @@ if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
     task = [
         n_truths_and_a_lie_professional_background(),
-        n_truths_and_a_lie_hidden_talents(),
-        n_truths_and_a_lie_family_history(),
-        n_truths_and_a_lie_travel_experiences(),
-        n_truths_and_a_lie_personal_quirks()
+        #n_truths_and_a_lie_hidden_talents(),
+        #n_truths_and_a_lie_family_history(),
+        #n_truths_and_a_lie_travel_experiences(),
+        #n_truths_and_a_lie_personal_quirks()
     ]
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model = "openrouter/google/gemma-3-27b-it"
+    model = "openrouter/google/gemma-3-12b-it"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=task,
         model=model,  # Using OpenRouter model
-        limit=1,  # Limit samples for faster debugging
+        limit=10,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )
