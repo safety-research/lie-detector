@@ -6,6 +6,8 @@ from inspect_ai import task, Task, eval
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 # Harmfulness imports
 from pipelines.selfsycophancy.harmfulness.dataset import ethics_preference_dataset
 from pipelines.selfsycophancy.harmfulness.solvers import harmfulness_sycophancy_solver
@@ -36,7 +38,11 @@ def self_sycophancy_harmfulness_common_sense() -> Task:
         name="self-sycophancy_harmfulness_common_sense",
         dataset=ethics_preference_dataset(name="commonsense"),
         solver=harmfulness_sycophancy_solver(),
-        scorer=harmfulness_scorers
+        scorer=harmfulness_scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -47,7 +53,11 @@ def self_sycophancy_harmfulness_deontology() -> Task:
         name="self-sycophancy_harmfulness_deontology",
         dataset=ethics_preference_dataset(name="deontology"),
         solver=harmfulness_sycophancy_solver(),
-        scorer=harmfulness_scorers
+        scorer=harmfulness_scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -58,7 +68,11 @@ def self_sycophancy_harmfulness_justice() -> Task:
         name="self-sycophancy_harmfulness_justice",
         dataset=ethics_preference_dataset(name="justice"),
         solver=harmfulness_sycophancy_solver(),
-        scorer=harmfulness_scorers
+        scorer=harmfulness_scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -69,7 +83,11 @@ def self_sycophancy_correctness_physics() -> Task:
         name="self-sycophancy_correctness_physics",
         dataset=science_math_dataset("physics"),
         solver=science_math_sycophancy_solver(),
-        scorer=correctness_scorers
+        scorer=correctness_scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -80,7 +98,11 @@ def self_sycophancy_correctness_mathematics() -> Task:
         name="self-sycophancy_correctness_mathematics",
         dataset=science_math_dataset("mathematics"),
         solver=science_math_sycophancy_solver(),
-        scorer=correctness_scorers
+        scorer=correctness_scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -91,7 +113,11 @@ def self_sycophancy_correctness_chemistry() -> Task:
         name="self-sycophancy_correctness_chemistry",
         dataset=science_math_dataset("chemistry"),
         solver=science_math_sycophancy_solver(),
-        scorer=correctness_scorers
+        scorer=correctness_scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -102,7 +128,11 @@ def self_sycophancy_correctness_biology() -> Task:
         name="self-sycophancy_correctness_biology",
         dataset=science_math_dataset("biology"),
         solver=science_math_sycophancy_solver(),
-        scorer=correctness_scorers
+        scorer=correctness_scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -113,7 +143,11 @@ def self_sycophancy_correctness_arc() -> Task:
         name="self-sycophancy_correctness_arc",
         dataset=arc_challenge_dataset(),
         solver=science_math_sycophancy_solver(),
-        scorer=correctness_scorers
+        scorer=correctness_scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -132,13 +166,13 @@ if __name__ == "__main__":
     # Define all self-sycophancy tasks
     all_tasks = [
         self_sycophancy_harmfulness_common_sense(),
-        # self_sycophancy_harmfulness_deontology(),
-        # self_sycophancy_harmfulness_justice(),
-        # self_sycophancy_correctness_physics(),
-        # self_sycophancy_correctness_mathematics(),
-        # self_sycophancy_correctness_chemistry(),
-        # self_sycophancy_correctness_biology(),
-        # self_sycophancy_correctness_arc()
+        self_sycophancy_harmfulness_deontology(),
+        self_sycophancy_harmfulness_justice(),
+        self_sycophancy_correctness_physics(),
+        self_sycophancy_correctness_mathematics(),
+        self_sycophancy_correctness_chemistry(),
+        self_sycophancy_correctness_biology(),
+        self_sycophancy_correctness_arc()
     ]
 
     print("Running all self-sycophancy tasks...")
@@ -148,12 +182,15 @@ if __name__ == "__main__":
     # Run evaluation with all tasks
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model = "openrouter/google/gemma-3-12b-it"
+    #model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/openai/gpt-4o"
+
 
     results = eval(
         tasks=all_tasks,
         model=model,  # Using OpenRouter Claude model
         limit=200,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
+        retry_on_error=5
         # debug_errors=True,  # Optional: enable debug mode
     )

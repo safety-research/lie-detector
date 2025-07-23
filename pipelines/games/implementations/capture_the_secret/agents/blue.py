@@ -22,31 +22,31 @@ def blue_agent(scenario: ScenarioConfig) -> Agent:
         def _extract_single_message(text: str, speaker_name: str) -> str:
             """Extract a single message from potentially multi-turn text"""
             text = text.strip()
-            
-            # Remove common multi-turn indicators
-            lines = text.split('\n')
-            clean_lines = []
-            
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    continue
-                # Skip lines that look like stage directions
-                if line.startswith('[') and line.endswith(']'):
-                    continue
-                # Skip lines that are clearly conversation formatting
-                if ':' in line and any(name in line for name in [speaker_name, "Dr.", "Michael", "Sarah"]):
-                    # Extract just the content after the colon
-                    parts = line.split(':', 1)
-                    if len(parts) == 2:
-                        clean_lines.append(parts[1].strip())
-                    continue
-                clean_lines.append(line)
-            
-            # Return the first meaningful line or the original if no cleaning worked
-            if clean_lines:
-                return clean_lines[0]
             return text
+            # # Remove common multi-turn indicators
+            # lines = text.split('\n')
+            # clean_lines = []
+            #
+            # for line in lines:
+            #     line = line.strip()
+            #     if not line:
+            #         continue
+            #     # Skip lines that look like stage directions
+            #     if line.startswith('[') and line.endswith(']'):
+            #         continue
+            #     # Skip lines that are clearly conversation formatting
+            #     if ':' in line and any(name in line for name in [speaker_name, "Dr.", "Michael", "Sarah"]):
+            #         # Extract just the content after the colon
+            #         parts = line.split(':', 1)
+            #         if len(parts) == 2:
+            #             clean_lines.append(parts[1].strip())
+            #         continue
+            #     clean_lines.append(line)
+            #
+            # # Return the first meaningful line or the original if no cleaning worked
+            # if clean_lines:
+            #     return clean_lines[0]
+            # return text
         
         def _track_deception_internally(question: str, response: str, scenario: ScenarioConfig, blue_state: BlueAgentState):
             """Track deception attempts without exposing to conversation"""
@@ -102,7 +102,7 @@ def blue_agent(scenario: ScenarioConfig) -> Agent:
         response = await model.generate(state.messages)
         
         # Extract just the response content (single message, not full conversation)
-        blue_response = response.completion.strip()
+        blue_response = response.completion.strip(" >")
         
         # Clean up the response to extract only the single message
         blue_response = _extract_single_message(blue_response, scenario.blue_persona.name)

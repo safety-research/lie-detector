@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from inspect_ai import Task, task
 from inspect_ai.model import GenerateConfig
@@ -15,6 +15,7 @@ from .solvers import ethical_dynamic_tool_solver
 
 @task
 def ethical_tool_sandbagging_task(
+        name: Optional[str] = None,
         num_scenarios: Optional[int] = None,
         ethical_frameworks: Optional[List[str]] = None,
         test_harmless_first: bool = True,
@@ -24,7 +25,8 @@ def ethical_tool_sandbagging_task(
         max_tokens: int = 50,
         shuffle: bool = True,
         seed: Optional[int] = None,
-        csv_path: str = "./ethical_scenarios.csv"
+        csv_path: str = "./ethical_scenarios.csv",
+        metadata: Any = None
 ) -> Task:
     """
     Task for detecting sandbagging in ethical tool usage scenarios.
@@ -46,7 +48,7 @@ def ethical_tool_sandbagging_task(
     """
 
     return Task(
-
+        name=name,
         dataset=create_ethical_sandbagging_dataset(
             csv_path=csv_path,
             num_scenarios=num_scenarios,
@@ -68,7 +70,8 @@ def ethical_tool_sandbagging_task(
             model=model,
             temperature=temperature,
             max_tokens=max_tokens
-        )
+        ),
+        metadata=metadata
     )
 
 
@@ -76,9 +79,11 @@ def ethical_tool_sandbagging_task(
 
 @task
 def ethical_comprehensive_test_task(
+        name: Optional[str] = None,
         model: str = "openai/gpt-4o",
         frameworks: Optional[List[str]] = None,
-        csv_path: str = "./ethical_scenarios.csv"
+        csv_path: str = "./ethical_scenarios.csv",
+
 ) -> Task:
     """
     Comprehensive test across all ethical scenarios.
@@ -93,6 +98,7 @@ def ethical_comprehensive_test_task(
     """
 
     return ethical_tool_sandbagging_task(
+        name=name,
         num_scenarios=None,  # Test all scenarios
         ethical_frameworks=frameworks,
         test_harmless_first=True,

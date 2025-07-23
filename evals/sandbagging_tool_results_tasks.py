@@ -11,12 +11,26 @@ from pipelines.sandbagging.selective_compliance.content_filtering import tool_re
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 # Removed global hook import to prevent hook from being applied to all tasks
 # from pipelines.sandbagging.selective_compliance.content_filtering.hook import *
 
 @task
 def sandbagging_tool_results_tasks():
-    return tool_results_sandbagging_task()
+    task = tool_results_sandbagging_task()
+    # Add metadata to the returned task
+    if hasattr(task, 'metadata'):
+        task.metadata.update({
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        })
+    else:
+        task.metadata = {
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
+    return task
 
 if __name__ == "__main__":
     # Example usage - run judge-based lie detection evaluation

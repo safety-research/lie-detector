@@ -8,6 +8,7 @@ from inspect_ai.scorer import Scorer
 from inspect_ai.solver import Solver
 
 from pipelines.games.core.base.tasks import BaseTaskCreator
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
 from pipelines.games.implementations.capture_the_secret.models import ScenarioConfig
 from pipelines.games.implementations.capture_the_secret.solvers import capture_the_secret_solver
 from pipelines.games.implementations.capture_the_secret.scorer import secrets_leaked_judge, deception_detection_judge, \
@@ -44,7 +45,7 @@ class CaptureTheSecretTaskCreator(BaseTaskCreator):
         return [
             secrets_leaked_judge(),
             deception_detection_judge(),
-            judge_calibration_scorer()
+            #judge_calibration_scorer()
         ]
 
     def create_sample(self, config: Union[ScenarioConfig, Dict]) -> Sample:
@@ -68,5 +69,9 @@ def create_deception_task(scenarios: List[Union[ScenarioConfig, Dict]], task_nam
         dataset=dataset,
         solver=creator.get_solver(),
         scorer=creator.get_scorers(),
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )

@@ -52,7 +52,7 @@ class BaseTaskCreator(ABC):
         return [self.create_sample(config) for config in configs]
     
     def create_task(self, configs: List[BaseGameConfig], task_name: str, 
-                   sandbox: str = "local") -> Task:
+                   sandbox: str = "local", metadata: Optional[Dict[str, Any]] = None) -> Task:
         """Create a complete Task from game configurations"""
         # Create samples
         samples = self.create_samples(configs)
@@ -61,17 +61,22 @@ class BaseTaskCreator(ABC):
         dataset = MemoryDataset(samples)
         
         # Create task
-        return Task(
-            name=task_name,
-            dataset=dataset,
-            solver=self.get_solver(),
-            scorer=self.get_scorers(),
-            sandbox=sandbox
-        )
+        task_kwargs = {
+            "name": task_name,
+            "dataset": dataset,
+            "solver": self.get_solver(),
+            "scorer": self.get_scorers(),
+            "sandbox": sandbox
+        }
+        
+        if metadata:
+            task_kwargs["metadata"] = metadata
+            
+        return Task(**task_kwargs)
 
 
 def create_game_task(task_creator_class, configs: List[BaseGameConfig], 
-                    task_name: str, sandbox: str = "local") -> Task:
+                    task_name: str, sandbox: str = "local", metadata: Optional[Dict[str, Any]] = None) -> Task:
     """Utility function to create a task using a TaskCreator class"""
     creator = task_creator_class()
-    return creator.create_task(configs, task_name, sandbox)
+    return creator.create_task(configs, task_name, sandbox, metadata)

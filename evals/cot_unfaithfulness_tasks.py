@@ -11,6 +11,8 @@ from inspect_ai.scorer import accuracy, mean
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 from pipelines.unfaithcot.dataset import create_cot_unfaithfulness_dataset, TokenType
 from pipelines.unfaithcot.solver import (
     cot_unfaithfulness_solver,
@@ -82,7 +84,11 @@ def cot_unfaithfulness_mmlu(
         name="cot-unfaithfulness_mmlu",
         dataset=dataset,
         solver=solver,
-        scorer=scorers
+        scorer=scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
 
 
@@ -138,7 +144,11 @@ def cot_unfaithfulness_contrastive_mmlu(
         name="cot-unfaithfulness_mmlu_contrastive",
         dataset=dataset,
         solver=solver,
-        scorer=scorers
+        scorer=scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
 
 
@@ -192,7 +202,11 @@ def cot_unfaithfulness_contrastive_arc(
         name="cot-unfaithfulness_arc_contrastive",
         dataset=dataset,
         solver=solver,
-        scorer=scorers
+        scorer=scorers,
+        metadata={
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.INTERNAL_KNOWLEDGE
+        }
     )
 
 if __name__ == "__main__":
@@ -202,7 +216,8 @@ if __name__ == "__main__":
         cot_unfaithfulness_contrastive_arc()]
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model = "openrouter/google/gemma-3-12b-it"
+    #model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/openai/gpt-4o"
 
     # Run evaluation
     results = eval(

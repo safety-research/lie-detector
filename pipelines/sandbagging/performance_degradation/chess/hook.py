@@ -135,7 +135,7 @@ class ChessSandbaggingHook(BaseSampleProcessingHook):
             sample_id = sample.id if hasattr(sample, 'id') else sample.get('id', 'unknown')
 
             result = {
-                'sample_id': f"conv_{datetime.now().strftime('%Y%m%d')}_{sample_id}",
+                'sample_id': sample_id,
                 'task': task_name,
                 'task_id': task_id,
                 'timestamp': timestamp,

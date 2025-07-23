@@ -11,6 +11,8 @@ parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 # Try to import - handle both relative and absolute imports
 try:
     from baseline.dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset, rowans_escaped_transcript_dataset
@@ -37,7 +39,7 @@ def baseline_task(
     return Task(
         dataset=baseline_dataset(data_dir, limit=limit),
         solver=generate(),
-        scorer=truth_scorer()
+        scorer=truth_scorer(),
     ) 
 
 @task
@@ -51,7 +53,7 @@ def escaped_transcript_task(
     return Task(
         dataset=conversation_dataset(data_dir, limit=limit),
         solver=generate(),
-        scorer=escaped_transcript_scorer()
+        scorer=escaped_transcript_scorer(),
     ) 
 
 @task
@@ -65,7 +67,7 @@ def llama_chat_task(
     return Task(
         dataset=llama_chat_dataset(data_dir, limit=limit),
         solver=generate(),
-        scorer=llama_chat_scorer()
+        scorer=llama_chat_scorer(),
     ) 
 
 @task
@@ -79,7 +81,7 @@ def llama_chat_reasoning_task(
     return Task(
         dataset=llama_chat_reasoning_dataset(data_dir, limit=limit),
         solver=generate(),
-        scorer=llama_chat_reasoning_scorer()
+        scorer=llama_chat_reasoning_scorer(),
     )
 
 @task
@@ -93,7 +95,7 @@ def base_transcript_reasoning_task(
     return Task(
         dataset=base_transcript_reasoning_dataset(data_dir, limit=limit),
         solver=generate(),
-        scorer=base_transcript_reasoning_scorer()
+        scorer=base_transcript_reasoning_scorer(),
     )
 
 @task
@@ -107,7 +109,7 @@ def rowans_escaped_transcript_task(
     return Task(
         dataset=rowans_escaped_transcript_dataset(data_dir, limit=limit),
         solver=generate(),
-        scorer=escaped_transcript_scorer()
+        scorer=escaped_transcript_scorer(),
     ) 
 
 def baseline_task_by_model(

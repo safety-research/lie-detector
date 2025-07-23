@@ -315,6 +315,38 @@
         // Apply filters
         document.getElementById('applyFiltersBtn').addEventListener('click', loadSamples);
         document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+        
+        // Add change listeners to filters to update counts dynamically
+        document.getElementById('taskFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            // Preserve the selected value after reload
+            const selectedTask = event.target.value;
+            document.getElementById('taskFilter').value = selectedTask;
+        });
+        
+        document.getElementById('modelFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedModel = event.target.value;
+            document.getElementById('modelFilter').value = selectedModel;
+        });
+        
+        document.getElementById('providerFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedProvider = event.target.value;
+            document.getElementById('providerFilter').value = selectedProvider;
+        });
+        
+        document.getElementById('domainFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedDomain = event.target.value;
+            document.getElementById('domainFilter').value = selectedDomain;
+        });
+        
+        document.getElementById('lieFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedLie = event.target.value;
+            document.getElementById('lieFilter').value = selectedLie;
+        });
 
         // Load data when page loads
         window.addEventListener('load', async () => {
@@ -324,11 +356,35 @@
 
         async function loadUniqueValues() {
             try {
-                const response = await fetch('/get_unique_values');
+                // Get current filter values
+                const task = document.getElementById('taskFilter').value;
+                const model = document.getElementById('modelFilter').value;
+                const provider = document.getElementById('providerFilter').value;
+                const domain = document.getElementById('domainFilter').value;
+                const didLie = document.getElementById('lieFilter').value;
+                
+                // Build URL with current filter parameters
+                let url = '/get_unique_values?';
+                const params = [];
+                if (task) params.push(`task=${encodeURIComponent(task)}`);
+                if (model) params.push(`model=${encodeURIComponent(model)}`);
+                if (provider) params.push(`provider=${encodeURIComponent(provider)}`);
+                if (domain) params.push(`domain=${encodeURIComponent(domain)}`);
+                if (didLie) params.push(`did_lie=${didLie}`);
+                url += params.join('&');
+                
+                const response = await fetch(url);
                 const values = await response.json();
 
                 // Store total count for display
                 window.totalSampleCount = values.total_count || 0;
+                
+                // Store current selections before updating
+                const currentTask = document.getElementById('taskFilter').value;
+                const currentModel = document.getElementById('modelFilter').value;
+                const currentProvider = document.getElementById('providerFilter').value;
+                const currentDomain = document.getElementById('domainFilter').value;
+                const currentDidLie = document.getElementById('lieFilter').value;
 
                 // Populate task filter with counts
                 const taskFilter = document.getElementById('taskFilter');
@@ -387,6 +443,13 @@
                         <option value="false">Truths Only (${values.lie_counts.false})</option>
                     `;
                 }
+                
+                // Restore previous selections
+                document.getElementById('taskFilter').value = currentTask;
+                document.getElementById('modelFilter').value = currentModel;
+                document.getElementById('providerFilter').value = currentProvider;
+                document.getElementById('domainFilter').value = currentDomain;
+                document.getElementById('lieFilter').value = currentDidLie;
             } catch (error) {
                 console.error('Error loading unique values:', error);
             }
@@ -459,7 +522,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <h6><i class="fas fa-tag"></i> Groundtruth Label (claude 4-sonnet)</h6>
+                        <h6><i class="fas fa-tag"></i> Groundtruth Label</h6>
                         <div class="trace-message">
                             <strong>${sample.did_lie ? 'LYING' : 'TRUTHFUL'}:</strong> <span class="content ${sample.evidence && sample.evidence.length > TRUNCATE_LENGTH ? 'has-truncated' : ''}" data-full-text="${escapeHtml(sample.evidence).replace(/"/g, '&quot;')}" data-expanded="false">${truncateAndFormat(sample.evidence)}</span>
                         </div>
