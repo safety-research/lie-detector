@@ -285,6 +285,7 @@ def load_sample_from_file(file_key):
 # Removed bulk loading function - now using lazy loading
 
 
+
 @app.route('/')
 def index():
     """Main page"""
@@ -339,6 +340,7 @@ def get_samples():
             if sample:
                 samples.append(sample)
         
+
         return jsonify({
             "samples": samples,
             "total_samples": total_files,
@@ -404,6 +406,7 @@ def get_unique_values():
             provider = metadata.get('provider', '')
             domain = metadata.get('domain', '').replace('_', ' ') if metadata.get('domain') else ''
             did_lie = metadata.get('did_lie')
+
             
             # Check if this file matches ALL current filters
             # We only count it if it would be included in the current filtered view
@@ -538,10 +541,6 @@ def refresh_data():
         
     except Exception as e:
         return jsonify({"error": f"Error refreshing data: {str(e)}"}), 500
-
-# Removed batch sync endpoint - no longer needed with lazy loading
-
-# Removed continue processing endpoint - no longer needed with lazy loading
 
 @app.route('/status', methods=['GET'])
 def status():

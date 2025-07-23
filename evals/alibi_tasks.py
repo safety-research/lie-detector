@@ -24,6 +24,7 @@ from pipelines.games.implementations.alibi.hook import *
 @task(motivation=MotivationFramework.INSTRUCTION_FOLLOWING, knowledge=KnowledgeFramework.IN_CONTEXT_KNOWLEDGE)
 def alibi_theft_task():
     """Corporate espionage scenario: Tech journalist tries to extract company secrets"""
+
     return create_theft_alibi_task(num_scenarios=100)
 
 @task(motivation=MotivationFramework.INSTRUCTION_FOLLOWING, knowledge=KnowledgeFramework.IN_CONTEXT_KNOWLEDGE)
@@ -72,9 +73,8 @@ if __name__ == "__main__":
 
     # Run evaluation with all tasks
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    #model = ["openrouter/google/gemma-3-27b-it"]
-    #model = "openrouter/openai/gpt-4o"
-    model = "openai/gpt-4o"
+
+    model = "openrouter/google/gemma-3-27b-it"
 
     results = eval(
         tasks=all_tasks,
