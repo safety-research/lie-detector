@@ -4,11 +4,18 @@ import subprocess
 import time
 from pathlib import Path
 from typing import Dict, Any, Optional
-import openai
+
+from dotenv import load_dotenv
+from openai import OpenAI
+
 from datetime import datetime
 import os
 
-from train import TrainingQueue
+load_dotenv()
+try:
+    from train import TrainingQueue
+except ImportError:
+    from prep.train import TrainingQueue
 
 try:
     import wandb
@@ -33,9 +40,7 @@ class OpenAITrainer:
         self.wandb_project = wandb_project or os.environ.get("WANDB_PROJECT", "lie-detector-training")
         self.wandb_entity = wandb_entity or os.environ.get("WANDB_ENTITY")
         self.enable_wandb = enable_wandb and WANDB_AVAILABLE
-
-        if self.api_key:
-            openai.api_key = self.api_key
+        self.client = OpenAI(api_key=self.api_key)
 
     def _init_wandb(self, fingerprint: str, config: Dict[str, Any],
                     dataset_metadata: Dict[str, Any]) -> Optional[Any]:
@@ -166,16 +171,12 @@ class OpenAITrainer:
 
             # Upload files using OpenAI API
             with open(train_file_path, "rb") as f:
-                train_file = openai.File.create(
-                    file=f,
-                    purpose="fine-tune"
-                )
+                train_file = self.client.files.create(file=f,
+                purpose="fine-tune")
 
             with open(val_file_path, "rb") as f:
-                val_file = openai.File.create(
-                    file=f,
-                    purpose="fine-tune"
-                )
+                val_file = self.client.files.create(file=f,
+                purpose="fine-tune")
 
             logger.info(f"Files uploaded: train={train_file.id}, val={val_file.id}")
 
@@ -191,13 +192,11 @@ class OpenAITrainer:
             if size:
                 suffix += f"-size{size}"
 
-            job = openai.FineTuningJob.create(
-                training_file=train_file.id,
-                validation_file=val_file.id,
-                model=base_model,
-                hyperparameters=hyperparameters,
-                suffix=suffix
-            )
+            job = self.client.fine_tuning.jobs.create(training_file=train_file.id,
+            validation_file=val_file.id,
+            model=base_model,
+            hyperparameters=hyperparameters,
+            suffix=suffix)
 
             logger.info(f"Created fine-tuning job: {job.id}")
             logger.info(f"Initial status: {job.status}")
@@ -250,7 +249,7 @@ class OpenAITrainer:
 
         while True:
             try:
-                job = openai.FineTuningJob.retrieve(job_id)
+                job = self.client.fine_tuning.jobs.retrieve(job_id)
 
                 # Log status changes
                 if job.status != last_status:
@@ -271,7 +270,7 @@ class OpenAITrainer:
                         })
 
                 # Get events for logging
-                events = openai.FineTuningJob.list_events(job_id, limit=100)
+                events = self.client.fine_tuning.jobs.list_events(job_id, limit=100)
 
                 # Log new events to W&B
                 if len(events.data) > last_event_count:
