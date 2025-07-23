@@ -81,7 +81,6 @@ def tool_results_sandbagging_task(
                 read_file(),
                 list_files(),
                 get_file_info(),
-
             ]),
             solver
         ],

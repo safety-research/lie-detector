@@ -10,6 +10,8 @@ from inspect_ai.solver import chain, system_message
 # Add the project root to path to import sandbagging module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 # Get the project root directory for absolute paths
 PROJECT_ROOT = Path(__file__).parent.parent
 
@@ -75,7 +77,11 @@ def ascii_sandbagging_task(
             model=model,
             temperature=temperature,
             max_tokens=max_tokens
-        )
+        ),
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -85,8 +91,9 @@ if __name__ == "__main__":
     from inspect_ai import eval
 
     task = ascii_sandbagging_task()
-    model = "openrouter/google/gemma-3-27b-it"#"openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/google/gemma-3-27b-it"#"openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/openai/gpt-4o"
 
     model ="openrouter/google/gemma-3-27b-it"
     model = "openrouter/google/gemma-3-12b-it"
@@ -96,6 +103,6 @@ if __name__ == "__main__":
     results = eval(
         tasks=[task],
         model=model,  # or any model you want to test
-        limit=1,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )

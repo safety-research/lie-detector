@@ -10,6 +10,8 @@ from inspect_ai.dataset import Sample, MemoryDataset
 load_dotenv()
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
 from pipelines.games.implementations.n_truths_and_a_lie.scenario import generate_themed_scenarios
 from pipelines.games.implementations.n_truths_and_a_lie import GameConfig
 from pipelines.games.implementations.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
@@ -69,9 +71,13 @@ def n_truths_and_a_lie_professional_background() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 @task
@@ -88,9 +94,13 @@ def n_truths_and_a_lie_hidden_talents() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 @task
@@ -107,9 +117,13 @@ def n_truths_and_a_lie_family_history() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 @task
@@ -126,9 +140,13 @@ def n_truths_and_a_lie_personal_quirks() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 @task
@@ -145,9 +163,13 @@ def n_truths_and_a_lie_travel_experiences() -> Task:
         scorer=[
             lie_detection_scorer(),
             interrogation_quality_scorer(),
-            combined_n_truths_scorer()
+            #combined_n_truths_scorer()
         ],
-        sandbox="local"
+        sandbox="local",
+        metadata={
+            "motivation_framework": MotivationFramework.IN_CONTEXT_PRESSURE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -162,13 +184,13 @@ if __name__ == "__main__":
     ]
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model = "openrouter/google/gemma-3-27b-it"
-
+    #model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/openai/gpt-4o"
     # Run evaluation with a specific model
     results = eval(
         tasks=task,
         model=model,  # Using OpenRouter model
-        limit=1,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )s

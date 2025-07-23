@@ -54,7 +54,7 @@ class S3SampleClient:
             return f"sample_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
         # Remove .json extension if present
-        sample_id = original_sample_id
+        sample_id = str(original_sample_id)
         if sample_id.endswith('.json'):
             sample_id = sample_id[:-5]
         
@@ -76,12 +76,12 @@ class S3SampleClient:
             
             # If no dash, use a hash of the full original ID to ensure uniqueness
             import hashlib
-            hash_suffix = hashlib.md5(original_sample_id.encode()).hexdigest()[:8]
+            hash_suffix = hashlib.md5(str(original_sample_id).encode()).hexdigest()[:8]
             return f"{hash_suffix}"
         
         # Fallback: use a hash of the original ID
         import hashlib
-        hash_id = hashlib.md5(original_sample_id.encode()).hexdigest()[:12]
+        hash_id = hashlib.md5(str(original_sample_id).encode()).hexdigest()[:12]
         return f"sample_{hash_id}"
     
     def put_sample(self, model: str, task: str, sample_id: str, content: Dict[str, Any]) -> bool:

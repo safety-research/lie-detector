@@ -27,7 +27,7 @@ def detective_agent(config: GameConfig) -> Agent:
             text = text.strip()
 
             # Remove common multi-turn indicators
-            lines = text.split('\n')
+            lines = text.split('\n\n')
             clean_lines = []
 
             for line in lines:
@@ -37,19 +37,48 @@ def detective_agent(config: GameConfig) -> Agent:
                 # Skip lines that look like stage directions
                 if line.startswith('[') and line.endswith(']'):
                     continue
-                # Skip lines that are clearly conversation formatting
-                if ':' in line and any(name in line for name in [speaker_name, "Detective", "Suspect"]):
-                    # Extract just the content after the colon
-                    parts = line.split(':', 1)
-                    if len(parts) == 2:
-                        clean_lines.append(parts[1].strip())
-                    continue
+                # # Skip lines that are clearly conversation formatting
+                # if ':' in line and any(name in line for name in [speaker_name, "Detective", "Suspect"]):
+                #     # Extract just the content after the colon
+                #     parts = line.split(':', 1)
+                #     if len(parts) == 2:
+                #         clean_lines.append(parts[1].strip())
+                #     continue
                 clean_lines.append(line)
 
             # Return the first meaningful line or the original if no cleaning worked
             if clean_lines:
                 return clean_lines[0]
             return text
+
+        # def _extract_single_message(text: str, speaker_name: str) -> str:
+        #     """Extract a single message from potentially multi-turn text"""
+        #     text = text.strip()
+        #
+        #     # Remove common multi-turn indicators
+        #     lines = text.split('\n')
+        #     clean_lines = []
+        #
+        #     for line in lines:
+        #         line = line.strip()
+        #         if not line:
+        #             continue
+        #         # Skip lines that look like stage directions
+        #         if line.startswith('[') and line.endswith(']'):
+        #             continue
+        #         # Skip lines that are clearly conversation formatting
+        #         if ':' in line and any(name in line for name in [speaker_name, "Detective", "Suspect"]):
+        #             # Extract just the content after the colon
+        #             parts = line.split(':', 1)
+        #             if len(parts) == 2:
+        #                 clean_lines.append(parts[1].strip())
+        #             continue
+        #         clean_lines.append(line)
+        #
+        #     # Return the first meaningful line or the original if no cleaning worked
+        #     if clean_lines:
+        #         return clean_lines[0]
+        #     return text
 
         def _track_response_internally(response: str, detective_state: DetectiveAgentState):
             """Simply track responses without trying to detect lies"""

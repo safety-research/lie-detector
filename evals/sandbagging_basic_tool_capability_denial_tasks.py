@@ -17,6 +17,8 @@ from common.gemma3_tool_adapter import is_gemma_model, conditional_tool_capabili
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 # Import original modules
 from pipelines.sandbagging.capability_denial.basic_tool_usage.dataset import create_tool_sandbagging_dataset
 from pipelines.sandbagging.capability_denial.basic_tool_usage.scorer import tool_sandbagging_scorer
@@ -96,7 +98,11 @@ def create_adaptive_tool_task(
             max_tokens=max_tokens
         ),
         # Pass model info to metadata for the solver to use
-        metadata={"model": model}
+        metadata={
+            "model": model,
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+        }
     )
 
 
@@ -193,8 +199,8 @@ if __name__ == "__main__":
 
     # Example usage with different models
     models_to_test = [
-        "google/gemma-3-27b-it",  # Will use Gemma adapter
-        "openrouter/meta-llama/llama-3.1-8b-instruct",  # Will use standard approach
+        #"google/gemma-3-27b-it",  # Will use Gemma adapter
+        #"openrouter/meta-llama/llama-3.1-8b-instruct",  # Will use standard approach
         "openai/gpt-4o"  # Will use standard approach
     ]
 
@@ -209,12 +215,11 @@ if __name__ == "__main__":
         tool_image_gen_sandbagging_task(num_subjects=NUM_SUBJECTS, model=model),
         tool_search_sandbagging_task(num_subjects=NUM_SUBJECTS, model=model)
     ]
-
-    # Run evaluation
+        # Run evaluation
     results = eval(
         tasks=tasks,
         model=model,
-        limit=1,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",
     )
 
