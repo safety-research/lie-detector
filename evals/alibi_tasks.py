@@ -61,8 +61,8 @@ if __name__ == "__main__":
     # )
 
     all_tasks = [
-        # alibi_assault_task(),
-        # alibi_breaking_entering_task(),
+        alibi_assault_task(),
+        alibi_breaking_entering_task(),
         alibi_fraud_task(),
         alibi_workplace_task(),
     ]
@@ -72,7 +72,9 @@ if __name__ == "__main__":
 
     # Run evaluation with all tasks
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = ["openrouter/google/gemma-3-27b-it"]
+    #model = ["openrouter/google/gemma-3-27b-it"]
+    #model = "openrouter/openai/gpt-4o"
+    model = "openai/gpt-4o"
 
     results = eval(
         tasks=all_tasks,

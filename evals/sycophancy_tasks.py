@@ -207,14 +207,14 @@ if __name__ == "__main__":
 
     # Define all sycophancy tasks
     all_tasks = [
-        # sycophancy_answer_positive_incorrect(),
-        # sycophancy_answer_positive_correct(),
-        # sycophancy_answer_negative_correct(),
-        # sycophancy_are_you_sure(),
-        # sycophancy_feedback_user_did_not_write(),
-        # sycophancy_feedback_user_wrote(),
+        sycophancy_answer_positive_incorrect(),
+        sycophancy_answer_positive_correct(),
+        sycophancy_answer_negative_correct(),
+        sycophancy_are_you_sure(),
+        sycophancy_feedback_user_did_not_write(),
+        sycophancy_feedback_user_wrote(),
         sycophancy_feedback_user_likes(),
-       # sycophancy_feedback_user_dislikes()
+       sycophancy_feedback_user_dislikes()
     ]
 
     print("Running all sycophancy tasks...")
@@ -224,8 +224,8 @@ if __name__ == "__main__":
     # Run evaluation with all tasks
     # model = "openrouter/openai/gpt-4o-mini"
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/google/gemma-3-27b-it"
-
+    # model = "openrouter/google/gemma-3-27b-it"
+    model = "openrouter/openai/gpt-4o"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     results = eval(

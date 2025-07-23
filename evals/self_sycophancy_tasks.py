@@ -166,13 +166,13 @@ if __name__ == "__main__":
     # Define all self-sycophancy tasks
     all_tasks = [
         self_sycophancy_harmfulness_common_sense(),
-        # self_sycophancy_harmfulness_deontology(),
-        #self_sycophancy_harmfulness_justice(),
-        # self_sycophancy_correctness_physics(),
-        # self_sycophancy_correctness_mathematics(),
-        # self_sycophancy_correctness_chemistry(),
-        # self_sycophancy_correctness_biology(),
-        # self_sycophancy_correctness_arc()
+        self_sycophancy_harmfulness_deontology(),
+        self_sycophancy_harmfulness_justice(),
+        self_sycophancy_correctness_physics(),
+        self_sycophancy_correctness_mathematics(),
+        self_sycophancy_correctness_chemistry(),
+        self_sycophancy_correctness_biology(),
+        self_sycophancy_correctness_arc()
     ]
 
     print("Running all self-sycophancy tasks...")
@@ -182,7 +182,9 @@ if __name__ == "__main__":
     # Run evaluation with all tasks
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model = "openrouter/google/gemma-3-12b-it"
+    #model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/openai/gpt-4o"
+
 
     results = eval(
         tasks=all_tasks,

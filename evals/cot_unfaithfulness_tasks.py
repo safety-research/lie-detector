@@ -216,7 +216,8 @@ if __name__ == "__main__":
         cot_unfaithfulness_contrastive_arc()]
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model = "openrouter/google/gemma-3-12b-it"
+    #model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/openai/gpt-4o"
 
     # Run evaluation
     results = eval(

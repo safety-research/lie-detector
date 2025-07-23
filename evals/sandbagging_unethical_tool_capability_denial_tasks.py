@@ -15,8 +15,8 @@ from pipelines.sandbagging.capability_denial.unethical_tool_usage.hooks import *
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent
-SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "sandbagging" / "capabilities"
-SANDBAGGING_ETHICAL_PATH = PROJECT_ROOT / "sandbagging" / "capability_denial" / "unethical_tool_usage"
+SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "pipelines" / "sandbagging" / "capabilities"
+SANDBAGGING_ETHICAL_PATH = PROJECT_ROOT / "pipelines" / "sandbagging" / "capability_denial" / "unethical_tool_usage"
 
 load_dotenv()
 
@@ -95,13 +95,15 @@ if __name__ == "__main__":
 
     #task = [tool_code_sandbagging_task()]
 
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/openai/gpt-4o"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=task,
         model=model,  # or any model you want to test
-        limit=1000,  # Limit samples for faster debugging
-        log_dir="../logs",  # Specify log directory
+        limit=250,  # Limit samples for faster debugging
+        log_dir="../logs",  # Specify log directory,
+        retry_on_error=10
     )

@@ -92,13 +92,14 @@ if __name__ == "__main__":
     from inspect_ai import eval
 
     task = ascii_sandbagging_task()
-    model = "openrouter/google/gemma-3-27b-it"#"openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/google/gemma-3-27b-it"#"openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model = "openrouter/openai/gpt-4o"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
         model=model,  # or any model you want to test
-        limit=1,  # Limit samples for faster debugging
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )

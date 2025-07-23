@@ -148,7 +148,8 @@ if __name__ == "__main__":
     # Run evaluation with all tasks
     # model = "openrouter/openai/gpt-4o-mini"
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    model = "openrouter/google/gemma-3-12b-it"
+    #model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/openai/gpt-4o"
 
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     results = eval(

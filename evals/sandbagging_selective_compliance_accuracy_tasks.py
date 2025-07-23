@@ -176,8 +176,8 @@ if __name__ == "__main__":
       sandbagging_digital_security_contrastive(),
       sandbagging_physical_security_contrastive()
     ]
-    
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/openai/gpt-4o"
+    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.1-8b-base"
     #model = "openrouter/meta-llama/llama-3.1-405b"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
@@ -190,8 +190,9 @@ if __name__ == "__main__":
     # Run evaluation with a specific model
     results = eval(
         model=model,
-        tasks=sandbagging_financial_systems_contrastive(),#all_tasks,
+        tasks=all_tasks,#all_tasks,
         #token_limit=1,
-        limit=4,  # Limit samples for faster debugging
+        retry_on_error=8,
+        limit=125,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )

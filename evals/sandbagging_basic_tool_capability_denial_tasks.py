@@ -200,8 +200,8 @@ if __name__ == "__main__":
 
     # Example usage with different models
     models_to_test = [
-        "google/gemma-3-27b-it",  # Will use Gemma adapter
-        "openrouter/meta-llama/llama-3.1-8b-instruct",  # Will use standard approach
+        #"google/gemma-3-27b-it",  # Will use Gemma adapter
+        #"openrouter/meta-llama/llama-3.1-8b-instruct",  # Will use standard approach
         "openai/gpt-4o"  # Will use standard approach
     ]
 
@@ -218,7 +218,7 @@ if __name__ == "__main__":
         results = eval(
             tasks=tasks,
             model=model,
-            limit=1,  # Limit samples for faster debugging
+            limit=125,  # Limit samples for faster debugging
             log_dir="../logs",
         )
 
