@@ -14,7 +14,7 @@ on:
   push:
     branches: [main, feature/ui]
     paths:
-      - 'data_viewer/**'
+      - '../../ui/**'
 
 jobs:
   sync-data:

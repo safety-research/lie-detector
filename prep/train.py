@@ -324,6 +324,7 @@ class TrainingQueue:
             else:
                 effective_dataset_path = dataset_path
 
+
             # Save training configuration
             config_path = run_dir / "config.json"
             with open(config_path, 'w') as f:
@@ -372,6 +373,7 @@ class TrainingQueue:
 
         # Subsample training data while maintaining balance
         train_sampled = self._balanced_sample(train_data, size)
+
 
         # Save subsampled training data
         train_sampled_path = target_dir / "train.jsonl"
@@ -426,10 +428,9 @@ class TrainingQueue:
         negative = []
 
         for item in data:
-            messages = item.get("messages", [])
-            if messages and messages[-1].get("role") == "assistant":
-                response = messages[-1].get("content", "").strip().lower()
-                if response == "yes.":
+            meta = item.get("meta", {})
+            if meta and 'did_lie' in meta:
+                if meta['did_lie']:
                     positive.append(item)
                 else:
                     negative.append(item)
@@ -620,7 +621,7 @@ class TrainingQueue:
 def start_openai_training(queue_result: Dict[str, Any], args) -> Dict[str, Any]:
     """Start the actual OpenAI training job."""
     try:
-        from trainers.oai import OpenAITrainer
+        from .trainers.oai import OpenAITrainer
 
         # Initialize trainer
         trainer = OpenAITrainer(
@@ -721,7 +722,7 @@ def main():
     parser = argparse.ArgumentParser(description='Train lie detector models with OpenAI')
     parser.add_argument('--dataset', type=str, help='Path to dataset or model directory')
     parser.add_argument('--model', type=str, help='Base model identifier (e.g., gpt-4o-2024-11-20)')
-    parser.add_argument('--all-folds', action='store_true', help='Train all folds in directory')
+    parser.add_argument('--all-folds', action='store_false', help='Train all folds in directory', default=False)
     parser.add_argument('--status', action='store_true', help='Show queue status')
     parser.add_argument('--retry-failed', action='store_true', help='Retry failed runs')
     parser.add_argument('--force', action='store_true', help='Force retraining')
@@ -729,11 +730,11 @@ def main():
     parser.add_argument('--learning-rate-multiplier', type=float, default=1.0, help='Learning rate multiplier')
     parser.add_argument('--batch-size', type=int, help='Batch size (None for auto)')
     parser.add_argument('--size', type=int, help='Subsample size for training data (maintains balance)')
-    parser.add_argument('--interactive', action='store_true', help='Monitor training interactively')
-    parser.add_argument('--monitor', type=str, help='Monitor specific fingerprint(s), comma-separated')
+    #parser.add_argument('--interactive', action='store_false', help='Monitor training interactively')
+    #parser.add_argument('--monitor', type=str, help='Monitor specific fingerprint(s), comma-separated')
 
     # W&B arguments
-    parser.add_argument('--no-wandb', action='store_true', help='Disable W&B logging')
+    parser.add_argument('--no-wandb', action='store_false', help='Disable W&B logging')
     parser.add_argument('--wandb-project', type=str, help='W&B project name')
     parser.add_argument('--wandb-entity', type=str, help='W&B entity/team name')
 
@@ -742,12 +743,12 @@ def main():
     # Initialize queue
     queue = TrainingQueue()
 
-    if args.monitor:
-        # Monitor specific fingerprints
-        fingerprints = [f.strip() for f in args.monitor.split(',')]
-        interactive_monitor(fingerprints, queue)
+    # if args.monitor:
+    #     # Monitor specific fingerprints
+    #     fingerprints = [f.strip() for f in args.monitor.split(',')]
+    #     interactive_monitor(fingerprints, queue)
 
-    elif args.status:
+    if args.status:
         # Show status
         status = queue.get_status()
         print(json.dumps(status, indent=2))
@@ -801,8 +802,8 @@ def main():
                 fingerprints_to_monitor.append(result['fingerprint'])
 
         # If interactive mode and we started training, monitor it
-        if args.interactive and fingerprints_to_monitor:
-            interactive_monitor(fingerprints_to_monitor, queue)
+        # if args.interactive and fingerprints_to_monitor:
+        #     interactive_monitor(fingerprints_to_monitor, queue)
 
     else:
         parser.print_help()

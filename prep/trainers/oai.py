@@ -25,7 +25,6 @@ except ImportError:
     WANDB_AVAILABLE = False
     logging.warning("wandb not installed. Install with: pip install wandb")
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -95,6 +94,57 @@ class OpenAITrainer:
             logger.error(f"Failed to initialize W&B: {e}")
             return None
 
+    def _prepare_training_files(self, dataset_path: Path, size: Optional[int] = None) -> tuple[Path, Path]:
+        """
+        Prepare training files by removing the 'meta' field from each line.
+
+        Args:
+            dataset_path: Path to the dataset directory
+            size: Optional size parameter (for logging)
+
+        Returns:
+            Tuple of (cleaned_train_path, cleaned_val_path)
+        """
+        # Create a temporary directory for cleaned files
+        temp_dir = dataset_path / "temp_cleaned"
+        temp_dir.mkdir(exist_ok=True)
+
+        # Process train.jsonl
+        train_input_path = dataset_path / "train.jsonl"
+        train_output_path = temp_dir / "train_cleaned.jsonl"
+
+        logger.info(f"Removing 'meta' field from training data...")
+        with open(train_input_path, 'r') as infile, open(train_output_path, 'w') as outfile:
+            for line_num, line in enumerate(infile, 1):
+                try:
+                    data = json.loads(line)
+                    # Remove the 'meta' field if it exists
+                    if 'meta' in data:
+                        del data['meta']
+                    outfile.write(json.dumps(data) + '\n')
+                except json.JSONDecodeError as e:
+                    logger.error(f"Error parsing line {line_num} in train.jsonl: {e}")
+                    raise
+
+        # Process val.jsonl
+        val_input_path = dataset_path / "val.jsonl"
+        val_output_path = temp_dir / "val_cleaned.jsonl"
+
+        with open(val_input_path, 'r') as infile, open(val_output_path, 'w') as outfile:
+            for line_num, line in enumerate(infile, 1):
+                try:
+                    data = json.loads(line)
+                    # Remove the 'meta' field if it exists
+                    if 'meta' in data:
+                        del data['meta']
+                    outfile.write(json.dumps(data) + '\n')
+                except json.JSONDecodeError as e:
+                    logger.error(f"Error parsing line {line_num} in val.jsonl: {e}")
+                    raise
+
+        logger.info(f"Successfully cleaned training files (removed 'meta' field)")
+        return train_output_path, val_output_path
+
     def train(self, dataset_path: str, base_model: str = "gpt-4o-2024-08-06",
               n_epochs: int = 3, learning_rate_multiplier: float = 1.0,
               batch_size: Optional[int] = None, size: Optional[int] = None,
@@ -160,25 +210,29 @@ class OpenAITrainer:
         )
 
         try:
-            # Upload training files
+            # Prepare cleaned training files (remove 'meta' field)
             dataset_path = Path(effective_dataset_path)
-            train_file_path = dataset_path / "train.jsonl"
-            val_file_path = dataset_path / "val.jsonl"
+            cleaned_train_path, cleaned_val_path = self._prepare_training_files(dataset_path, size)
 
             logger.info(f"Uploading training files for {fingerprint}")
             if size:
                 logger.info(f"Using subsampled data with size {size}")
 
-            # Upload files using OpenAI API
-            with open(train_file_path, "rb") as f:
+            # Upload cleaned files using OpenAI API
+            with open(cleaned_train_path, "rb") as f:
                 train_file = self.client.files.create(file=f,
-                purpose="fine-tune")
+                                                      purpose="fine-tune")
 
-            with open(val_file_path, "rb") as f:
+            with open(cleaned_val_path, "rb") as f:
                 val_file = self.client.files.create(file=f,
-                purpose="fine-tune")
+                                                    purpose="fine-tune")
 
             logger.info(f"Files uploaded: train={train_file.id}, val={val_file.id}")
+
+            # Clean up temporary files
+            cleaned_train_path.unlink()
+            cleaned_val_path.unlink()
+            cleaned_train_path.parent.rmdir()
 
             # Log to W&B
             if wandb_run:
@@ -192,11 +246,21 @@ class OpenAITrainer:
             if size:
                 suffix += f"-size{size}"
 
-            job = self.client.fine_tuning.jobs.create(training_file=train_file.id,
-            validation_file=val_file.id,
-            model=base_model,
-            hyperparameters=hyperparameters,
-            suffix=suffix)
+            try:
+                job = self.client.fine_tuning.jobs.create(
+                    training_file=train_file.id,
+                    validation_file=val_file.id,
+                    model=base_model,
+                    hyperparameters=hyperparameters,
+                    suffix=suffix
+                )
+                logger.info(f"Created fine-tuning job: {job.id}")
+            except Exception as e:
+                logger.error(f"Failed to create fine-tuning job: {e}")
+                logger.error(f"Error type: {type(e)}")
+                logger.error(f"Error details: {str(e)}")
+                raise
+
 
             logger.info(f"Created fine-tuning job: {job.id}")
             logger.info(f"Initial status: {job.status}")
@@ -242,6 +306,7 @@ class OpenAITrainer:
         """Monitor OpenAI fine-tuning job until completion with W&B logging."""
         logger.info(f"Monitoring job {job_id}")
 
+
         step = 0
         last_event_count = 0
         last_status = None
@@ -250,6 +315,8 @@ class OpenAITrainer:
         while True:
             try:
                 job = self.client.fine_tuning.jobs.retrieve(job_id)
+
+                logger.info(f"Full job object: {job}")
 
                 # Log status changes
                 if job.status != last_status:
@@ -417,7 +484,7 @@ class OpenAITrainer:
                     }
 
                 # Still running - wait and check again
-                time.sleep(30)  # Check every 30 seconds
+                time.sleep(10)  # Check every 30 seconds
 
             except Exception as e:
                 logger.error(f"Error monitoring job: {e}")

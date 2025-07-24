@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from common.generalization_mappings import generalization_map_1, generalization_map_2
+from common.generalization_mappings import generalization_map_1, generalization_map_2, generalization_map_3
 from prep.download import S3DataDownloader
 
 # Configure logging
@@ -27,7 +27,8 @@ class LieDetectionDataProcessor:
         self.samples = samples
         self.generalization_maps = {
             'generalization_map_1': generalization_map_1,
-            'generalization_map_2': generalization_map_2
+            'generalization_map_2': generalization_map_2,
+            'generalization_map_3': generalization_map_3
         }
 
     def deduplicate_samples(self) -> List[Dict]:
@@ -292,7 +293,7 @@ class LieDetectionDataProcessor:
                 "content": response
             })
 
-            training_data.append({"messages": messages, "metadata": {"did_lie": sample['did_lie']}})
+            training_data.append({"messages": messages, "meta": {"did_lie": sample['did_lie']}})
 
         return training_data
 
@@ -336,13 +337,13 @@ def save_training_files(train_data: List[Dict], val_data: List[Dict],
 def main():
     parser = argparse.ArgumentParser(description='Prepare lie detection data for fine-tuning')
     parser.add_argument('--model', help='Model identifier (e.g., openai/gpt-4o)', default='openai/gpt-4o')
-    parser.add_argument('--aggregation', choices=['generalization_map_1', 'generalization_map_2', 'none'],
-                        default='generalization_map_1', help='Aggregation strategy for categorizing tasks')
+    parser.add_argument('--aggregation', choices=['generalization_map_1', 'generalization_map_2', 'generalization_map_3', 'none'],
+                        default='generalization_map_3', help='Aggregation strategy for categorizing tasks')
     parser.add_argument('--folds', type=lambda x: x.lower() == 'true', default=True,
                         help='Whether to create cross-validation folds')
     parser.add_argument('--balance', choices=['downsample', 'upsample', 'none'], default='downsample',
                         help='Strategy for balancing lie/truth samples')
-    parser.add_argument('--validation-split', type=float, default=0.2,
+    parser.add_argument('--validation-split', type=float, default=0.15,
                         help='Fraction of training data for validation (0.0-0.5). '
                              'If 0.0, uses OOD data as validation with no test set.')
     parser.add_argument('--size', type=int, help='Size of training data (optional)', default=None)

@@ -4,11 +4,11 @@ on:
   push:
     branches: [main, feature/ui]
     paths:
-      - 'data_viewer/**'
+      - '../../ui/**'
   pull_request:
     branches: [main]
     paths:
-      - 'data_viewer/**'
+      - '../../ui/**'
   workflow_dispatch:
 
 env:
