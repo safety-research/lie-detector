@@ -81,8 +81,8 @@ class ScenarioConfig(BaseGameConfig):
     blue_persona: Persona
     red_persona: Persona
     information: Dict[InfoClassification, List[SecretInfo]]
-    conversation_limit: int = 10
-    turns_limit: int = 10  # Also set the base class field
+    conversation_limit: int = 8
+    turns_limit: int = 8  # Also set the base class field
     scenario_context: Optional[Dict[str, str]] = None
     
     @property

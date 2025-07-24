@@ -26,7 +26,7 @@ def create_base_scenario_config(
         'game_id': game_id,
         'domain': domain,
         'generation_params': generation_params,
-        'conversation_limit': 25 + random.randint(-5, 10)
+        'conversation_limit': 8 + random.randint(-4, 4)
     }
 
 

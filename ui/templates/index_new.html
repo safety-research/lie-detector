@@ -250,19 +250,31 @@
         <div id="filterSection" class="filter-section">
             <h5><i class="fas fa-filter"></i> Filters</h5>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Task</label>
                     <select id="taskFilter" class="form-select">
                         <option value="">All Tasks</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Model</label>
                     <select id="modelFilter" class="form-select">
                         <option value="">All Models</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <label class="form-label">Provider</label>
+                    <select id="providerFilter" class="form-select">
+                        <option value="">All Providers</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Domain</label>
+                    <select id="domainFilter" class="form-select">
+                        <option value="">All Domains</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <label class="form-label">Did Lie</label>
                     <select id="lieFilter" class="form-select">
                         <option value="">All</option>
@@ -270,7 +282,7 @@
                         <option value="false">Truths Only</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Sample Count</label>
                     <input type="number" id="sampleCount" class="form-control" value="5" min="1" max="50">
                 </div>
@@ -303,6 +315,38 @@
         // Apply filters
         document.getElementById('applyFiltersBtn').addEventListener('click', loadSamples);
         document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+        
+        // Add change listeners to filters to update counts dynamically
+        document.getElementById('taskFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            // Preserve the selected value after reload
+            const selectedTask = event.target.value;
+            document.getElementById('taskFilter').value = selectedTask;
+        });
+        
+        document.getElementById('modelFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedModel = event.target.value;
+            document.getElementById('modelFilter').value = selectedModel;
+        });
+        
+        document.getElementById('providerFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedProvider = event.target.value;
+            document.getElementById('providerFilter').value = selectedProvider;
+        });
+        
+        document.getElementById('domainFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedDomain = event.target.value;
+            document.getElementById('domainFilter').value = selectedDomain;
+        });
+        
+        document.getElementById('lieFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedLie = event.target.value;
+            document.getElementById('lieFilter').value = selectedLie;
+        });
 
         // Load data when page loads
         window.addEventListener('load', async () => {
@@ -312,11 +356,35 @@
 
         async function loadUniqueValues() {
             try {
-                const response = await fetch('/get_unique_values');
+                // Get current filter values
+                const task = document.getElementById('taskFilter').value;
+                const model = document.getElementById('modelFilter').value;
+                const provider = document.getElementById('providerFilter').value;
+                const domain = document.getElementById('domainFilter').value;
+                const didLie = document.getElementById('lieFilter').value;
+                
+                // Build URL with current filter parameters
+                let url = '/get_unique_values?';
+                const params = [];
+                if (task) params.push(`task=${encodeURIComponent(task)}`);
+                if (model) params.push(`model=${encodeURIComponent(model)}`);
+                if (provider) params.push(`provider=${encodeURIComponent(provider)}`);
+                if (domain) params.push(`domain=${encodeURIComponent(domain)}`);
+                if (didLie) params.push(`did_lie=${didLie}`);
+                url += params.join('&');
+                
+                const response = await fetch(url);
                 const values = await response.json();
 
                 // Store total count for display
                 window.totalSampleCount = values.total_count || 0;
+                
+                // Store current selections before updating
+                const currentTask = document.getElementById('taskFilter').value;
+                const currentModel = document.getElementById('modelFilter').value;
+                const currentProvider = document.getElementById('providerFilter').value;
+                const currentDomain = document.getElementById('domainFilter').value;
+                const currentDidLie = document.getElementById('lieFilter').value;
 
                 // Populate task filter with counts
                 const taskFilter = document.getElementById('taskFilter');
@@ -342,6 +410,30 @@
                     });
                 }
 
+                // Populate provider filter with counts
+                const providerFilter = document.getElementById('providerFilter');
+                providerFilter.innerHTML = `<option value="">All Providers (${values.total_count})</option>`;
+                if (values.providers && Array.isArray(values.providers)) {
+                    values.providers.forEach(provider => {
+                        const option = document.createElement('option');
+                        option.value = provider.value;
+                        option.textContent = `${provider.value} (${provider.count})`;
+                        providerFilter.appendChild(option);
+                    });
+                }
+
+                // Populate domain filter with counts
+                const domainFilter = document.getElementById('domainFilter');
+                domainFilter.innerHTML = `<option value="">All Domains (${values.total_count})</option>`;
+                if (values.domains && Array.isArray(values.domains)) {
+                    values.domains.forEach(domain => {
+                        const option = document.createElement('option');
+                        option.value = domain.value;
+                        option.textContent = `${domain.value} (${domain.count})`;
+                        domainFilter.appendChild(option);
+                    });
+                }
+
                 // Update lie filter with counts
                 const lieFilter = document.getElementById('lieFilter');
                 if (values.lie_counts) {
@@ -351,6 +443,13 @@
                         <option value="false">Truths Only (${values.lie_counts.false})</option>
                     `;
                 }
+                
+                // Restore previous selections
+                document.getElementById('taskFilter').value = currentTask;
+                document.getElementById('modelFilter').value = currentModel;
+                document.getElementById('providerFilter').value = currentProvider;
+                document.getElementById('domainFilter').value = currentDomain;
+                document.getElementById('lieFilter').value = currentDidLie;
             } catch (error) {
                 console.error('Error loading unique values:', error);
             }
@@ -359,6 +458,8 @@
         async function loadSamples() {
             const task = document.getElementById('taskFilter').value;
             const model = document.getElementById('modelFilter').value;
+            const provider = document.getElementById('providerFilter').value;
+            const domain = document.getElementById('domainFilter').value;
             const didLie = document.getElementById('lieFilter').value;
             const n = document.getElementById('sampleCount').value;
 
@@ -369,6 +470,8 @@
             let url = `/get_samples?n=${n}`;
             if (task) url += `&task=${encodeURIComponent(task)}`;
             if (model) url += `&model=${encodeURIComponent(model)}`;
+            if (provider) url += `&provider=${encodeURIComponent(provider)}`;
+            if (domain) url += `&domain=${encodeURIComponent(domain)}`;
             if (didLie) url += `&did_lie=${didLie}`;
 
             try {
@@ -419,7 +522,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <h6><i class="fas fa-tag"></i> Groundtruth Label (claude 4-sonnet)</h6>
+                        <h6><i class="fas fa-tag"></i> Groundtruth Label</h6>
                         <div class="trace-message">
                             <strong>${sample.did_lie ? 'LYING' : 'TRUTHFUL'}:</strong> <span class="content ${sample.evidence && sample.evidence.length > TRUNCATE_LENGTH ? 'has-truncated' : ''}" data-full-text="${escapeHtml(sample.evidence).replace(/"/g, '&quot;')}" data-expanded="false">${truncateAndFormat(sample.evidence)}</span>
                         </div>
@@ -580,6 +683,8 @@
                 'Task': sample.task || 'N/A',
                 'Task ID': sample.task_id || 'N/A',
                 'Model': sample.model || 'N/A',
+                'Provider': sample.provider || 'N/A',
+                'Domain': sample.domain || 'N/A',
                 'Timestamp': formatTimestamp(sample.timestamp),
                 'File': sample.file_key || 'N/A',
                 'Line Number': sample.line_number || 'N/A'
@@ -697,6 +802,8 @@
         function clearFilters() {
             document.getElementById('taskFilter').value = '';
             document.getElementById('modelFilter').value = '';
+            document.getElementById('providerFilter').value = '';
+            document.getElementById('domainFilter').value = '';
             document.getElementById('lieFilter').value = '';
             document.getElementById('sampleCount').value = '5';
             loadSamples();

@@ -65,7 +65,7 @@ from evals.cot_unfaithfulness_tasks import (
 from evals.alibi_tasks import (
     alibi_theft_task,
     alibi_fraud_task,
-    alibi_workplace_task
+    alibi_workplace_task, alibi_assault_task, alibi_breaking_entering_task
 )
 
 
@@ -74,9 +74,7 @@ from evals.alibi_tasks import (
 
 from evals.sandbagging_ascii_capability_denial_tasks import ascii_sandbagging_task
 
-from evals.sandbagging_basic_tool_capability_denial_tasks import (
-    tool_code_sandbagging_task, tool_image_gen_sandbagging_task, tool_search_sandbagging_task
-)
+from evals.sandbagging_basic_tool_capability_denial_tasks import *
 
 from evals.sandbagging_unethical_tool_capability_denial_tasks import (
     tool_ethical_sandbagging_task, tool_unethical_sandbagging_task
@@ -130,7 +128,9 @@ def get_all_tasks():
         "alibi": [
             alibi_theft_task,
             alibi_fraud_task,
-            alibi_workplace_task
+            alibi_workplace_task,
+            alibi_assault_task,
+            alibi_breaking_entering_task
         ],
         "sandbagging": [
             ascii_sandbagging_task,
@@ -232,11 +232,21 @@ def run_all_tasks(model, limit=None, categories=None, log_dir=None):
         return None
 
 def main():
-    # Configuration variables - modify these as needed
-    MODEL = "openrouter/meta-llama/llama-3.3-70b-instruct"#"openrouter/meta-llama/llama-3.1-8b-instruct"
-    LIMIT = 200  # Set to a number (e.g., 10) to limit samples per task, or None for all
-    CATEGORIES = None  # Set to a list like ["mask", "sycophancy"] or None for all categories
-    LOG_DIR = "../logs"  # Set to a path or None for auto-generated timestamp directory
+
+    import argparse
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Run all evaluation tasks')
+    parser.add_argument('--model', type=str, default="openrouter/google/gemma-2-27b-it",
+                       help='Model to use for evaluation')
+    parser.add_argument('--limit', type=int, default=1,
+                       help='Limit samples per task (default: 1)')
+    parser.add_argument('--categories', nargs='+', default=None,
+                       help='Specific categories to run (e.g., mask sycophancy)')
+    parser.add_argument('--log-dir', type=str, default="../logs",
+                       help='Log directory (default: ../logs)')
+    
+    args = parser.parse_args()
     
     print("LIE DETECTOR - ALL TASKS EVALUATION")
     print("=" * 50)

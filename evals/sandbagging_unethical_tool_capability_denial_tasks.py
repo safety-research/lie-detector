@@ -8,13 +8,15 @@ from inspect_ai import task, Task, eval
 # Add the project root to the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common.generalization_enums import MotivationFramework, KnowledgeFramework
+
 from pipelines.sandbagging.capability_denial.unethical_tool_usage.tasks import ethical_tool_sandbagging_task
 from pipelines.sandbagging.capability_denial.unethical_tool_usage.hooks import *
 
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent
-SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "sandbagging" / "capabilities"
-SANDBAGGING_ETHICAL_PATH = PROJECT_ROOT / "sandbagging" / "capability_denial" / "unethical_tool_usage"
+SANDBAGGING_CAPABILITIES_PATH = PROJECT_ROOT / "pipelines" / "sandbagging" / "capabilities"
+SANDBAGGING_ETHICAL_PATH = PROJECT_ROOT / "pipelines" / "sandbagging" / "capability_denial" / "unethical_tool_usage"
 
 load_dotenv()
 
@@ -44,7 +46,11 @@ def tool_ethical_sandbagging_task(
         max_tokens=50,
         shuffle=True,
         seed=42,  # Fixed seed for consistency
-        csv_path=str(SANDBAGGING_ETHICAL_PATH / "scenarios.csv")
+        csv_path=str(SANDBAGGING_ETHICAL_PATH / "scenarios.csv"),
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 @task
@@ -73,7 +79,11 @@ def tool_unethical_sandbagging_task(
         max_tokens=50,
         shuffle=True,
         seed=42,  # Fixed seed for consistency
-        csv_path=str(SANDBAGGING_ETHICAL_PATH / "harmful_scenarios.csv")
+        csv_path=str(SANDBAGGING_ETHICAL_PATH / "harmful_scenarios.csv"),
+        metadata={
+            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+            "knowledge_framework": KnowledgeFramework.INTROSPECTIVE_KNOWLEDGE
+        }
     )
 
 
@@ -85,13 +95,15 @@ if __name__ == "__main__":
 
     #task = [tool_code_sandbagging_task()]
 
-    model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    model = "openrouter/openai/gpt-4o"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=task,
         model=model,  # or any model you want to test
-        limit=1000,  # Limit samples for faster debugging
-        log_dir="../logs",  # Specify log directory
+        limit=250,  # Limit samples for faster debugging
+        log_dir="../logs",  # Specify log directory,
+        retry_on_error=10
     )

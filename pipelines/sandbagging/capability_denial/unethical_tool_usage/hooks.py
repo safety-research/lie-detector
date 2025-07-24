@@ -226,7 +226,7 @@ class SandbaggingCapabilitiesHook(BaseSampleProcessingHook):
                 return None
 
             parsed_entry = {
-                'sample_id': f"conv_{datetime.now().strftime('%Y%m%d')}_{sample_id}",
+                'sample_id': sample_id,
                 'task': task_name,
                 'task_id': task_id,
                 'timestamp': timestamp,

@@ -24,7 +24,7 @@ def suspect_agent(config: GameConfig) -> Agent:
             text = text.strip()
             
             # Remove common multi-turn indicators
-            lines = text.split('\n')
+            lines = text.split('\n\n')
             clean_lines = []
             
             for line in lines:
@@ -34,13 +34,13 @@ def suspect_agent(config: GameConfig) -> Agent:
                 # Skip lines that look like stage directions
                 if line.startswith('[') and line.endswith(']'):
                     continue
-                # Skip lines that are clearly conversation formatting
-                if ':' in line and any(name in line for name in [speaker_name, "Detective", "Suspect"]):
-                    # Extract just the content after the colon
-                    parts = line.split(':', 1)
-                    if len(parts) == 2:
-                        clean_lines.append(parts[1].strip())
-                    continue
+                # # Skip lines that are clearly conversation formatting
+                # if ':' in line and any(name in line for name in [speaker_name, "Detective", "Suspect"]):
+                #     # Extract just the content after the colon
+                #     parts = line.split(':', 1)
+                #     if len(parts) == 2:
+                #         clean_lines.append(parts[1].strip())
+                #     continue
                 clean_lines.append(line)
             
             # Return the first meaningful line or the original if no cleaning worked
