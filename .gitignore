@@ -30,3 +30,6 @@ __pycache__
 *.csv
 *.env
 *.DS_Store
+/prep/.data/
+/prep/wandb/
+/.data/
