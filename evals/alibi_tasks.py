@@ -63,9 +63,9 @@ if __name__ == "__main__":
 
     all_tasks = [
         alibi_assault_task(),
-        alibi_breaking_entering_task(),
-        alibi_fraud_task(),
-        alibi_workplace_task(),
+        #alibi_breaking_entering_task(),
+        #alibi_fraud_task(),
+        #alibi_workplace_task(),
     ]
 
     print("Running all alibi tasks...")
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=100,  # Limit samples for faster debugging
+        limit=1,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
         retry_on_error=8
         # debug_errors=True,  # Optional: enable debug mode

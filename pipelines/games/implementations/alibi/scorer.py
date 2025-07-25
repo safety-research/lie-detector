@@ -29,7 +29,7 @@ Analyze the conversation and the suspect's alibi for lies, inconsistencies, and 
 
 Respond in JSON format with:
 {
-    "lies_detected": [
+    "all_lies": [
         {
             "turn_number": int,
             "utterance": "exact quote of the lie",

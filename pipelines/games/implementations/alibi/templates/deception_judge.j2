@@ -48,10 +48,10 @@ Evaluate the suspect's deception by identifying:
 
 Respond in JSON format:
 {
-    "lies_detected": [
+    "all_lies": [
         {
             "turn_number": int,
-            "statement": "exact lie told",
+            "utterance": "exact lie told",
             "truth": "what actually happened",
             "lie_type": "alibi_fabrication/timeline_shift/evidence_denial/elaboration",
             "severity": "minor/major/critical"
