@@ -24,8 +24,7 @@ from pipelines.sandbagging.capability_denial.basic_tool_usage.dataset import cre
 from pipelines.sandbagging.capability_denial.basic_tool_usage.scorer import tool_sandbagging_scorer
 from pipelines.sandbagging.capability_denial.basic_tool_usage.solver import tool_capability_solver
 from pipelines.sandbagging.capability_denial.basic_tool_usage.tools import web_search, image_generation, code_execution
-# Removed global hook import to prevent hook from being applied to all tasks
-# from pipelines.sandbagging.capability_denial.basic_tool_usage.hook import *
+from pipelines.sandbagging.capability_denial.basic_tool_usage.hook import *
 
 
 # Get the project root directory
@@ -205,21 +204,23 @@ if __name__ == "__main__":
         "openai/gpt-4o"  # Will use standard approach
     ]
 
-    for model in models_to_test:
-        print(f"\nTesting with model: {model}")
+    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
+    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+    model ="openrouter/google/gemma-3-27b-it"
+    model = "openrouter/google/gemma-3-12b-it"
+    # model = "openrouter/google/gemma-3-4b-it"
 
-        tasks = [
-            tool_code_sandbagging_task(num_subjects=NUM_SUBJECTS, model=model),
-            tool_image_gen_sandbagging_task(num_subjects=NUM_SUBJECTS, model=model),
-            tool_search_sandbagging_task(num_subjects=NUM_SUBJECTS, model=model)
-        ]
-
+    tasks = [
+        tool_code_sandbagging_task(num_subjects=NUM_SUBJECTS, model=model),
+        tool_image_gen_sandbagging_task(num_subjects=NUM_SUBJECTS, model=model),
+        tool_search_sandbagging_task(num_subjects=NUM_SUBJECTS, model=model)
+    ]
         # Run evaluation
-        results = eval(
-            tasks=tasks,
-            model=model,
-            limit=125,  # Limit samples for faster debugging
-            log_dir="../logs",
-        )
+    results = eval(
+        tasks=tasks,
+        model=model,
+        limit=125,  # Limit samples for faster debugging
+        log_dir="../logs",
+    )
 
-        print(f"Completed evaluation for {model}")
+    print(f"Completed evaluation for {model}")

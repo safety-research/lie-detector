@@ -219,6 +219,10 @@ if __name__ == "__main__":
     #model = "openrouter/google/gemma-3-12b-it"
     model = "openrouter/openai/gpt-4o"
 
+    model ="openrouter/google/gemma-3-27b-it"
+    # model = "openrouter/google/gemma-3-12b-it"
+    # model = "openrouter/google/gemma-3-4b-it"
+
     # Run evaluation
     results = eval(
         tasks=task_instance,

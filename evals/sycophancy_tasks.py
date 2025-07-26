@@ -17,7 +17,7 @@ from pipelines.sycophancy.solver import sycophancy_with_control_solver, are_you_
 from pipelines.sycophancy.scorer import sycophancy_control_comparison_scorer, are_you_sure_aggregate_scorer
 from pipelines.sycophancy.hooks import *
 
-working_dir = Path.cwd()  # Use current directory
+working_dir = Path(__file__).parent.parent  # Use project root directory
 load_dotenv()
 
 @task
@@ -227,6 +227,10 @@ if __name__ == "__main__":
     # model = "openrouter/google/gemma-3-27b-it"
     model = "openrouter/openai/gpt-4o"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
+
+    model ="openrouter/google/gemma-3-27b-it"
+    model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/google/gemma-3-4b-it"
 
     results = eval(
         tasks=all_tasks,

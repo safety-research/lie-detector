@@ -6,15 +6,18 @@ from inspect_ai import task, Task
 from inspect_ai.model import GenerateConfig
 from inspect_ai.solver import chain, system_message
 
-from pipelines.sandbagging.selective_compliance.content_filtering import tool_results_sandbagging_task
-
 # Add the project root to path to import sandbagging module
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
 
+
+from pipelines.sandbagging.selective_compliance.content_filtering import tool_results_sandbagging_task
+from pipelines.sandbagging.selective_compliance.content_filtering.hook import *
 from common.generalization_enums import MotivationFramework, KnowledgeFramework
 
 # Removed global hook import to prevent hook from being applied to all tasks
 # from pipelines.sandbagging.selective_compliance.content_filtering.hook import *
+
 
 @task
 def sandbagging_tool_results_tasks():
@@ -37,11 +40,15 @@ if __name__ == "__main__":
     from inspect_ai import eval
 
     task = sandbagging_tool_results_tasks()
+    model ="openrouter/google/gemma-3-27b-it"
+    # model = "openrouter/google/gemma-3-12b-it"
+    # model = "openrouter/google/gemma-3-4b-it"
 
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
-        model="openrouter/meta-llama/llama-3.3-70b-instruct",# model="openai/gpt-4o-mini",  # or any model you want to test
-        limit=5,  # Limit samples for faster debugging
+        model=model, # or any model you want to test
+        limit=125,
+        max_retries=15,  # Limit samples for faster debugging
         log_dir="./logs",  # Specify log directory
     )
