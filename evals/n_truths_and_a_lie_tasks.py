@@ -177,10 +177,10 @@ if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
     task = [
         n_truths_and_a_lie_professional_background(),
-        n_truths_and_a_lie_hidden_talents(),
-        n_truths_and_a_lie_family_history(),
-        n_truths_and_a_lie_travel_experiences(),
-        n_truths_and_a_lie_personal_quirks()
+        # n_truths_and_a_lie_hidden_talents(),
+        # n_truths_and_a_lie_family_history(),
+        # n_truths_and_a_lie_travel_experiences(),
+        # n_truths_and_a_lie_personal_quirks()
     ]
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=task,
         model=model,  # Using OpenRouter model
-        limit=125,  # Limit samples for faster debugging
+        limit=1,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )s
