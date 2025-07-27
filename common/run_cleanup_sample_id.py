@@ -5,6 +5,10 @@ Script to clean up empty (0-byte) JSONL files and then deduplicate by sample_id 
 
 import sys
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add the common directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'common'))

@@ -33,6 +33,18 @@ def load_jsonl(file_path):
     return data
 
 
+def calculate_max_steps(all_fold_data, scaler=2):
+    """Calculate max_steps as scaler * total samples across all folds"""
+    total_samples_across_folds = 0
+    for fold_name, fold_data in all_fold_data.items():
+        total_samples_across_folds += len(fold_data['train']) + len(fold_data['test'])
+    
+    max_steps = scaler * total_samples_across_folds
+    print(f"Total samples across all folds: {total_samples_across_folds}")
+    print(f"Calculated max_steps = {scaler} * {total_samples_across_folds} = {max_steps}")
+    return max_steps
+
+
 def prepare_dataset(data, tokenizer, max_length=1024):  # Default to safer 1024
     """
     Prepare dataset for training using Gemma chat format.
@@ -394,9 +406,9 @@ def train_and_evaluate_all(train_fold_name, all_fold_data, config):
     training_args = TrainingArguments(
         output_dir=f"{config['output_dir']}/train_on_{train_fold_name}",
         per_device_train_batch_size=config['batch_size'],
-        per_device_eval_batch_size=config['batch_size'],
+        per_device_eval_batch_size=config['eval_batch_size'],
         gradient_accumulation_steps=config['gradient_accumulation_steps'],
-        num_train_epochs=config['num_epochs'],
+        max_steps=config['max_steps'],
         learning_rate=config['learning_rate'],
         save_strategy="steps",
         eval_strategy="steps",
@@ -511,6 +523,7 @@ def run_train_one_eval_all(input_path, config):
     
     # Results for each training fold
     all_training_results = {}
+    all_run_urls = {}
     
     # Train on each fold and evaluate on all
     for train_fold_name in all_fold_data.keys():
@@ -531,6 +544,7 @@ def run_train_one_eval_all(input_path, config):
         )
         
         all_training_results[train_fold_name] = fold_results
+        all_run_urls[train_fold_name] = run_url
         
         # Print summary for this training fold
         print(f"\nSummary for training on {train_fold_name}:")
@@ -620,7 +634,7 @@ def run_train_one_eval_all(input_path, config):
         elif val_test_acc_diff < -0.02:  # Models performing better on test than validation
             print("ℹ️  Models generalizing well (test performance similar or better than validation)")
     
-    return all_training_results
+    return all_training_results, all_run_urls
 
 
 def main():
@@ -630,8 +644,7 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3,4,5,6,7"
     
     # Base input path
-    base_input_path = "/workspace/lie-detector/organized_balanced_training_cleaned_20250722_135859"
-    
+    base_input_path = "/workspace/lie-detector/organized_balanced_training_20250727_201402_cleaned"
     # Get all model subdirectories
     model_dirs = [d for d in os.listdir(base_input_path) if os.path.isdir(os.path.join(base_input_path, d)) and d.startswith('openrouter_google_gemma-3-')]
     
@@ -649,8 +662,8 @@ def main():
     # Configuration (defined outside the loop)
     config = {
         'learning_rate': 2e-4,
-        'num_epochs': 5,
         'batch_size': 8,
+        'eval_batch_size': 16,  # Larger batch size for evaluation
         'lora_r': 8,
         'lora_alpha': 16,
         'lora_dropout': 0.05,
@@ -659,22 +672,74 @@ def main():
         'warmup_ratio': 0.03,
         'max_length': 2675,
     }
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    
+    # Extract timestamp from the input path instead of generating a new one
+    import re
+    timestamp_match = re.search(r'(\d{8}_\d{6})', base_input_path)
+    if timestamp_match:
+        timestamp = timestamp_match.group(1)
+        print(f"Using timestamp from input path: {timestamp}")
+    else:
+        # Fallback to current timestamp if not found in path
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        print(f"Timestamp not found in input path, using current time: {timestamp}")
+    
     for model_dir in model_dirs:
         print(f"\n{'='*80}")
         print(f"Processing model: {model_dir}")
         print(f"{'='*80}")
         
-        input_path = os.path.join(base_input_path, model_dir, "folds_colors_chat_format")
+        # Construct the folds directory path based on whether there's a _train_[number] suffix
+        if "_train_" in base_input_path:
+            import re
+            train_match = re.search(r'_train_\d+', base_input_path)
+            if train_match:
+                train_suffix = train_match.group()
+                folds_dir = f"folds_colors_chat_format{train_suffix}"
+            else:
+                folds_dir = "folds_colors_chat_format"
+        else:
+            folds_dir = "folds_colors_chat_format"
+        
+        input_path = os.path.join(base_input_path, model_dir, folds_dir)
+        
+        # Calculate max_steps based on the fold data
+        input_path_obj = Path(input_path)
+        fold_dirs = [d for d in input_path_obj.iterdir() if d.is_dir()]
+        all_fold_data = {}
+        for fold_dir in fold_dirs:
+            fold_name = fold_dir.name
+            train_file = fold_dir / "train.jsonl"
+            test_file = fold_dir / "test.jsonl"
+            
+            if train_file.exists() and test_file.exists():
+                train_data = load_jsonl(train_file)
+                test_data = load_jsonl(test_file)
+                all_fold_data[fold_name] = {
+                    'train': train_data,
+                    'test': test_data
+                }
+        
+        max_steps = calculate_max_steps(all_fold_data)
         
         # Create output directory
-        output_dir = f"./outputs/{timestamp}/{model_dir}_train_one_eval_all_{timestamp}"
+        output_dir = f"./outputs/{timestamp}/lr_{config['learning_rate']}/{model_dir}_train_one_eval_all_{timestamp}"
+        
+        # Check if base input path contains _train_[number] pattern
+        if "_train_" in base_input_path:
+            import re
+            train_match = re.search(r'_train_\d+', base_input_path)
+            if train_match:
+                train_suffix = train_match.group()
+                output_dir = f"./outputs/{timestamp}{train_suffix}/lr_{config['learning_rate']}/{model_dir}_train_one_eval_all_{timestamp}"
+        
         os.makedirs(output_dir, exist_ok=True)
         
         # Update config with model-specific values
         config.update({
             'model_name': model_name_map[model_dir],
             'output_dir': output_dir,
+            'max_steps': max_steps,
         })
         
         print("Configuration:")
@@ -682,16 +747,16 @@ def main():
             print(f"  {key}: {value}")
         
         # Run train-on-one, evaluate-on-all
-        all_results = run_train_one_eval_all(input_path, config)
+        all_results, all_run_urls = run_train_one_eval_all(input_path, config)
         
         # Save comprehensive results
         results = {
             'config': config,
             'all_training_results': all_results,
+            'all_run_urls': all_run_urls,
             'timestamp': timestamp,
             'input_path': input_path,
             'method': 'train_one_evaluate_all',
-            'wandb_url': run_url
         }
         
         results_file = f"{output_dir}/train_one_eval_all_results.json"
@@ -702,7 +767,7 @@ def main():
         print(f"\nComprehensive results saved to: {results_file}")
     
     # Save combined results
-    combined_results_file = f"./outputs/all_models_train_one_eval_all_{timestamp}.json"
+    combined_results_file = f"{output_dir}/all_models_train_one_eval_all_{timestamp}.json"
     with open(combined_results_file, 'w') as f:
         json.dump(all_model_results, f, indent=2)
     

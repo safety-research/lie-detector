@@ -181,10 +181,13 @@ generalization_map_3 = {
         "n-truths-and-a-lie_professional_background",
         "n-truths-and-a-lie_travel_experiences",
     ],
-    "mask": [
-        "mask_provided_facts",
+    "mask1": [
+     
         "mask_continuations",
         "mask_disinformation",
+    ],
+    "mask2": [
+        "mask_provided_facts",
         "mask_statistics",
         "mask_known_facts",
     ],

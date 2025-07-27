@@ -80,6 +80,16 @@ def normalize_task_name(task_name: str) -> str:
         return "capture_the_secret_sales"
     elif task_name == "capture-the-secret_scientific":
         return "capture_the_secret_scientific"
+    elif task_name == "capture-the-secret-multi_corporate":
+        return "capture_the_secret_multi_corporate"
+    elif task_name == "capture-the-secret-multi_intelligence":
+        return "capture_the_secret_multi_intelligence"
+    elif task_name == "capture-the-secret-multi_relationship":
+        return "capture_the_secret_multi_relationship"
+    elif task_name == "capture-the-secret-multi_sales":
+        return "capture_the_secret_multi_sales"
+    elif task_name == "capture-the-secret-multi_scientific":
+        return "capture_the_secret_multi_scientific"
     
     # Handle hyphen vs underscore inconsistencies for cot tasks
     elif task_name == "cot-unfaithfulness_mmlu_contrastive":
@@ -113,8 +123,8 @@ def normalize_task_name(task_name: str) -> str:
     elif task_name == "self-sycophancy_harmfulness_justice":
         return "self_sycophancy_harmfulness_justice"
     
-    # Convert underscores to hyphens to match the data format
-    return task_name.replace('_', '-')
+    # For most tasks, keep as-is since taxonomy and data both use underscores
+    return task_name
 
 def load_taxonomy_mappings(taxonomy_path: str) -> Dict[str, Dict[str, List[str]]]:
     """
@@ -260,9 +270,8 @@ def build_simple_taxonomy_maps(rows: List[Dict[str, str]]) -> Dict[str, Dict[str
         color = row.get('colors', '').strip()
         
         if task and color:
-            # Normalize task name (replace underscores with hyphens)
-            normalized_task = task.replace('_', '-')
-            mapping[color].append(normalized_task)
+            # Keep task names as-is (they already match the data format)
+            mapping[color].append(task)
     
     # Convert defaultdict to regular dict
     result = dict(mapping)
@@ -446,23 +455,48 @@ def create_chat_format_samples(data_item: Dict[str, Any]) -> Dict[str, Any]:
 def create_general_train_test_split(data_items: List[Dict[str, Any]], 
                                    output_dir: Path, 
                                    format_type: str,
-                                   train_ratio: float = 0.8) -> Dict[str, Any]:
+                                   train_ratio: float = 0.8,
+                                   max_train_examples: Optional[int] = None) -> Dict[str, Any]:
     """
-    Create a general 80/20 train/test split with balanced lies/truths.
+    Create a general train/test split with balanced lies/truths.
     
     Args:
         data_items: List of all data items
         output_dir: Output directory
         format_type: Training format type
-        train_ratio: Ratio of data to use for training
+        train_ratio: Ratio of data to use for training (ignored if max_train_examples is set)
+        max_train_examples: Maximum number of training examples per fold (if set, overrides train_ratio)
     """
-    print(f"\nCreating general train/test split (ratio: {train_ratio})")
+    if max_train_examples is not None:
+        print(f"\nCreating general train/test split (max train: {max_train_examples})")
+    else:
+        print(f"\nCreating general train/test split (ratio: {train_ratio})")
     
     # Separate lies and truths
     lies = [item for item in data_items if item.get('did_lie', False)]
     truths = [item for item in data_items if not item.get('did_lie', False)]
     
     print(f"  Original data: {len(lies)} lies, {len(truths)} truths")
+    
+    # For chat format, filter out problematic examples BEFORE balancing
+    if format_type == "chat_format":
+        # Filter lies that can be converted to chat format
+        filtered_lies = []
+        for item in lies:
+            if create_chat_format_samples(item) is not None:
+                filtered_lies.append(item)
+        
+        # Filter truths that can be converted to chat format
+        filtered_truths = []
+        for item in truths:
+            if create_chat_format_samples(item) is not None:
+                filtered_truths.append(item)
+        
+        print(f"  After chat format filtering: {len(filtered_lies)} lies, {len(filtered_truths)} truths")
+        
+        # Use filtered data for balancing
+        lies = filtered_lies
+        truths = filtered_truths
     
     # Balance the data by undersampling the majority class
     min_count = min(len(lies), len(truths))
@@ -472,19 +506,38 @@ def create_general_train_test_split(data_items: List[Dict[str, Any]],
     
     print(f"  Balanced data: {len(balanced_lies)} lies, {len(balanced_truths)} truths")
     
-    # Shuffle balanced data
-    random.shuffle(balanced_data)
-    
-    # Split balanced data
-    split_idx = int(len(balanced_data) * train_ratio)
-    train_data = balanced_data[:split_idx]
-    test_data = balanced_data[split_idx:]
+    # Split balanced data ensuring equal representation
+    if max_train_examples is not None:
+        # For limited training examples, ensure equal lies/truths
+        train_lie_count = max_train_examples // 2
+        train_truth_count = max_train_examples - train_lie_count  # Handle odd numbers
+        
+        train_lies = balanced_lies[:train_lie_count]
+        train_truths = balanced_truths[:train_truth_count]
+        train_data = train_lies + train_truths
+        
+        # Shuffle training data
+        random.shuffle(train_data)
+        
+        # Remaining data goes to test
+        test_lies = balanced_lies[train_lie_count:]
+        test_truths = balanced_truths[train_truth_count:]
+        test_data = test_lies + test_truths
+    else:
+        # Use traditional ratio-based split
+        random.shuffle(balanced_data)
+        split_idx = int(len(balanced_data) * train_ratio)
+        train_data = balanced_data[:split_idx]
+        test_data = balanced_data[split_idx:]
     
     print(f"  Train examples: {len(train_data)}")
     print(f"  Test examples: {len(test_data)}")
     
     # Create output directory
-    split_dir = output_dir / f"general_train_test_split_{format_type}"
+    if max_train_examples is not None:
+        split_dir = output_dir / f"general_train_test_split_{format_type}_train_{max_train_examples}"
+    else:
+        split_dir = output_dir / f"general_train_test_split_{format_type}"
     train_dir = split_dir / "train"
     test_dir = split_dir / "test"
     
@@ -547,7 +600,8 @@ def create_balanced_folds(data_items: List[Dict[str, Any]],
                          mapping: Dict[str, List[str]], 
                          mapping_name: str,
                          output_dir: Path, 
-                         format_type: str) -> Dict[str, Any]:
+                         format_type: str,
+                         max_train_examples: Optional[int] = None) -> Dict[str, Any]:
     """
     Create balanced folds based on generalization mapping.
     
@@ -557,6 +611,7 @@ def create_balanced_folds(data_items: List[Dict[str, Any]],
         mapping_name: Name of the mapping
         output_dir: Output directory
         format_type: Training format type
+        max_train_examples: Maximum number of training examples per fold (if set, overrides 80/20 split)
     """
     print(f"\nCreating balanced folds for mapping: {mapping_name}")
     
@@ -588,7 +643,10 @@ def create_balanced_folds(data_items: List[Dict[str, Any]],
         print(f"    {category}: {len(items)} items")
     
     # Create folds directory
-    fold_dir = output_dir / f"folds_{mapping_name}_{format_type}"
+    if max_train_examples is not None:
+        fold_dir = output_dir / f"folds_{mapping_name}_{format_type}_train_{max_train_examples}"
+    else:
+        fold_dir = output_dir / f"folds_{mapping_name}_{format_type}"
     fold_dir.mkdir(parents=True, exist_ok=True)
     
     # For each category, create train/test split
@@ -601,16 +659,59 @@ def create_balanced_folds(data_items: List[Dict[str, Any]],
         
         print(f"    Lies: {len(lies)}, Truths: {len(truths)}")
         
-        # Use all items (no balancing within category)
-        all_items = items.copy()
+        # For chat format, filter out problematic examples BEFORE balancing
+        if format_type == "chat_format":
+            # Filter lies that can be converted to chat format
+            filtered_lies = []
+            for item in lies:
+                if create_chat_format_samples(item) is not None:
+                    filtered_lies.append(item)
+            
+            # Filter truths that can be converted to chat format
+            filtered_truths = []
+            for item in truths:
+                if create_chat_format_samples(item) is not None:
+                    filtered_truths.append(item)
+            
+            print(f"    After chat format filtering: {len(filtered_lies)} lies, {len(filtered_truths)} truths")
+            
+            # Use filtered data for balancing
+            lies = filtered_lies
+            truths = filtered_truths
         
-        # Shuffle and split
-        random.shuffle(all_items)
-        split_idx = int(len(all_items) * 0.8)
-        train_items = all_items[:split_idx]
-        test_items = all_items[split_idx:]
+        # Balance lies and truths within category
+        min_count = min(len(lies), len(truths))
+        balanced_lies = random.sample(lies, min_count)
+        balanced_truths = random.sample(truths, min_count)
+        balanced_items = balanced_lies + balanced_truths
         
-        print(f"    Total: {len(all_items)} items")
+        print(f"    Balanced: {len(balanced_lies)} lies, {len(balanced_truths)} truths")
+        
+        # Split balanced data ensuring equal representation
+        if max_train_examples is not None:
+            # For limited training examples, ensure equal lies/truths
+            train_lie_count = max_train_examples // 2
+            train_truth_count = max_train_examples - train_lie_count  # Handle odd numbers
+            
+            train_lies = balanced_lies[:train_lie_count]
+            train_truths = balanced_truths[:train_truth_count]
+            train_items = train_lies + train_truths
+            
+            # Shuffle training items
+            random.shuffle(train_items)
+            
+            # Remaining items go to test
+            test_lies = balanced_lies[train_lie_count:]
+            test_truths = balanced_truths[train_truth_count:]
+            test_items = test_lies + test_truths
+        else:
+            # Use traditional 80/20 split
+            random.shuffle(balanced_items)
+            split_idx = int(len(balanced_items) * 0.8)
+            train_items = balanced_items[:split_idx]
+            test_items = balanced_items[split_idx:]
+        
+        print(f"    Total: {len(balanced_items)} items")
         print(f"    Train: {len(train_items)}, Test: {len(test_items)}")
         
         # Process train data
@@ -655,7 +756,7 @@ def create_balanced_folds(data_items: List[Dict[str, Any]],
         
         # Collect summary data for this category
         category_summary[category] = {
-            'total': len(all_items),
+            'total': len(balanced_items),
             'lies': len(lies),
             'truths': len(truths),
             'train': len(train_items),
@@ -873,7 +974,8 @@ def create_detailed_fold_visualizations(summary_data: Dict[str, Any], output_dir
 def process_training_data(input_dir: str, 
                          taxonomy_path: str,
                          format_type: str = "base_transcript",
-                         seed: int = 42) -> None:
+                         seed: int = 42,
+                         max_train_examples: Optional[int] = None) -> None:
     """
     Process all training data and create both general and fold-based splits for each model separately.
     
@@ -882,6 +984,7 @@ def process_training_data(input_dir: str,
         taxonomy_path: Path to the lie taxonomy CSV file
         format_type: Training format type ("base_transcript" or "llama_chat")
         seed: Random seed for reproducibility
+        max_train_examples: Maximum number of training examples per fold (if set, overrides 80/20 split)
     """
     # Set random seed
     random.seed(seed)
@@ -916,7 +1019,10 @@ def process_training_data(input_dir: str,
         datetime_part = datetime.now().strftime("%Y%m%d_%H%M%S")
     
     # Create output directory name
-    output_dir_name = f"organized_balanced_training_{datetime_part}"
+    if max_train_examples is not None:
+        output_dir_name = f"organized_balanced_training_{datetime_part}_train_{max_train_examples}"
+    else:
+        output_dir_name = f"organized_balanced_training_{datetime_part}"
     output_dir = input_path.parent / output_dir_name
     
     print(f"Creating output directory: {output_dir}")
@@ -960,7 +1066,7 @@ def process_training_data(input_dir: str,
         
         # Create general train/test split for this model
         print(f"\nCreating general train/test split for {model_name}...")
-        general_summary = create_general_train_test_split(model_data, model_output_dir, format_type)
+        general_summary = create_general_train_test_split(model_data, model_output_dir, format_type, max_train_examples=max_train_examples)
         model_summary_data['general_train_test_split'] = general_summary
         
         # Create fold-based splits for each mapping for this model
@@ -969,7 +1075,7 @@ def process_training_data(input_dir: str,
             # Extract the part before colon for folder name
             folder_name = mapping_name.split(':')[0].strip()
             print(f"\nCreating balanced folds for mapping: {folder_name}")
-            fold_summary = create_balanced_folds(model_data, mapping, folder_name, model_output_dir, format_type)
+            fold_summary = create_balanced_folds(model_data, mapping, folder_name, model_output_dir, format_type, max_train_examples=max_train_examples)
             model_summary_data['folds'][folder_name] = fold_summary
         
         # Save model-specific summary JSON
@@ -1000,6 +1106,8 @@ def main():
                        help="Training format type: base_transcript or chat_format")
     parser.add_argument("--seed", type=int, default=42,
                        help="Random seed for reproducibility")
+    parser.add_argument("--max_train_examples", type=int, default=None,
+                       help="Maximum number of training examples per fold (if set, overrides 80/20 split)")
     
     args = parser.parse_args()
     
@@ -1014,7 +1122,7 @@ def main():
         return
     
     # Process the training data
-    process_training_data(args.input_path, args.taxonomy_path, args.format, args.seed)
+    process_training_data(args.input_path, args.taxonomy_path, args.format, args.seed, args.max_train_examples)
 
 if __name__ == "__main__":
     main() 

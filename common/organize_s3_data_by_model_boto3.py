@@ -16,6 +16,10 @@ import sys
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any, Tuple
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def get_s3_file_list(s3_uri: str) -> List[str]:
     """Get list of JSONL files from S3 using boto3."""
