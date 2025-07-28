@@ -44,10 +44,10 @@ def parse_text_results_with_subtasks(filepath: str) -> List[Dict[str, Any]]:
             baseline_type = 'base_transcript_reasoning'
         else:
             # Check for regular baseline types
-            for part in parts:
-                if part in ['base', 'escaped', 'llama']:
-                    baseline_type = part
-                    break
+        for part in parts:
+            if part in ['base', 'escaped', 'llama']:
+                baseline_type = part
+                break
         
         if not baseline_type:
             baseline_type = "unknown"
@@ -239,10 +239,10 @@ def parse_json_results_with_subtasks(filepath: str) -> List[Dict[str, Any]]:
             baseline_type = 'base_transcript_reasoning'
         else:
             # Check for regular baseline types
-            for part in parts:
-                if part in ['base', 'escaped', 'llama']:
-                    baseline_type = part
-                    break
+        for part in parts:
+            if part in ['base', 'escaped', 'llama']:
+                baseline_type = part
+                break
         
         if not baseline_type:
             baseline_type = "unknown"

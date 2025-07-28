@@ -64,12 +64,12 @@ def clean_s3_processed_data_by_sample_id(bucket: str = "dipika-lie-detection-dat
     
     for folder in folders:
         print(f"\nProcessing folder: {folder}")
-        # List all JSONL files in the folder
+        # List all JSON and JSONL files in the folder
         files = []
         for page in paginator.paginate(Bucket=bucket, Prefix=folder):
             for obj in page.get('Contents', []):
                 key = obj['Key']
-                if key.endswith('.jsonl'):
+                if key.endswith('.jsonl') or key.endswith('.json'):
                     files.append({
                         'key': key,
                         'last_modified': obj['LastModified']
@@ -86,32 +86,68 @@ def clean_s3_processed_data_by_sample_id(bucket: str = "dipika-lie-detection-dat
             obj = s3.get_object(Bucket=bucket, Key=file['key'])
             try:
                 content = obj['Body'].read().decode('utf-8')
-                lines = content.strip().split('\n')
                 
-                for line in lines:
-                    if not line.strip():
-                        continue
-                    try:
-                        data = json.loads(line)
-                        model = data.get('model', 'unknown')
-                        sample_id = data.get('sample_id')
-                        
-                        if not sample_id:
-                            print(f"    Warning: No sample_id found in {file['key']}")
+                # Handle both JSONL (line-by-line) and JSON (single object/array) files
+                if file['key'].endswith('.jsonl'):
+                    # JSONL format: one JSON object per line
+                    lines = content.strip().split('\n')
+                    for line in lines:
+                        if not line.strip():
                             continue
+                        try:
+                            data = json.loads(line)
+                            model = data.get('model', 'unknown')
+                            sample_id = data.get('sample_id')
                             
-                        if model not in model_to_samples:
-                            model_to_samples[model] = {}
+                            if not sample_id:
+                                print(f"    Warning: No sample_id found in {file['key']}")
+                                continue
+                                
+                            if model not in model_to_samples:
+                                model_to_samples[model] = {}
+                                
+                            if sample_id not in model_to_samples[model]:
+                                model_to_samples[model][sample_id] = []
+                                
+                            model_to_samples[model][sample_id].append({
+                                'file_key': file['key'],
+                                'last_modified': file['last_modified'],
+                                'data': data
+                            })
                             
-                        if sample_id not in model_to_samples[model]:
-                            model_to_samples[model][sample_id] = []
-                            
-                        model_to_samples[model][sample_id].append({
-                            'file_key': file['key'],
-                            'last_modified': file['last_modified'],
-                            'data': data
-                        })
+                        except json.JSONDecodeError as e:
+                            print(f"    Warning: Invalid JSON in {file['key']}: {e}")
+                            continue
+                else:
+                    # JSON format: single JSON object or array
+                    try:
+                        data = json.loads(content)
+                        # Handle both single object and array of objects
+                        if isinstance(data, list):
+                            items = data
+                        else:
+                            items = [data]
                         
+                        for item in items:
+                            model = item.get('model', 'unknown')
+                            sample_id = item.get('sample_id')
+                            
+                            if not sample_id:
+                                print(f"    Warning: No sample_id found in {file['key']}")
+                                continue
+                                
+                            if model not in model_to_samples:
+                                model_to_samples[model] = {}
+                                
+                            if sample_id not in model_to_samples[model]:
+                                model_to_samples[model][sample_id] = []
+                                
+                            model_to_samples[model][sample_id].append({
+                                'file_key': file['key'],
+                                'last_modified': file['last_modified'],
+                                'data': item
+                            })
+                            
                     except json.JSONDecodeError as e:
                         print(f"    Warning: Invalid JSON in {file['key']}: {e}")
                         continue

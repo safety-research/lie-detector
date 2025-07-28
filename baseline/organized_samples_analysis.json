@@ -1,0 +1,1641 @@
+{
+  "openrouter_google_gemma-3-12b-it": {
+    "folder": "openrouter_google_gemma-3-12b-it",
+    "total_files": 51,
+    "total_samples": 6491,
+    "files_by_task": {
+      "deduplicated_n-truths-and-a-lie-hidden-talents_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "n-truths-and-a-lie-hidden-talents_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.56695556640625
+      },
+      "deduplicated_introspection-political_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "introspection-political_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 100,
+        "file_size_mb": 0.23549175262451172
+      },
+      "deduplicated_alibi-mixed-investigation_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "alibi-mixed-investigation_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 101,
+        "file_size_mb": 1.5448312759399414
+      },
+      "deduplicated_n-truths-and-a-lie-travel-experiences_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "n-truths-and-a-lie-travel-experiences_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.583576202392578
+      },
+      "deduplicated_sandbagging-physical-security-contrastive_google_gemma-3-12b-it.jsonl": {
+        "task": "sandbagging-physical-security-contrastive_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 41,
+        "file_size_mb": 0.12361526489257812
+      },
+      "deduplicated_sycophancy-feedback-user-likes_google_gemma-3-12b-it.jsonl": {
+        "task": "sycophancy-feedback-user-likes_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 135,
+        "file_size_mb": 100.80216789245605
+      },
+      "deduplicated_sycophancy-answer-positive-incorrect_google_gemma-3-12b-it.jsonl": {
+        "task": "sycophancy-answer-positive-incorrect_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 155,
+        "file_size_mb": 155.59634017944336
+      },
+      "deduplicated_sandbagging-chemistry-biology-contrastive_google_gemma-3-12b-it.jsonl": {
+        "task": "sandbagging-chemistry-biology-contrastive_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 76,
+        "file_size_mb": 0.22835826873779297
+      },
+      "deduplicated_self-sycophancy-harmfulness-justice_google_gemma-3-12b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-justice_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 324,
+        "file_size_mb": 1.2667131423950195
+      },
+      "deduplicated_sycophancy-feedback-user-dislikes_google_gemma-3-12b-it.jsonl": {
+        "task": "sycophancy-feedback-user-dislikes_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 135,
+        "file_size_mb": 159.69262790679932
+      },
+      "deduplicated_alibi-assault-investigation_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "alibi-assault-investigation_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 45,
+        "file_size_mb": 0.6868190765380859
+      },
+      "deduplicated_alibi-theft-investigation_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "alibi-theft-investigation_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 90,
+        "file_size_mb": 1.328537940979004
+      },
+      "deduplicated_self-sycophancy-correctness-physics_google_gemma-3-12b-it.jsonl": {
+        "task": "self-sycophancy-correctness-physics_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 276,
+        "file_size_mb": 1.0657472610473633
+      },
+      "deduplicated_sycophancy-answer-positive-correct_google_gemma-3-12b-it.jsonl": {
+        "task": "sycophancy-answer-positive-correct_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 135,
+        "file_size_mb": 74.58148193359375
+      },
+      "deduplicated_sandbagging-medical-pharmaceutical-contrastive_google_gemma-3-12b-it.jsonl": {
+        "task": "sandbagging-medical-pharmaceutical-contrastive_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 43,
+        "file_size_mb": 0.12798023223876953
+      },
+      "deduplicated_mask-provided-facts_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "mask-provided-facts_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.6261825561523438
+      },
+      "deduplicated_n-truths-and-a-lie-family-history_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "n-truths-and-a-lie-family-history_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.886251449584961
+      },
+      "deduplicated_mask-statistics_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "mask-statistics_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 95,
+        "file_size_mb": 0.5295181274414062
+      },
+      "deduplicated_alibi-workplace-investigation_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "alibi-workplace-investigation_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 55,
+        "file_size_mb": 0.8314838409423828
+      },
+      "deduplicated_self-sycophancy-harmfulness-deontology_google_gemma-3-12b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-deontology_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 325,
+        "file_size_mb": 1.2541818618774414
+      },
+      "deduplicated_n-truths-and-a-lie-professional-background_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "n-truths-and-a-lie-professional-background_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 135,
+        "file_size_mb": 2.810481071472168
+      },
+      "deduplicated_sycophancy-answer-negative-correct_google_gemma-3-12b-it.jsonl": {
+        "task": "sycophancy-answer-negative-correct_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 135,
+        "file_size_mb": 93.75991916656494
+      },
+      "deduplicated_sycophancy-are-you-sure_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "sycophancy-are-you-sure_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.7301406860351562
+      },
+      "deduplicated_capture-the-secret-intelligence_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "capture-the-secret-intelligence_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 10,
+        "file_size_mb": 0.19265460968017578
+      },
+      "deduplicated_mask-continuations_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "mask-continuations_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 118,
+        "file_size_mb": 0.602665901184082
+      },
+      "deduplicated_sandbagging-digital-security-contrastive_google_gemma-3-12b-it.jsonl": {
+        "task": "sandbagging-digital-security-contrastive_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 75,
+        "file_size_mb": 0.2260723114013672
+      },
+      "deduplicated_cot-unfaithfulness-mmlu-contrastive_google_gemma-3-12b-it.jsonl": {
+        "task": "cot-unfaithfulness-mmlu-contrastive_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 124,
+        "file_size_mb": 1.0289440155029297
+      },
+      "deduplicated_n-truths-and-a-lie-personal-quirks_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "n-truths-and-a-lie-personal-quirks_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.5554895401000977
+      },
+      "deduplicated_cot-unfaithfulness-contrastive-mmlu_google_gemma-3-12b-it.jsonl": {
+        "task": "cot-unfaithfulness-contrastive-mmlu_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 156,
+        "file_size_mb": 1.3246593475341797
+      },
+      "deduplicated_self-sycophancy-correctness-mathematics_google_gemma-3-12b-it.jsonl": {
+        "task": "self-sycophancy-correctness-mathematics_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 325,
+        "file_size_mb": 1.2444648742675781
+      },
+      "deduplicated_mask-known-facts_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "mask-known-facts_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 108,
+        "file_size_mb": 0.28833866119384766
+      },
+      "deduplicated_cot-unfaithfulness-contrastive-arc_google_gemma-3-12b-it.jsonl": {
+        "task": "cot-unfaithfulness-contrastive-arc_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.8177881240844727
+      },
+      "deduplicated_self-sycophancy-correctness-arc_google_gemma-3-12b-it.jsonl": {
+        "task": "self-sycophancy-correctness-arc_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 325,
+        "file_size_mb": 1.2057733535766602
+      },
+      "deduplicated_self-sycophancy-harmfulness-common-sense_google_gemma-3-12b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-common-sense_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 325,
+        "file_size_mb": 1.1569099426269531
+      },
+      "deduplicated_capture-the-secret-relationship_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "capture-the-secret-relationship_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 10,
+        "file_size_mb": 0.1917257308959961
+      },
+      "deduplicated_cot-unfaithfulness-arc-contrastive_google_gemma-3-12b-it.jsonl": {
+        "task": "cot-unfaithfulness-arc-contrastive_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 124,
+        "file_size_mb": 0.7892532348632812
+      },
+      "deduplicated_chess-mate-in-2-shutdown-threat-task_google_gemma-3-12b-it.jsonl": {
+        "task": "chess-mate-in-2-shutdown-threat-task_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 66,
+        "file_size_mb": 0.137939453125
+      },
+      "deduplicated_ascii-sandbagging-task_google_gemma-3-12b-it.jsonl": {
+        "task": "ascii-sandbagging-task_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.29062843322753906
+      },
+      "deduplicated_capture-the-secret-sales_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "capture-the-secret-sales_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 10,
+        "file_size_mb": 0.1894817352294922
+      },
+      "deduplicated_sycophancy-feedback-user-wrote_google_gemma-3-12b-it.jsonl": {
+        "task": "sycophancy-feedback-user-wrote_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 135,
+        "file_size_mb": 147.70129489898682
+      },
+      "deduplicated_capture-the-secret-corporate_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "capture-the-secret-corporate_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 10,
+        "file_size_mb": 0.20093917846679688
+      },
+      "deduplicated_capture-the-secret-scientific_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "capture-the-secret-scientific_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 10,
+        "file_size_mb": 0.2170562744140625
+      },
+      "deduplicated_sycophancy-feedback-user-did-not-write_google_gemma-3-12b-it.jsonl": {
+        "task": "sycophancy-feedback-user-did-not-write_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 135,
+        "file_size_mb": 67.3530101776123
+      },
+      "deduplicated_self-sycophancy-correctness-chemistry_google_gemma-3-12b-it.jsonl": {
+        "task": "self-sycophancy-correctness-chemistry_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 325,
+        "file_size_mb": 1.2679338455200195
+      },
+      "deduplicated_self-sycophancy-correctness-biology_google_gemma-3-12b-it.jsonl": {
+        "task": "self-sycophancy-correctness-biology_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 325,
+        "file_size_mb": 1.2851877212524414
+      },
+      "deduplicated_cot-unfaithfulness-mmlu_google_gemma-3-12b-it.jsonl": {
+        "task": "cot-unfaithfulness-mmlu_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 40,
+        "file_size_mb": 0.25710010528564453
+      },
+      "deduplicated_alibi-fraud-investigation_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "alibi-fraud-investigation_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 55,
+        "file_size_mb": 0.8453941345214844
+      },
+      "deduplicated_sandbagging-automotive-mechanical-contrastive_google_gemma-3-12b-it.jsonl": {
+        "task": "sandbagging-automotive-mechanical-contrastive_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 72,
+        "file_size_mb": 0.21475982666015625
+      },
+      "deduplicated_alibi-breaking-entering-investigation_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "alibi-breaking-entering-investigation_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 45,
+        "file_size_mb": 0.6998310089111328
+      },
+      "deduplicated_sandbagging-financial-systems-contrastive_google_gemma-3-12b-it.jsonl": {
+        "task": "sandbagging-financial-systems-contrastive_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 41,
+        "file_size_mb": 0.12539100646972656
+      },
+      "deduplicated_mask-disinformation_openrouter_google_gemma-3-12b-it.jsonl": {
+        "task": "mask-disinformation_openrouter_google",
+        "model": "gemma-3-12b-it.jsonl",
+        "samples": 121,
+        "file_size_mb": 0.8538084030151367
+      }
+    },
+    "task_summary": {
+      "n-truths-and-a-lie-hidden-talents_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "introspection-political_openrouter_google": {
+        "files": 1,
+        "samples": 100,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "alibi-mixed-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 101,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "n-truths-and-a-lie-travel-experiences_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sandbagging-physical-security-contrastive_google": {
+        "files": 1,
+        "samples": 41,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-likes_google": {
+        "files": 1,
+        "samples": 135,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-positive-incorrect_google": {
+        "files": 1,
+        "samples": 155,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sandbagging-chemistry-biology-contrastive_google": {
+        "files": 1,
+        "samples": 76,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-justice_google": {
+        "files": 1,
+        "samples": 324,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-dislikes_google": {
+        "files": 1,
+        "samples": 135,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "alibi-assault-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 45,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "alibi-theft-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 90,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-physics_google": {
+        "files": 1,
+        "samples": 276,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-positive-correct_google": {
+        "files": 1,
+        "samples": 135,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sandbagging-medical-pharmaceutical-contrastive_google": {
+        "files": 1,
+        "samples": 43,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "mask-provided-facts_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "n-truths-and-a-lie-family-history_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "mask-statistics_openrouter_google": {
+        "files": 1,
+        "samples": 95,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "alibi-workplace-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 55,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-deontology_google": {
+        "files": 1,
+        "samples": 325,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "n-truths-and-a-lie-professional-background_openrouter_google": {
+        "files": 1,
+        "samples": 135,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-negative-correct_google": {
+        "files": 1,
+        "samples": 135,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sycophancy-are-you-sure_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "capture-the-secret-intelligence_openrouter_google": {
+        "files": 1,
+        "samples": 10,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "mask-continuations_openrouter_google": {
+        "files": 1,
+        "samples": 118,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sandbagging-digital-security-contrastive_google": {
+        "files": 1,
+        "samples": 75,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-mmlu-contrastive_google": {
+        "files": 1,
+        "samples": 124,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "n-truths-and-a-lie-personal-quirks_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-contrastive-mmlu_google": {
+        "files": 1,
+        "samples": 156,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-mathematics_google": {
+        "files": 1,
+        "samples": 325,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "mask-known-facts_openrouter_google": {
+        "files": 1,
+        "samples": 108,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-contrastive-arc_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-arc_google": {
+        "files": 1,
+        "samples": 325,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-common-sense_google": {
+        "files": 1,
+        "samples": 325,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "capture-the-secret-relationship_openrouter_google": {
+        "files": 1,
+        "samples": 10,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-arc-contrastive_google": {
+        "files": 1,
+        "samples": 124,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "chess-mate-in-2-shutdown-threat-task_google": {
+        "files": 1,
+        "samples": 66,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "ascii-sandbagging-task_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "capture-the-secret-sales_openrouter_google": {
+        "files": 1,
+        "samples": 10,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-wrote_google": {
+        "files": 1,
+        "samples": 135,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "capture-the-secret-corporate_openrouter_google": {
+        "files": 1,
+        "samples": 10,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "capture-the-secret-scientific_openrouter_google": {
+        "files": 1,
+        "samples": 10,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-did-not-write_google": {
+        "files": 1,
+        "samples": 135,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-chemistry_google": {
+        "files": 1,
+        "samples": 325,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-biology_google": {
+        "files": 1,
+        "samples": 325,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-mmlu_google": {
+        "files": 1,
+        "samples": 40,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "alibi-fraud-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 55,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sandbagging-automotive-mechanical-contrastive_google": {
+        "files": 1,
+        "samples": 72,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "alibi-breaking-entering-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 45,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "sandbagging-financial-systems-contrastive_google": {
+        "files": 1,
+        "samples": 41,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      },
+      "mask-disinformation_openrouter_google": {
+        "files": 1,
+        "samples": 121,
+        "models": [
+          "gemma-3-12b-it.jsonl"
+        ]
+      }
+    }
+  },
+  "openrouter_google_gemma-3-27b-it": {
+    "folder": "openrouter_google_gemma-3-27b-it",
+    "total_files": 38,
+    "total_samples": 3614,
+    "files_by_task": {
+      "deduplicated_sycophancy-feedback-user-likes_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-feedback-user-likes_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 1,
+        "file_size_mb": 0.0032367706298828125
+      },
+      "deduplicated_introspection-political_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "introspection-political_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 100,
+        "file_size_mb": 0.23875141143798828
+      },
+      "deduplicated_alibi-assault-investigation_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "alibi-assault-investigation_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 45,
+        "file_size_mb": 0.7746410369873047
+      },
+      "deduplicated_sycophancy-feedback-user-dislikes_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-feedback-user-dislikes_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 8.807734489440918
+      },
+      "deduplicated_self-sycophancy-harmfulness-justice_google_gemma-3-27b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-justice_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.36806488037109375
+      },
+      "deduplicated_sandbagging-physical-security-contrastive_google_gemma-3-27b-it.jsonl": {
+        "task": "sandbagging-physical-security-contrastive_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 41,
+        "file_size_mb": 0.12536907196044922
+      },
+      "deduplicated_sycophancy-feedback-user-likes_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-feedback-user-likes_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 13.465631484985352
+      },
+      "deduplicated_sandbagging-chemistry-biology-contrastive_google_gemma-3-27b-it.jsonl": {
+        "task": "sandbagging-chemistry-biology-contrastive_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 76,
+        "file_size_mb": 0.2318897247314453
+      },
+      "deduplicated_sycophancy-answer-positive-incorrect_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-answer-positive-incorrect_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.6430282592773438
+      },
+      "deduplicated_alibi-theft-investigation_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "alibi-theft-investigation_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 45,
+        "file_size_mb": 0.4932689666748047
+      },
+      "deduplicated_sandbagging-medical-pharmaceutical-contrastive_google_gemma-3-27b-it.jsonl": {
+        "task": "sandbagging-medical-pharmaceutical-contrastive_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 43,
+        "file_size_mb": 0.13002300262451172
+      },
+      "deduplicated_sycophancy-answer-positive-correct_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-answer-positive-correct_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.865549087524414
+      },
+      "deduplicated_self-sycophancy-correctness-physics_google_gemma-3-27b-it.jsonl": {
+        "task": "self-sycophancy-correctness-physics_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.45298290252685547
+      },
+      "deduplicated_mask-provided-facts_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "mask-provided-facts_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.4132251739501953
+      },
+      "deduplicated_alibi-workplace-investigation_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "alibi-workplace-investigation_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 10,
+        "file_size_mb": 0.16780662536621094
+      },
+      "deduplicated_mask-statistics_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "mask-statistics_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 82,
+        "file_size_mb": 0.36313915252685547
+      },
+      "deduplicated_sycophancy-answer-negative-correct_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-answer-negative-correct_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.7555980682373047
+      },
+      "deduplicated_self-sycophancy-harmfulness-deontology_google_gemma-3-27b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-deontology_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.3697195053100586
+      },
+      "deduplicated_mask-continuations_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "mask-continuations_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 101,
+        "file_size_mb": 0.4738759994506836
+      },
+      "deduplicated_sycophancy-are-you-sure_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-are-you-sure_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.6942739486694336
+      },
+      "deduplicated_cot-unfaithfulness-contrastive-mmlu_google_gemma-3-27b-it.jsonl": {
+        "task": "cot-unfaithfulness-contrastive-mmlu_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 236,
+        "file_size_mb": 1.8373422622680664
+      },
+      "deduplicated_sandbagging-digital-security-contrastive_google_gemma-3-27b-it.jsonl": {
+        "task": "sandbagging-digital-security-contrastive_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 75,
+        "file_size_mb": 0.22815704345703125
+      },
+      "deduplicated_self-sycophancy-harmfulness-common-sense_google_gemma-3-27b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-common-sense_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 124,
+        "file_size_mb": 0.35859107971191406
+      },
+      "deduplicated_cot-unfaithfulness-contrastive-arc_google_gemma-3-27b-it.jsonl": {
+        "task": "cot-unfaithfulness-contrastive-arc_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 238,
+        "file_size_mb": 1.477116584777832
+      },
+      "deduplicated_mask-known-facts_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "mask-known-facts_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 82,
+        "file_size_mb": 0.18725872039794922
+      },
+      "deduplicated_self-sycophancy-correctness-mathematics_google_gemma-3-27b-it.jsonl": {
+        "task": "self-sycophancy-correctness-mathematics_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.4297456741333008
+      },
+      "deduplicated_self-sycophancy-correctness-arc_google_gemma-3-27b-it.jsonl": {
+        "task": "self-sycophancy-correctness-arc_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.3469820022583008
+      },
+      "deduplicated_ascii-sandbagging-task_google_gemma-3-27b-it.jsonl": {
+        "task": "ascii-sandbagging-task_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 109,
+        "file_size_mb": 0.2573356628417969
+      },
+      "deduplicated_self-sycophancy-correctness-chemistry_google_gemma-3-27b-it.jsonl": {
+        "task": "self-sycophancy-correctness-chemistry_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.3864727020263672
+      },
+      "deduplicated_sycophancy-feedback-user-did-not-write_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-feedback-user-did-not-write_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 9.151695251464844
+      },
+      "deduplicated_sycophancy-feedback-user-wrote_google_gemma-3-27b-it.jsonl": {
+        "task": "sycophancy-feedback-user-wrote_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 20,
+        "file_size_mb": 1.091862678527832
+      },
+      "deduplicated_alibi-breaking-entering-investigation_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "alibi-breaking-entering-investigation_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 45,
+        "file_size_mb": 0.7767963409423828
+      },
+      "deduplicated_sandbagging-automotive-mechanical-contrastive_google_gemma-3-27b-it.jsonl": {
+        "task": "sandbagging-automotive-mechanical-contrastive_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 72,
+        "file_size_mb": 0.21760845184326172
+      },
+      "deduplicated_cot-unfaithfulness-mmlu_google_gemma-3-27b-it.jsonl": {
+        "task": "cot-unfaithfulness-mmlu_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 40,
+        "file_size_mb": 0.23144817352294922
+      },
+      "deduplicated_self-sycophancy-correctness-biology_google_gemma-3-27b-it.jsonl": {
+        "task": "self-sycophancy-correctness-biology_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.39809131622314453
+      },
+      "deduplicated_alibi-fraud-investigation_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "alibi-fraud-investigation_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 10,
+        "file_size_mb": 0.16948890686035156
+      },
+      "deduplicated_mask-disinformation_openrouter_google_gemma-3-27b-it.jsonl": {
+        "task": "mask-disinformation_openrouter_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 103,
+        "file_size_mb": 0.6406784057617188
+      },
+      "deduplicated_sandbagging-financial-systems-contrastive_google_gemma-3-27b-it.jsonl": {
+        "task": "sandbagging-financial-systems-contrastive_google",
+        "model": "gemma-3-27b-it.jsonl",
+        "samples": 41,
+        "file_size_mb": 0.12727069854736328
+      }
+    },
+    "task_summary": {
+      "sycophancy-feedback-user-likes_openrouter_google": {
+        "files": 1,
+        "samples": 1,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "introspection-political_openrouter_google": {
+        "files": 1,
+        "samples": 100,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "alibi-assault-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 45,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-dislikes_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-justice_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sandbagging-physical-security-contrastive_google": {
+        "files": 1,
+        "samples": 41,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-likes_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sandbagging-chemistry-biology-contrastive_google": {
+        "files": 1,
+        "samples": 76,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-positive-incorrect_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "alibi-theft-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 45,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sandbagging-medical-pharmaceutical-contrastive_google": {
+        "files": 1,
+        "samples": 43,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-positive-correct_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-physics_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "mask-provided-facts_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "alibi-workplace-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 10,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "mask-statistics_openrouter_google": {
+        "files": 1,
+        "samples": 82,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-negative-correct_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-deontology_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "mask-continuations_openrouter_google": {
+        "files": 1,
+        "samples": 101,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sycophancy-are-you-sure_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-contrastive-mmlu_google": {
+        "files": 1,
+        "samples": 236,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sandbagging-digital-security-contrastive_google": {
+        "files": 1,
+        "samples": 75,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-common-sense_google": {
+        "files": 1,
+        "samples": 124,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-contrastive-arc_google": {
+        "files": 1,
+        "samples": 238,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "mask-known-facts_openrouter_google": {
+        "files": 1,
+        "samples": 82,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-mathematics_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-arc_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "ascii-sandbagging-task_google": {
+        "files": 1,
+        "samples": 109,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-chemistry_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-did-not-write_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-wrote_google": {
+        "files": 1,
+        "samples": 20,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "alibi-breaking-entering-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 45,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sandbagging-automotive-mechanical-contrastive_google": {
+        "files": 1,
+        "samples": 72,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-mmlu_google": {
+        "files": 1,
+        "samples": 40,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-biology_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "alibi-fraud-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 10,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "mask-disinformation_openrouter_google": {
+        "files": 1,
+        "samples": 103,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      },
+      "sandbagging-financial-systems-contrastive_google": {
+        "files": 1,
+        "samples": 41,
+        "models": [
+          "gemma-3-27b-it.jsonl"
+        ]
+      }
+    }
+  },
+  "openrouter_google_gemma-3-4b-it": {
+    "folder": "openrouter_google_gemma-3-4b-it",
+    "total_files": 35,
+    "total_samples": 3643,
+    "files_by_task": {
+      "deduplicated_ascii-sandbagging-task_google_gemma-3-4b-it.jsonl": {
+        "task": "ascii-sandbagging-task_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.29308414459228516
+      },
+      "deduplicated_sycophancy-feedback-user-wrote_google_gemma-3-4b-it.jsonl": {
+        "task": "sycophancy-feedback-user-wrote_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.195797920227051
+      },
+      "deduplicated_sycophancy-answer-negative-correct_google_gemma-3-4b-it.jsonl": {
+        "task": "sycophancy-answer-negative-correct_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.9811468124389648
+      },
+      "deduplicated_sandbagging-medical-pharmaceutical-contrastive_google_gemma-3-4b-it.jsonl": {
+        "task": "sandbagging-medical-pharmaceutical-contrastive_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 43,
+        "file_size_mb": 0.12789154052734375
+      },
+      "deduplicated_sandbagging-chemistry-biology-contrastive_google_gemma-3-4b-it.jsonl": {
+        "task": "sandbagging-chemistry-biology-contrastive_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 76,
+        "file_size_mb": 0.22809410095214844
+      },
+      "deduplicated_alibi-breaking-entering-investigation_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "alibi-breaking-entering-investigation_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 100,
+        "file_size_mb": 1.7280874252319336
+      },
+      "deduplicated_cot-unfaithfulness-contrastive-arc_google_gemma-3-4b-it.jsonl": {
+        "task": "cot-unfaithfulness-contrastive-arc_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.8359127044677734
+      },
+      "deduplicated_mask-continuations_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "mask-continuations_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 117,
+        "file_size_mb": 0.49868202209472656
+      },
+      "deduplicated_self-sycophancy-correctness-chemistry_google_gemma-3-4b-it.jsonl": {
+        "task": "self-sycophancy-correctness-chemistry_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.27994251251220703
+      },
+      "deduplicated_sandbagging-financial-systems-contrastive_google_gemma-3-4b-it.jsonl": {
+        "task": "sandbagging-financial-systems-contrastive_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 41,
+        "file_size_mb": 0.12510108947753906
+      },
+      "deduplicated_self-sycophancy-correctness-biology_google_gemma-3-4b-it.jsonl": {
+        "task": "self-sycophancy-correctness-biology_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.3030204772949219
+      },
+      "deduplicated_sandbagging-digital-security-contrastive_google_gemma-3-4b-it.jsonl": {
+        "task": "sandbagging-digital-security-contrastive_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 75,
+        "file_size_mb": 0.22604846954345703
+      },
+      "deduplicated_alibi-fraud-investigation_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "alibi-fraud-investigation_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 100,
+        "file_size_mb": 1.6842727661132812
+      },
+      "deduplicated_alibi-workplace-investigation_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "alibi-workplace-investigation_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 100,
+        "file_size_mb": 1.7418127059936523
+      },
+      "deduplicated_cot-unfaithfulness-mmlu_google_gemma-3-4b-it.jsonl": {
+        "task": "cot-unfaithfulness-mmlu_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 38,
+        "file_size_mb": 0.25296974182128906
+      },
+      "deduplicated_sycophancy-feedback-user-likes_google_gemma-3-4b-it.jsonl": {
+        "task": "sycophancy-feedback-user-likes_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.0666017532348633
+      },
+      "deduplicated_self-sycophancy-harmfulness-common-sense_google_gemma-3-4b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-common-sense_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.2772035598754883
+      },
+      "deduplicated_cot-unfaithfulness-contrastive-mmlu_google_gemma-3-4b-it.jsonl": {
+        "task": "cot-unfaithfulness-contrastive-mmlu_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 1.028700828552246
+      },
+      "deduplicated_self-sycophancy-correctness-arc_google_gemma-3-4b-it.jsonl": {
+        "task": "self-sycophancy-correctness-arc_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.2730293273925781
+      },
+      "deduplicated_self-sycophancy-harmfulness-justice_google_gemma-3-4b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-justice_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.29474830627441406
+      },
+      "deduplicated_sycophancy-answer-positive-correct_google_gemma-3-4b-it.jsonl": {
+        "task": "sycophancy-answer-positive-correct_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.8968524932861328
+      },
+      "deduplicated_sycophancy-feedback-user-dislikes_google_gemma-3-4b-it.jsonl": {
+        "task": "sycophancy-feedback-user-dislikes_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.1730499267578125
+      },
+      "deduplicated_self-sycophancy-harmfulness-deontology_google_gemma-3-4b-it.jsonl": {
+        "task": "self-sycophancy-harmfulness-deontology_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.2771596908569336
+      },
+      "deduplicated_sycophancy-answer-positive-incorrect_google_gemma-3-4b-it.jsonl": {
+        "task": "sycophancy-answer-positive-incorrect_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.9275569915771484
+      },
+      "deduplicated_sycophancy-feedback-user-did-not-write_google_gemma-3-4b-it.jsonl": {
+        "task": "sycophancy-feedback-user-did-not-write_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 2.1308279037475586
+      },
+      "deduplicated_sandbagging-automotive-mechanical-contrastive_google_gemma-3-4b-it.jsonl": {
+        "task": "sandbagging-automotive-mechanical-contrastive_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 72,
+        "file_size_mb": 0.21470928192138672
+      },
+      "deduplicated_alibi-theft-investigation_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "alibi-theft-investigation_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 45,
+        "file_size_mb": 0.5376338958740234
+      },
+      "deduplicated_mask-known-facts_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "mask-known-facts_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 109,
+        "file_size_mb": 0.2466440200805664
+      },
+      "deduplicated_self-sycophancy-correctness-mathematics_google_gemma-3-4b-it.jsonl": {
+        "task": "self-sycophancy-correctness-mathematics_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.31457042694091797
+      },
+      "deduplicated_mask-provided-facts_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "mask-provided-facts_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.43993568420410156
+      },
+      "deduplicated_alibi-assault-investigation_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "alibi-assault-investigation_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 100,
+        "file_size_mb": 1.6859931945800781
+      },
+      "deduplicated_self-sycophancy-correctness-physics_google_gemma-3-4b-it.jsonl": {
+        "task": "self-sycophancy-correctness-physics_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 125,
+        "file_size_mb": 0.3239755630493164
+      },
+      "deduplicated_mask-disinformation_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "mask-disinformation_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 122,
+        "file_size_mb": 0.732792854309082
+      },
+      "deduplicated_sandbagging-physical-security-contrastive_google_gemma-3-4b-it.jsonl": {
+        "task": "sandbagging-physical-security-contrastive_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 41,
+        "file_size_mb": 0.12268829345703125
+      },
+      "deduplicated_mask-statistics_openrouter_google_gemma-3-4b-it.jsonl": {
+        "task": "mask-statistics_openrouter_google",
+        "model": "gemma-3-4b-it.jsonl",
+        "samples": 89,
+        "file_size_mb": 0.38337039947509766
+      }
+    },
+    "task_summary": {
+      "ascii-sandbagging-task_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-wrote_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-negative-correct_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sandbagging-medical-pharmaceutical-contrastive_google": {
+        "files": 1,
+        "samples": 43,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sandbagging-chemistry-biology-contrastive_google": {
+        "files": 1,
+        "samples": 76,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "alibi-breaking-entering-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 100,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-contrastive-arc_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "mask-continuations_openrouter_google": {
+        "files": 1,
+        "samples": 117,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-chemistry_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sandbagging-financial-systems-contrastive_google": {
+        "files": 1,
+        "samples": 41,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-biology_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sandbagging-digital-security-contrastive_google": {
+        "files": 1,
+        "samples": 75,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "alibi-fraud-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 100,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "alibi-workplace-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 100,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-mmlu_google": {
+        "files": 1,
+        "samples": 38,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-likes_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-common-sense_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "cot-unfaithfulness-contrastive-mmlu_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-arc_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-justice_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-positive-correct_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-dislikes_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-harmfulness-deontology_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sycophancy-answer-positive-incorrect_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sycophancy-feedback-user-did-not-write_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sandbagging-automotive-mechanical-contrastive_google": {
+        "files": 1,
+        "samples": 72,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "alibi-theft-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 45,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "mask-known-facts_openrouter_google": {
+        "files": 1,
+        "samples": 109,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-mathematics_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "mask-provided-facts_openrouter_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "alibi-assault-investigation_openrouter_google": {
+        "files": 1,
+        "samples": 100,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "self-sycophancy-correctness-physics_google": {
+        "files": 1,
+        "samples": 125,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "mask-disinformation_openrouter_google": {
+        "files": 1,
+        "samples": 122,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "sandbagging-physical-security-contrastive_google": {
+        "files": 1,
+        "samples": 41,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      },
+      "mask-statistics_openrouter_google": {
+        "files": 1,
+        "samples": 89,
+        "models": [
+          "gemma-3-4b-it.jsonl"
+        ]
+      }
+    }
+  }
+}

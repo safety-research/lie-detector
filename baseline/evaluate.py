@@ -23,6 +23,40 @@ except ImportError:
 
 load_dotenv()
 
+def map_data_model_to_eval_model(data_model: str) -> str:
+    """
+    Map the model name from the data to the actual model name for evaluation.
+    This ensures we use the same model for evaluation as the one that generated the lies.
+    """
+    # Normalize the data model name (remove provider prefixes if present)
+    if data_model.startswith('openrouter/'):
+        data_model = data_model[11:]  # Remove 'openrouter/'
+    elif data_model.startswith('anthropic/'):
+        data_model = data_model[10:]  # Remove 'anthropic/'
+    elif data_model.startswith('openai/'):
+        data_model = data_model[7:]   # Remove 'openai/'
+    
+    # Map to the full model name for evaluation
+    # Only Gemma models are present in the processed-data-gemma/ S3 path
+    model_mapping = {
+        'gemma-3-4b-it': 'openrouter/google/gemma-3-4b-it',
+        'gemma-3-12b-it': 'openrouter/google/gemma-3-12b-it', 
+        'gemma-3-27b-it': 'openrouter/google/gemma-3-27b-it',
+        'google_gemma-3-4b-it': 'openrouter/google/gemma-3-4b-it',
+        'google_gemma-3-12b-it': 'openrouter/google/gemma-3-12b-it',
+        'google_gemma-3-27b-it': 'openrouter/google/gemma-3-27b-it',
+        'openrouter_google_gemma-3-4b-it': 'openrouter/google/gemma-3-4b-it',
+        'openrouter_google_gemma-3-12b-it': 'openrouter/google/gemma-3-12b-it',
+        'openrouter_google_gemma-3-27b-it': 'openrouter/google/gemma-3-27b-it',
+        # Handle the normalized names after removing openrouter/ prefix
+        'google/gemma-3-4b-it': 'openrouter/google/gemma-3-4b-it',
+        'google/gemma-3-12b-it': 'openrouter/google/gemma-3-12b-it',
+        'google/gemma-3-27b-it': 'openrouter/google/gemma-3-27b-it'
+    }
+    
+    # Return the mapped model name, or the original if not found
+    return model_mapping.get(data_model, data_model)
+
 def examine_data_distribution():
     """Examine the data to understand the ground truth labeling."""
     print("=== EXAMINING DATA DISTRIBUTION ===")
@@ -139,7 +173,7 @@ def save_prompts_to_file(results, filename, output_dir=".", baseline_type="basel
     
     return filepath
 
-def save_results_to_files(results, filename, metrics, output_dir=".", baseline_type="baseline"):
+def save_results_to_files(results, filename, metrics, output_dir=".", baseline_type="baseline", model_name="unknown"):
     """Save evaluation results to both JSON and TXT files with subtask breakdown."""
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     
@@ -277,7 +311,7 @@ def save_results_to_files(results, filename, metrics, output_dir=".", baseline_t
         "metadata": {
             "timestamp": timestamp,
             "total_samples": len(results),
-            "model": "openrouter/meta-llama/llama-3.1-8b-instruct",
+            "model": model_name,
             "subtasks": list(subtask_results.keys())
         },
         "overall_metrics": {
@@ -308,7 +342,7 @@ def save_results_to_files(results, filename, metrics, output_dir=".", baseline_t
         f.write("="*80 + "\n\n")
         
         f.write(f"Timestamp: {timestamp}\n")
-        f.write(f"Model: openrouter/meta-llama/llama-3.1-8b-instruct\n")
+        f.write(f"Model: {model_name}\n")
         f.write(f"Total Samples: {len(results)}\n")
         f.write(f"Number of Subtasks: {len(subtask_results)}\n\n")
         
@@ -568,22 +602,25 @@ def main(num_samples=None, model=None, data_dir="processed_data", baseline_type=
     }
 
     # Save results to files
-    json_filepath, txt_filepath = save_results_to_files(results, baseline_type, metrics, results_dir, baseline_type)
+    json_filepath, txt_filepath = save_results_to_files(results, baseline_type, metrics, results_dir, baseline_type, model_name)
     print(f"\n📝 Saved results to: {json_filepath}")
     print(f"📝 Saved summary to: {txt_filepath}")
 
-def main_by_model(num_samples=None, model=None, data_dir="processed_data", baseline_type="base_transcript"):
+def main_by_model(num_samples=None, model=None, data_dir="processed_data", baseline_type="base_transcript", use_same_model=True, results_dir=None, transcripts_dir=None, model_prefix=None):
     """Run baseline evaluation separately for each model."""
     print("\n" + "="*80)
     print(f"=== RUNNING {baseline_type.upper()} EVALUATION BY MODEL ===")
     
     # Configuration
-    model_name = model or "openrouter/meta-llama/llama-3.1-8b-instruct"
+    default_model = model or "openrouter/meta-llama/llama-3.1-8b-instruct"
     log_dir = f"logs/{baseline_type}"
     limit = num_samples
 
     print(f"Running {baseline_type} evaluation by model...")
-    print(f"Evaluation model: {model_name}")
+    if use_same_model:
+        print(f"Using same model for evaluation as the one that generated the lies")
+    else:
+        print(f"Using fixed evaluation model: {default_model}")
     print(f"Samples per model: {'All available' if limit is None else limit}")
 
     # Import model-specific task functions
@@ -614,7 +651,9 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
         print(f"  - {model_key}")
 
     # Create output directories
+    if results_dir is None:
     results_dir = f"baseline/results/{baseline_type}"
+    if transcripts_dir is None:
     transcripts_dir = f"baseline/transcripts/{baseline_type}"
     os.makedirs(results_dir, exist_ok=True)
     os.makedirs(transcripts_dir, exist_ok=True)
@@ -631,7 +670,15 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
         model_log_dir = f"{log_dir}/{model_key.replace('/', '_').replace(':', '_')}"
         
         # Run evaluation for this model
-        log = eval(task, model=model_name, log_dir=model_log_dir)
+        if use_same_model:
+            # Use the same model for evaluation as the one that generated the lies
+            eval_model = map_data_model_to_eval_model(model_key)
+        else:
+            # Use the fixed evaluation model
+            eval_model = default_model
+            
+        print(f"Using evaluation model: {eval_model}")
+        log = eval(task, model=eval_model, log_dir=model_log_dir)
         results = log[0].samples if log and log[0].samples else []
         
         print(f"Processed {len(results)} samples for {model_key}")
@@ -641,6 +688,9 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
             continue
         
         # Save prompts for this model
+        if model_prefix:
+            model_safe_name = model_prefix
+        else:
         model_safe_name = model_key.replace('/', '_').replace(':', '_')
         prompts_file = save_prompts_to_file(results, f"{model_safe_name}_{baseline_type}", transcripts_dir, baseline_type)
         print(f"📝 Saved prompts to: {prompts_file}")
@@ -763,8 +813,11 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
         }
         
         # Save results for this model
+        if model_prefix:
+            model_safe_name = model_prefix
+        else:
         model_safe_name = model_key.replace('/', '_').replace(':', '_')
-        json_filepath, txt_filepath = save_results_to_files(results, f"{model_safe_name}_{baseline_type}", all_model_metrics[model_key], results_dir, baseline_type)
+        json_filepath, txt_filepath = save_results_to_files(results, f"{model_safe_name}_{baseline_type}", all_model_metrics[model_key], results_dir, baseline_type, eval_model)
         print(f"📝 Saved results to: {json_filepath}")
         print(f"📝 Saved summary to: {txt_filepath}")
     
