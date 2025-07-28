@@ -33,3 +33,8 @@ __pycache__
 /prep/.data/
 /prep/wandb/
 /.data/
+/baseline/tasks/bytetrash/
+/baseline/results/
+/baseline/results/escaped_transcript/
+/pipelines/offpolicy/logs/
+/pipelines/offpolicy/truth_is_universal/cache/
