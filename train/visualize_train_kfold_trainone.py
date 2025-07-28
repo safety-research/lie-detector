@@ -53,9 +53,9 @@ def extract_auc_scores(all_training_results, training_summary=None):
     """
     from sklearn.metrics import roc_auc_score
     
-    # Get all fold names
-    train_folds = list(all_training_results.keys())
-    test_folds = list(all_training_results[train_folds[0]].keys())
+    # Get all fold names and sort alphabetically
+    train_folds = sorted(list(all_training_results.keys()))
+    test_folds = sorted(list(all_training_results[train_folds[0]].keys()))
     
     # Create AUC matrix
     auc_matrix = np.zeros((len(train_folds), len(test_folds)))
@@ -70,10 +70,11 @@ def extract_auc_scores(all_training_results, training_summary=None):
                     y_prob = results['roc_data']['y_prob']
                     try:
                         # The y_prob values are probabilities of class B (truthful)
-                        # For AUC calculation, we need probabilities of the positive class (A/liar)
-                        # So we use 1 - y_prob to get probability of A
-                        y_prob_a = [1 - p for p in y_prob]
-                        auc_score = roc_auc_score(y_true, y_prob_a)
+                        # For lie detection, we want A (lie) as positive class
+                        # So we need to flip both the labels and probabilities
+                        y_true_flipped = [1 - label for label in y_true]  # Flip: A=1, B=0
+                        y_prob_a = [1 - p for p in y_prob]  # Probability of A (lie)
+                        auc_score = roc_auc_score(y_true_flipped, y_prob_a)
                         auc_matrix[i, j] = auc_score
                     except Exception as e:
                         print(f"Error calculating AUC for {train_fold} -> {test_fold}: {e}")
@@ -168,9 +169,9 @@ def create_accuracy_heatmap(all_training_results, output_path, training_summary=
         training_summary: Training summary containing correct training set sizes
         title: Plot title
     """
-    # Get all fold names
-    train_folds = list(all_training_results.keys())
-    test_folds = list(all_training_results[train_folds[0]].keys())
+    # Get all fold names and sort alphabetically
+    train_folds = sorted(list(all_training_results.keys()))
+    test_folds = sorted(list(all_training_results[train_folds[0]].keys()))
     
     # Create accuracy matrix
     acc_matrix = np.zeros((len(train_folds), len(test_folds)))
@@ -257,9 +258,9 @@ def create_f1_heatmap(all_training_results, output_path, training_summary=None, 
         training_summary: Training summary containing correct training set sizes
         title: Plot title
     """
-    # Get all fold names
-    train_folds = list(all_training_results.keys())
-    test_folds = list(all_training_results[train_folds[0]].keys())
+    # Get all fold names and sort alphabetically
+    train_folds = sorted(list(all_training_results.keys()))
+    test_folds = sorted(list(all_training_results[train_folds[0]].keys()))
     
     # Create F1 matrix
     f1_matrix = np.zeros((len(train_folds), len(test_folds)))
