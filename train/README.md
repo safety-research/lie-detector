@@ -2,6 +2,16 @@
 
 ## Prerequisites
 
+### 0. **Clone Repo**
+
+Clone the repo into /workspace
+
+```bash
+git clone XXX
+```
+
+Create VENV in root.
+
 ### 1. **Install AWS CLI**
    ```bash
    # Install unzip if not available
