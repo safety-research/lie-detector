@@ -11,6 +11,7 @@ from inspect_ai.hooks import Hooks, RunEnd, TaskEnd
 from inspect_ai.log import EvalLog
 
 from common.s3_sample_client import S3SampleClient
+from model.sample import LieDetectionSample
 
 load_dotenv()
 from common.utils import write_to_s3
@@ -26,7 +27,7 @@ class BaseSampleProcessingHook(Hooks):
         super().__init__()
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.results: List[Dict[str, Any]] = []
+        self.results: List[LieDetectionSample] = []
         self.s3_sample_client: S3SampleClient = S3SampleClient()
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
 
@@ -41,6 +42,7 @@ class BaseSampleProcessingHook(Hooks):
             sample_id,
             parsed_entry
         )
+
 
     async def on_task_end(self, data: TaskEnd):
         """
@@ -89,12 +91,14 @@ class BaseSampleProcessingHook(Hooks):
             sample_info = []  # Keep track of sample info for error reporting
 
             for sample in samples:
-                parsed_entry = self.process_sample(sample, eval_log)
-                if parsed_entry:
+                parsed_sample = self.process_sample(sample, eval_log)
+                if parsed_sample:
+                    # Convert to dict for JSON serialization
+                    parsed_entry = parsed_sample.dict(exclude_none=True)
                     all_entries.append(parsed_entry)
 
                     # Prepare upload task
-                    sample_id = parsed_entry.get('sample_id', '-')
+                    sample_id = parsed_sample.sample_id
                     sample_info.append(sample_id)
 
                     upload_task = self.upload_sample_async(
@@ -143,14 +147,22 @@ class BaseSampleProcessingHook(Hooks):
 
         except Exception as e:
             print(f"[LogParserHook] Error processing log file: {e}")
-        finally:
-            # Clean up executor when done
-            self.executor.shutdown(wait=False)
+            # Removed the finally block that was shutting down the executor
+
+    async def on_run_end(self, data: RunEnd):
+        """
+        Hook that runs at the very end of the entire run (after all tasks).
+        This is where we clean up the executor.
+        """
+        # Shutdown the executor when the entire run is complete
+        if hasattr(self, 'executor') and self.executor:
+            self.executor.shutdown(wait=True)
+            print(f"[LogParserHook] Executor shutdown complete")
 
     @abstractmethod
-    def process_sample(self, sample: Any, eval_log: EvalLog) -> Optional[Dict[str, Any]]:
+    def process_sample(self, sample: Any, eval_log: EvalLog) -> Optional[LieDetectionSample]:
         """
-        Process a single sample and return a dictionary.
+        Process a single sample and return a LieDetectionSample instance.
         Return None to skip this sample.
         """
         pass
@@ -174,6 +186,6 @@ class BaseSampleProcessingHook(Hooks):
         output_path = self.output_dir / filename
         with output_path.open("w") as f:
             for item in self.results:
-                f.write(json.dumps(item) + "\n")
+                f.write(json.dumps(item.dict(exclude_none=True)) + "\n")
 
         print(f"[{self.__class__.__name__}] Saved {len(self.results)} samples to {output_path}")

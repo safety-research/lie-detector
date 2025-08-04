@@ -183,13 +183,14 @@ if __name__ == "__main__":
     # model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     #model = "openrouter/google/gemma-3-12b-it"
-    model = "openrouter/openai/gpt-4o"
+    #model = "openrouter/openai/gpt-4o"
 
+    model = "openrouter/google/gemma-3-12b-it"
 
     results = eval(
         tasks=all_tasks,
         model=model,  # Using OpenRouter Claude model
-        limit=200,  # Limit samples for faster debugging
+        limit=400,  # Limit samples for faster debugging
         log_dir="../logs",  # Optional: specify log directory
         retry_on_error=5
         # debug_errors=True,  # Optional: enable debug mode

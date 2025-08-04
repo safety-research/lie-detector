@@ -15,7 +15,10 @@ from common.generalization_enums import MotivationFramework, KnowledgeFramework
 
 # Try to import - handle both relative and absolute imports
 try:
-    from baseline.dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset, rowans_escaped_transcript_dataset
+    from baseline.dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, \
+    base_transcript_reasoning_dataset, rowans_escaped_transcript_dataset, baseline_dataset_by_model_from_file, \
+    conversation_dataset_by_model_from_file, llama_chat_dataset_by_model_from_file, \
+    llama_chat_reasoning_dataset_by_model_from_file
     from baseline.dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model, rowans_escaped_transcript_dataset_by_model
     from baseline.scorer import truth_scorer, escaped_transcript_scorer, llama_chat_scorer, llama_chat_reasoning_scorer, base_transcript_reasoning_scorer
 except ImportError:

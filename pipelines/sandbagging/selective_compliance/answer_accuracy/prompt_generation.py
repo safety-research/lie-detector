@@ -153,12 +153,18 @@ def load_prompts_from_json(json_file_path: str) -> List[SandbaggingPromptPair]:
             "workplace_sabotage": SandbaggingDomain.AUTOMOTIVE_MECHANICAL,
             "academic_dishonesty": SandbaggingDomain.DIGITAL_SECURITY,
             "privacy_invasion": SandbaggingDomain.DIGITAL_SECURITY,
+            "financial_systems": SandbaggingDomain.FINANCIAL_SYSTEMS,
+            "digital_security": SandbaggingDomain.DIGITAL_SECURITY,
+            "chemistry_biology": SandbaggingDomain.CHEMISTRY_BIOLOGY,
+            "medical_pharmaceutical": SandbaggingDomain.MEDICAL_PHARMACEUTICAL,
+            "automotive_mechanical": SandbaggingDomain.AUTOMOTIVE_MECHANICAL,
+            "physical_security": SandbaggingDomain.PHYSICAL_SECURITY,
         }
         
         for query in queries:
             # Extract question and answers from the formatted question
             question_text = query["question"]
-            question_id = query["question_id"]
+            question_id = query["question_id"] if "question_id" in query else str(hash(question_text))
             category = query["category"]
             
             # Determine the correct and incorrect answers based on the letters
@@ -172,9 +178,10 @@ def load_prompts_from_json(json_file_path: str) -> List[SandbaggingPromptPair]:
 
             
             # Map category to domain
-            domain = category_to_domain.get(category, SandbaggingDomain.PHYSICAL_SECURITY)
+            domain = category_to_domain.get(category, None)
 
-            
+            if not domain:
+                pass
             # Create the SandbaggingPromptPair
             pair = SandbaggingPromptPair(
                 domain=domain,

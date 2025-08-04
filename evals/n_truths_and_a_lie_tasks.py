@@ -65,7 +65,7 @@ def n_truths_and_a_lie_professional_background() -> Task:
     dataset = _configs_to_dataset(configs)
 
     return Task(
-        name="n-truths-and-a-lie_professional_background",
+        name="n-truths-and-a-lie-multi_professional_background",
         dataset=dataset,
         solver=n_truths_solver(),
         scorer=[
@@ -88,7 +88,7 @@ def n_truths_and_a_lie_hidden_talents() -> Task:
     dataset = _configs_to_dataset(configs)
 
     return Task(
-        name="n-truths-and-a-lie_hidden_talents",
+        name="n-truths-and-a-lie-multi_hidden_talents",
         dataset=dataset,
         solver=n_truths_solver(),
         scorer=[
@@ -111,7 +111,7 @@ def n_truths_and_a_lie_family_history() -> Task:
     dataset = _configs_to_dataset(configs)
 
     return Task(
-        name="n-truths-and-a-lie_family_history",
+        name="n-truths-and-a-lie-multi_family_history",
         dataset=dataset,
         solver=n_truths_solver(),
         scorer=[
@@ -134,7 +134,7 @@ def n_truths_and_a_lie_personal_quirks() -> Task:
     dataset = _configs_to_dataset(configs)
 
     return Task(
-        name="n-truths-and-a-lie_personal_quirks",
+        name="n-truths-and-a-lie-multi_personal_quirks",
         dataset=dataset,
         solver=n_truths_solver(),
         scorer=[
@@ -157,7 +157,7 @@ def n_truths_and_a_lie_travel_experiences() -> Task:
     dataset = _configs_to_dataset(configs)
 
     return Task(
-        name="n-truths-and-a-lie_travel_experiences",
+        name="n-truths-and-a-lie-multi_travel_experiences",
         dataset=dataset,
         solver=n_truths_solver(),
         scorer=[
@@ -177,15 +177,15 @@ if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
     task = [
         n_truths_and_a_lie_professional_background(),
-        # n_truths_and_a_lie_hidden_talents(),
-        # n_truths_and_a_lie_family_history(),
-        # n_truths_and_a_lie_travel_experiences(),
-        # n_truths_and_a_lie_personal_quirks()
+        n_truths_and_a_lie_hidden_talents(),
+        n_truths_and_a_lie_family_history(),
+        n_truths_and_a_lie_travel_experiences(),
+        n_truths_and_a_lie_personal_quirks()
     ]
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    #model = "openrouter/google/gemma-3-12b-it"
-    model = "openrouter/openai/gpt-4o"
+    model = ["openrouter/google/gemma-3-12b-it", "openrouter/google/gemma-3-4b-it", "openrouter/google/gemma-3-27b-it"]
+    #model = "openrouter/openai/gpt-4o"
     # Run evaluation with a specific model
     results = eval(
         tasks=task,

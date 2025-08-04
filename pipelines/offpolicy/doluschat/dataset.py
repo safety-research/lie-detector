@@ -12,7 +12,7 @@ def doluschat_dataset(
         dataset_name: str = "AlignmentResearch/DolusChat",
         split: str = "train",
         limit: Optional[int] = None,
-        shuffle: bool = False,
+        shuffle: bool = True,
         seed: Optional[int] = None,
         categories: Optional[List[str]] = None
 ) -> Dataset:

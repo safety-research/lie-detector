@@ -129,7 +129,7 @@ def detective_agent(config: GameConfig) -> Agent:
 
         # Generate next question
         from inspect_ai.model import get_model
-        model = get_model()
+        model = get_model("openrouter/anthropic/claude-sonnet-4")
 
         response = await model.generate(state.messages)
         question = response.completion.strip()

@@ -70,11 +70,13 @@ def truth_is_universal_task(
 
 if __name__ == "__main__":
     results = eval(
-        tasks=[truth_is_universal_task()],
+        tasks=[truth_is_universal_task(), doluschat_task()],
+        #model=["openai/gpt-4o"],
         model=["openrouter/google/gemma-3-4b-it",
                "openrouter/google/gemma-3-12b-it",
                "openrouter/google/gemma-3-27b-it"],  # Using OpenRouter model
-        limit=10000,  # Limit samples for faster debugging
+        limit=2000,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
+        max_connections=100
         # debug_errors=True,  # Optional: enable debug mode
     )

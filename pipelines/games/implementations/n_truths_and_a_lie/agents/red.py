@@ -86,7 +86,7 @@ def red_agent(config: GameConfig) -> Agent:
 
             # Generate next question
             from inspect_ai.model import get_model
-            model = get_model()
+            model = get_model("openrouter/anthropic/claude-sonnet-4")
 
             # Add context about remaining questions
             remaining_turns = config.interrogation_turns_limit - len(game_state.interrogation)

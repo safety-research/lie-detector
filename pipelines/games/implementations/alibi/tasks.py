@@ -55,36 +55,36 @@ def create_theft_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task focused on theft alibis"""
     from pipelines.games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.THEFT], num_scenarios=num_scenarios)
-    return create_alibi_task(configs, f"alibi_theft_investigation")
+    return create_alibi_task(configs, f"alibi-multi_theft_investigation")
 
 
 def create_fraud_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task focused on fraud alibis"""
     from pipelines.games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.FRAUD], num_scenarios=num_scenarios)
-    return create_alibi_task(configs, f"alibi_fraud_investigation")
+    return create_alibi_task(configs, f"alibi-multi_fraud_investigation")
 
 
 def create_workplace_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task focused on workplace misconduct alibis"""
     from pipelines.games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.WORKPLACE_MISCONDUCT], num_scenarios=num_scenarios)
-    return create_alibi_task(configs, f"alibi_workplace_investigation")
+    return create_alibi_task(configs, f"alibi-multi_workplace_investigation")
 
 def create_breaking_entering_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task focused on workplace misconduct alibis"""
     from pipelines.games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.BREAKING_ENTERING], num_scenarios=num_scenarios)
-    return create_alibi_task(configs, f"alibi_breaking_entering_investigation")
+    return create_alibi_task(configs, f"alibi-multi_breaking_entering_investigation")
 
 def create_assault_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task focused on workplace misconduct alibis"""
     from pipelines.games.implementations.alibi.models import IncidentType
     configs = generate_enhanced_alibi_scenarios(incident_types=[IncidentType.ASSAULT], num_scenarios=num_scenarios)
-    return create_alibi_task(configs, f"alibi_assault_investigation")
+    return create_alibi_task(configs, f"alibi-multi_assault_investigation")
 
 
 def create_mixed_alibi_task(num_scenarios: int = 100) -> Task:
     """Create task with mixed incident types"""
     configs = generate_enhanced_alibi_scenarios(incident_types=[], num_scenarios=num_scenarios)
-    return create_alibi_task(configs, f"alibi_mixed_investigation")
+    return create_alibi_task(configs, f"alibi-multi_mixed_investigation")

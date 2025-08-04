@@ -44,6 +44,10 @@ def create_sandbagging_contrastive_dataset(
             "question": pair.question_text,
             "domain": pair.domain.value
         }
+
+        if "generated" not in pair.source:
+            continue
+
         content_str = json.dumps(content_data, sort_keys=True)
         sample_id = hashlib.sha256(content_str.encode()).hexdigest()[:12]
 
@@ -68,7 +72,21 @@ def create_sandbagging_contrastive_dataset(
         
         # Target is always the correct answer
         target = pair.correct_answer
-        
+
+        if "Question:" in pair.harmful_context:
+            metadata["harmful_context"] = pair.harmful_context.split("Question:")[0]
+            pass
+
+        # Clean up the placement of the multichoice options in the output string.
+        if "(A)" not in input_text and "A)" not in input_text:
+            if "(A)" in pair.harmful_context:
+                index = pair.harmful_context.index("(A)")
+                options = pair.harmful_context[index:]
+                if options:
+                    options = "(A)" + options
+                    metadata["question_text"] = metadata["question_text"] + options
+                    metadata["harmful_context"] = pair.harmful_context[:index]
+                    pass
         # Create sample
         sample = Sample(
             id=f"sandbagging_pair_{pair.question_id}_{sample_id}",

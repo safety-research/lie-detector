@@ -84,6 +84,10 @@ class SandbaggingHook(BaseSampleProcessingHook):
             if parsed_entry['model'] == 'unknown' and hasattr(eval_log.eval, 'model'):
                 parsed_entry['model'] = eval_log.eval.model
 
+            if parsed_entry['did_lie'] == True:
+                data = parsed_entry['trace'][1]['content']
+                if "A)" not in data:
+                    pass
             return parsed_entry
 
         except Exception as e:

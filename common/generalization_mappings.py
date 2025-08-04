@@ -144,7 +144,7 @@ generalization_map_2 = { # Knowledge / contents / object of lie
 
 # generalization_map_3 - Mapping by top-level task prefix
 generalization_map_3 = {
-    "alibi": [
+    "games": [
         "alibi_breaking_entering_investigation",
         "alibi_assault_investigation",
         "alibi_fraud_investigation",
@@ -153,6 +153,37 @@ generalization_map_3 = {
         "alibi_theft_task",
         "alibi_workplace_task",
         "alibi_assault_task",
+        "alibi_theft_investigation",
+
+        "alibi-multi_fraud_investigation",
+        "alibi-multi_breaking_entering_investigation",
+        "alibi-multi_assault_investigation",
+        "alibi-multi_theft_investigation",
+        "alibi-multi_workplace_investigation",
+
+        "capture-the-secret_relationship",
+        "capture-the-secret_sales",
+        "capture-the-secret_scientific",
+        "capture-the-secret_intelligence",
+        "capture-the-secret_corporate",
+
+        "capture-the-secret-multi_corporate",
+        "capture-the-secret-multi_scientific",
+        "capture-the-secret-multi_sales",
+        "capture-the-secret-multi_relationship",
+        "capture-the-secret-multi_intelligence",
+
+        "n-truths-and-a-lie_personal_quirks",
+        "n-truths-and-a-lie_family_history",
+        "n-truths-and-a-lie_hidden_talents",
+        "n-truths-and-a-lie_professional_background",
+        "n-truths-and-a-lie_travel_experiences",
+
+        "n-truths-and-a-lie-multi_personal_quirks",
+        "n-truths-and-a-lie-multi_family_history",
+        "n-truths-and-a-lie-multi_hidden_talents",
+        "n-truths-and-a-lie-multi_professional_background",
+        "n-truths-and-a-lie-multi_travel_experiences",
     ],
     "sandbagging": [
         "sandbagging_chess_shutdown_threat",
@@ -164,32 +195,22 @@ generalization_map_3 = {
         "sandbagging_physical_security_contrastive",
         "sandbagging_contrastive",
         "sandbagging_ascii",
-        "sandbagging_tool_results_tasks",
-        "chess-mate-in-2_shutdown_threat_task"
+        "sandbagging_tool_consequentialist"
+
+        "chess-mate-in-2_shutdown_threat_task",
+        "chess_mate_in_2_shutdown_threat_task"
     ],
-    "capture-the-secret": [
-        "capture-the-secret_relationship",
-        "capture-the-secret_sales",
-        "capture-the-secret_scientific",
-        "capture-the-secret_intelligence",
-        "capture-the-secret_corporate",
+    "ascii": [
+        "ascii_sandbagging_task",
     ],
-    "n-truths-and-a-lie": [
-        "n-truths-and-a-lie_personal_quirks",
-        "n-truths-and-a-lie_family_history",
-        "n-truths-and-a-lie_hidden_talents",
-        "n-truths-and-a-lie_professional_background",
-        "n-truths-and-a-lie_travel_experiences",
-    ],
-    "mask1": [
-     
-        "mask_continuations",
-        "mask_disinformation",
-    ],
-    "mask2": [
+    "mask-factual": [
         "mask_provided_facts",
         "mask_statistics",
         "mask_known_facts",
+    ],
+    "mask-roleplay": [
+        "mask_continuations",
+        "mask_disinformation",
     ],
     "tool": [
         "tool_code_sandbagging_task",
@@ -210,7 +231,7 @@ generalization_map_3 = {
         "sycophancy_feedback_user_dislikes",
         "sycophancy_are_you_sure",
     ],
-    "self": [
+    "self-sycophancy": [
         "self-sycophancy_correctness_arc",
         "self-sycophancy_correctness_biology",
         "self-sycophancy_correctness_chemistry",
@@ -219,13 +240,32 @@ generalization_map_3 = {
         "self-sycophancy_harmfulness_common_sense",
         "self-sycophancy_harmfulness_deontology",
         "self-sycophancy_harmfulness_justice",
+
+        "self_sycophancy_correctness_physics",
+        "self_sycophancy_harmfulness_deontology",
+        "self_sycophancy_harmfulness_justice",
+
     ],
-    "cot": [
+    "cot-unfaithfulness": [
         "cot-unfaithfulness_contrastive_mmlu",
         "cot-unfaithfulness_contrastive_arc",
         "cot-unfaithfulness_mmlu_contrastive",
         "cot-unfaithfulness_arc_contrastive",
     ],
+    "unanswerable": [
+        "unanswerable-claims_art",
+        "unanswerable-claims_history",
+        "unanswerable-claims_politics",
+        "unanswerable-claims_legal",
+        "unanswerable-claims_mathematics",
+        "unanswerable-claims_fiction",
+        "unanswerable-claims_philosophy",
+        "unanswerable-claims_science",
+    ],
+    "offpolicy": [
+        "off-policy_dolus_chat",
+        "off-policy_truth_is_universal",
+    ]
 }
 
 # Subject

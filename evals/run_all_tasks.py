@@ -250,17 +250,17 @@ def main():
     
     print("LIE DETECTOR - ALL TASKS EVALUATION")
     print("=" * 50)
-    print(f"Model: {MODEL}")
-    print(f"Limit: {LIMIT if LIMIT else 1000}")
-    print(f"Categories: {CATEGORIES if CATEGORIES else 'All'}")
+    print(f"Model: {args.model}")
+    print(f"Limit: {args.limit if args.limit else 1000}")
+    print(f"Categories: {args.categories if args.categories else 'All'}")
     print("=" * 50)
     
     # Run all tasks
     results = run_all_tasks(
-        model=MODEL,
-        limit=LIMIT,
-        categories=CATEGORIES,
-        log_dir=LOG_DIR
+        model=args.model,
+        limit=args.limit,
+        categories=args.categories,
+        log_dir=args.log_dir
     )
     
     if results:

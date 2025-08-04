@@ -190,7 +190,7 @@ def create_truth_universal_sample(record: Dict[str, Any], dataset_name: str, idx
 def truth_is_universal_dataset(
         dataset_names: Optional[List[str]] = None,
         limit: Optional[int] = None,
-        shuffle: bool = False,
+        shuffle: bool = True,
         cache_dir: str = "./cache/truth_is_universal",
         balance_labels: bool = True
 ) -> MemoryDataset:
