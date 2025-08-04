@@ -175,16 +175,10 @@ if __name__ == "__main__":
       sandbagging_digital_security_contrastive(),
       sandbagging_physical_security_contrastive()
     ]
-    model = "openrouter/openai/gpt-4o"
-    #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
-    #model = "openrouter/meta-llama/llama-3.1-8b-base"
-    #model = "openrouter/meta-llama/llama-3.1-405b"
-    # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model2 = ["openrouter/anthropic/claude-3.7-sonnet",
-             "openrouter/anthropic/claude-sonnet-4",
-             "openrouter/google/gemma-3-27b-it",
-             "openrouter/google/gemma-3-9b-it"
-             ]
+
+    model = "openrouter/google/gemma-3-27b-it"
+    model = "openrouter/google/gemma-3-4b-it"
+    model = "openrouter/google/gemma-3-12b-it"
     
     # Run evaluation with a specific model
     results = eval(
@@ -192,6 +186,6 @@ if __name__ == "__main__":
         tasks=all_tasks,#all_tasks,
         #token_limit=1,
         retry_on_error=8,
-        limit=125,  # Limit samples for faster debugging
+        limit=500,  # Limit samples for faster debugging
         log_dir="../logs",  # Specify log directory
     )

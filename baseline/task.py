@@ -131,6 +131,25 @@ def baseline_task_by_model(
     
     return model_tasks
 
+def baseline_task_by_model_from_file(
+    data_file: str, 
+    limit: Optional[int] = None
+) -> Dict[str, Task]:
+    """
+    Baseline lie detection task split by model from a specific file.
+    """
+    model_datasets = baseline_dataset_by_model_from_file(data_file, limit=limit)
+    model_tasks = {}
+    
+    for model, dataset in model_datasets.items():
+        model_tasks[model] = Task(
+            dataset=dataset,
+            solver=generate(),
+            scorer=truth_scorer()
+        )
+    
+    return model_tasks
+
 def escaped_transcript_task_by_model(
     data_dir: str, 
     limit: Optional[int] = None
@@ -139,6 +158,25 @@ def escaped_transcript_task_by_model(
     Escaped transcript format lie detection task split by model.
     """
     model_datasets = conversation_dataset_by_model(data_dir, limit=limit)
+    model_tasks = {}
+    
+    for model, dataset in model_datasets.items():
+        model_tasks[model] = Task(
+            dataset=dataset,
+            solver=generate(),
+            scorer=escaped_transcript_scorer()
+        )
+    
+    return model_tasks
+
+def escaped_transcript_task_by_model_from_file(
+    data_file: str, 
+    limit: Optional[int] = None
+) -> Dict[str, Task]:
+    """
+    Escaped transcript format lie detection task split by model from a specific file.
+    """
+    model_datasets = conversation_dataset_by_model_from_file(data_file, limit=limit)
     model_tasks = {}
     
     for model, dataset in model_datasets.items():
@@ -167,7 +205,26 @@ def llama_chat_task_by_model(
             scorer=llama_chat_scorer()
         )
     
-    return model_tasks 
+        return model_tasks
+
+def llama_chat_task_by_model_from_file(
+    data_file: str, 
+    limit: Optional[int] = None
+) -> Dict[str, Task]:
+    """
+    LLaMA chat format lie detection task split by model from a specific file.
+    """
+    model_datasets = llama_chat_dataset_by_model_from_file(data_file, limit=limit)
+    model_tasks = {}
+    
+    for model, dataset in model_datasets.items():
+        model_tasks[model] = Task(
+            dataset=dataset,
+            solver=generate(),
+            scorer=llama_chat_scorer()
+        )
+    
+    return model_tasks
 
 def llama_chat_reasoning_task_by_model(
     data_dir: str, 
@@ -177,6 +234,25 @@ def llama_chat_reasoning_task_by_model(
     LLaMA chat reasoning format lie detection task split by model.
     """
     model_datasets = llama_chat_reasoning_dataset_by_model(data_dir, limit=limit)
+    model_tasks = {}
+    
+    for model, dataset in model_datasets.items():
+        model_tasks[model] = Task(
+            dataset=dataset,
+            solver=generate(),
+            scorer=llama_chat_reasoning_scorer()
+        )
+    
+    return model_tasks
+
+def llama_chat_reasoning_task_by_model_from_file(
+    data_file: str, 
+    limit: Optional[int] = None
+) -> Dict[str, Task]:
+    """
+    LLaMA chat reasoning format lie detection task split by model from a specific file.
+    """
+    model_datasets = llama_chat_reasoning_dataset_by_model_from_file(data_file, limit=limit)
     model_tasks = {}
     
     for model, dataset in model_datasets.items():

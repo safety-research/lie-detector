@@ -166,6 +166,64 @@ def load_jsonl_data_by_model(data_dir: Path) -> Dict[str, List[Dict[str, Any]]]:
     
     return dict(model_datasets)
 
+def load_jsonl_data_by_model_from_file(data_file: Path) -> Dict[str, List[Dict[str, Any]]]:
+    """Load data from a specific JSONL file and group by model."""
+    model_datasets = defaultdict(list)
+    
+    print(f"Loading data from: {data_file}")
+    
+    if data_file.suffix.lower() == '.jsonl':
+        # Process JSONL file
+        with open(data_file, "r") as f:
+            for line in f:
+                try:
+                    item = json.loads(line)
+                    model = normalize_model_name(item.get('model', 'unknown'))
+                    model_datasets[model].append(item)
+                except json.JSONDecodeError:
+                    print(f"Skipping malformed line in {data_file}")
+    elif data_file.suffix.lower() == '.json':
+        # Process JSON file
+        with open(data_file, "r") as f:
+            try:
+                # First try to parse as a single JSON object
+                data = json.load(f)
+                # If it's a list, extend the dataset
+                if isinstance(data, list):
+                    for item in data:
+                        model = normalize_model_name(item.get('model', 'unknown'))
+                        model_datasets[model].append(item)
+                # If it's a single object, append it
+                else:
+                    model = normalize_model_name(data.get('model', 'unknown'))
+                    model_datasets[model].append(data)
+            except json.JSONDecodeError:
+                # If that fails, try to parse as JSONL (one JSON object per line)
+                print(f"  Trying to parse {data_file} as JSONL format...")
+                f.seek(0)  # Reset file pointer to beginning
+                line_count = 0
+                for line in f:
+                    line = line.strip()
+                    if line:  # Skip empty lines
+                        try:
+                            item = json.loads(line)
+                            model = normalize_model_name(item.get('model', 'unknown'))
+                            model_datasets[model].append(item)
+                            line_count += 1
+                        except json.JSONDecodeError:
+                            print(f"  Skipping malformed line {line_count + 1} in {data_file}")
+                print(f"  Successfully loaded {line_count} objects from {data_file}")
+    
+    # Print breakdown by model
+    print(f"\nData loaded by model:")
+    total_samples = 0
+    for model, samples in model_datasets.items():
+        print(f"  {model}: {len(samples)} samples")
+        total_samples += len(samples)
+    print(f"Total samples: {total_samples}")
+    
+    return dict(model_datasets)
+
 def create_samples(dataset: List[Dict[str, Any]]) -> List[Sample]:
     """Create a list of inspect_ai Samples from the dataset."""
     samples = []
@@ -375,6 +433,29 @@ def baseline_dataset_by_model(data_dir: str, limit: Optional[int] = None) -> Dic
     
     return model_datasets
 
+def baseline_dataset_by_model_from_file(data_file: str, limit: Optional[int] = None) -> Dict[str, Dataset]:
+    """
+    Creates separate datasets for each model for the baseline lie detection task from a specific file.
+    
+    Args:
+        data_file (str): Specific file to load data from.
+        limit (Optional[int]): Limit the number of samples per model.
+        
+    Returns:
+        Dict[str, Dataset]: Dictionary mapping model names to Dataset objects.
+    """
+    model_data = load_jsonl_data_by_model_from_file(Path(data_file))
+    model_datasets = {}
+    
+    for model, raw_data in model_data.items():
+        if limit:
+            raw_data = raw_data[:limit]
+        
+        samples = create_samples(raw_data)
+        model_datasets[model] = MemoryDataset(samples=samples)
+    
+    return model_datasets
+
 def conversation_dataset_by_model(data_dir: str, limit: Optional[int] = None) -> Dict[str, Dataset]:
     """
     Creates separate datasets for each model for the conversation-based lie detection task.
@@ -387,6 +468,29 @@ def conversation_dataset_by_model(data_dir: str, limit: Optional[int] = None) ->
         Dict[str, Dataset]: Dictionary mapping model names to Dataset objects.
     """
     model_data = load_jsonl_data_by_model(Path(data_dir))
+    model_datasets = {}
+    
+    for model, raw_data in model_data.items():
+        if limit:
+            raw_data = raw_data[:limit]
+        
+        samples = create_conversation_samples(raw_data)
+        model_datasets[model] = MemoryDataset(samples=samples)
+    
+    return model_datasets
+
+def conversation_dataset_by_model_from_file(data_file: str, limit: Optional[int] = None) -> Dict[str, Dataset]:
+    """
+    Creates separate datasets for each model for the conversation-based lie detection task from a specific file.
+    
+    Args:
+        data_file (str): Specific file to load data from.
+        limit (Optional[int]): Limit the number of samples per model.
+        
+    Returns:
+        Dict[str, Dataset]: Dictionary mapping model names to Dataset objects.
+    """
+    model_data = load_jsonl_data_by_model_from_file(Path(data_file))
     model_datasets = {}
     
     for model, raw_data in model_data.items():
@@ -420,6 +524,29 @@ def llama_chat_dataset_by_model(data_dir: str, limit: Optional[int] = None) -> D
         model_datasets[model] = MemoryDataset(samples=samples)
     
     return model_datasets 
+
+def llama_chat_dataset_by_model_from_file(data_file: str, limit: Optional[int] = None) -> Dict[str, Dataset]:
+    """
+    Creates separate datasets for each model for the LLaMA chat lie detection task from a specific file.
+    
+    Args:
+        data_file (str): Specific file to load data from.
+        limit (Optional[int]): Limit the number of samples per model.
+        
+    Returns:
+        Dict[str, Dataset]: Dictionary mapping model names to Dataset objects.
+    """
+    model_data = load_jsonl_data_by_model_from_file(Path(data_file))
+    model_datasets = {}
+    
+    for model, raw_data in model_data.items():
+        if limit:
+            raw_data = raw_data[:limit]
+        
+        samples = create_llama_chat_samples(raw_data)
+        model_datasets[model] = MemoryDataset(samples=samples)
+    
+    return model_datasets
 
 def llama_chat_dataset(data_dir: str, limit: Optional[int] = None) -> Dataset:
     """
@@ -528,6 +655,75 @@ def base_transcript_reasoning_dataset_by_model(data_dir: str, limit: Optional[in
             raw_data = raw_data[:limit]
         
         samples = create_base_transcript_reasoning_samples(raw_data)
+        model_datasets[model] = MemoryDataset(samples=samples)
+    
+    return model_datasets
+
+def llama_chat_reasoning_dataset_by_model_from_file(data_file: str, limit: Optional[int] = None) -> Dict[str, Dataset]:
+    """
+    Creates separate datasets for each model for the LLaMA chat reasoning format lie detection task from a specific file.
+    
+    Args:
+        data_file (str): Specific file to load data from.
+        limit (Optional[int]): Limit the number of samples per model.
+        
+    Returns:
+        Dict[str, Dataset]: Dictionary mapping model names to Dataset objects.
+    """
+    model_data = load_jsonl_data_by_model_from_file(Path(data_file))
+    model_datasets = {}
+    
+    for model, raw_data in model_data.items():
+        if limit:
+            raw_data = raw_data[:limit]
+        
+        samples = create_llama_chat_reasoning_samples(raw_data)
+        model_datasets[model] = MemoryDataset(samples=samples)
+    
+    return model_datasets
+
+def base_transcript_reasoning_dataset_by_model_from_file(data_file: str, limit: Optional[int] = None) -> Dict[str, Dataset]:
+    """
+    Creates separate datasets for each model for the base transcript reasoning format lie detection task from a specific file.
+    
+    Args:
+        data_file (str): Specific file to load data from.
+        limit (Optional[int]): Limit the number of samples per model.
+        
+    Returns:
+        Dict[str, Dataset]: Dictionary mapping model names to Dataset objects.
+    """
+    model_data = load_jsonl_data_by_model_from_file(Path(data_file))
+    model_datasets = {}
+    
+    for model, raw_data in model_data.items():
+        if limit:
+            raw_data = raw_data[:limit]
+        
+        samples = create_base_transcript_reasoning_samples(raw_data)
+        model_datasets[model] = MemoryDataset(samples=samples)
+    
+    return model_datasets
+
+def rowans_escaped_transcript_dataset_by_model_from_file(data_file: str, limit: Optional[int] = None) -> Dict[str, Dataset]:
+    """
+    Creates separate datasets for each model for the Rowan's escaped transcript format lie detection task from a specific file.
+    
+    Args:
+        data_file (str): Specific file to load data from.
+        limit (Optional[int]): Limit the number of samples per model.
+        
+    Returns:
+        Dict[str, Dataset]: Dictionary mapping model names to Dataset objects.
+    """
+    model_data = load_jsonl_data_by_model_from_file(Path(data_file))
+    model_datasets = {}
+    
+    for model, raw_data in model_data.items():
+        if limit:
+            raw_data = raw_data[:limit]
+        
+        samples = create_rowans_escaped_transcript_samples(raw_data)
         model_datasets[model] = MemoryDataset(samples=samples)
     
     return model_datasets

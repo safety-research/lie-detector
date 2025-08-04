@@ -652,9 +652,11 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
 
     # Create output directories
     if results_dir is None:
-    results_dir = f"baseline/results/{baseline_type}"
+        results_dir = f"baseline/results/{baseline_type}"
     if transcripts_dir is None:
-    transcripts_dir = f"baseline/transcripts/{baseline_type}"
+        transcripts_dir = f"baseline/transcripts/{baseline_type}"
+    
+    # Ensure the directories exist
     os.makedirs(results_dir, exist_ok=True)
     os.makedirs(transcripts_dir, exist_ok=True)
 
@@ -691,7 +693,7 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
         if model_prefix:
             model_safe_name = model_prefix
         else:
-        model_safe_name = model_key.replace('/', '_').replace(':', '_')
+            model_safe_name = model_key.replace('/', '_').replace(':', '_')
         prompts_file = save_prompts_to_file(results, f"{model_safe_name}_{baseline_type}", transcripts_dir, baseline_type)
         print(f"📝 Saved prompts to: {prompts_file}")
         
@@ -816,7 +818,7 @@ def main_by_model(num_samples=None, model=None, data_dir="processed_data", basel
         if model_prefix:
             model_safe_name = model_prefix
         else:
-        model_safe_name = model_key.replace('/', '_').replace(':', '_')
+            model_safe_name = model_key.replace('/', '_').replace(':', '_')
         json_filepath, txt_filepath = save_results_to_files(results, f"{model_safe_name}_{baseline_type}", all_model_metrics[model_key], results_dir, baseline_type, eval_model)
         print(f"📝 Saved results to: {json_filepath}")
         print(f"📝 Saved summary to: {txt_filepath}")
