@@ -15,6 +15,8 @@ import os
 import argparse
 from pathlib import Path
 from datetime import datetime
+from PIL import Image
+import glob
 
 def load_training_results(results_file):
     """Load training results from JSON file."""
@@ -404,18 +406,107 @@ def visualize_model_results(model_results_dir, output_dir, model_name, title_nam
     
     return True
 
+def create_scaling_grid_plot(timestamp_dir, output_dir):
+    """
+    Create a grid plot combining all PNG files from different models.
+    
+    Args:
+        timestamp_dir: Path to the timestamp directory containing model results
+        output_dir: Path to save the combined grid plot
+    """
+    # Define the models in order of increasing size
+    model_sizes = ['4b', '12b', '27b']
+    metrics = ['auc', 'accuracy', 'f1']
+    
+    # Find all PNG files in the timestamp directory
+    png_files = []
+    for model_size in model_sizes:
+        model_pattern = f"*google_gemma-3-{model_size}*"
+        model_dirs = glob.glob(str(Path(timestamp_dir) / model_pattern))
+        
+        for model_dir in model_dirs:
+            # Find PNG files in this model directory
+            model_png_files = glob.glob(str(Path(model_dir) / "*.png"))
+            for png_file in model_png_files:
+                png_files.append((model_size, png_file))
+    
+    if not png_files:
+        print("No PNG files found to combine")
+        return
+    
+    # Group files by metric and model size
+    metric_files = {}
+    for model_size, png_file in png_files:
+        filename = Path(png_file).name.lower()
+        for metric in metrics:
+            if metric in filename:
+                if metric not in metric_files:
+                    metric_files[metric] = {}
+                metric_files[metric][model_size] = png_file
+                break
+    
+    # Check if we have all required files
+    required_files = []
+    for metric in metrics:
+        for model_size in model_sizes:
+            if metric in metric_files and model_size in metric_files[metric]:
+                required_files.append(metric_files[metric][model_size])
+            else:
+                print(f"Missing file for {metric} and {model_size}")
+    
+    if len(required_files) != len(metrics) * len(model_sizes):
+        print(f"Expected {len(metrics) * len(model_sizes)} files, found {len(required_files)}")
+        return
+    
+    # Load and resize images
+    images = []
+    for metric in metrics:
+        row_images = []
+        for model_size in model_sizes:
+            img_path = metric_files[metric][model_size]
+            img = Image.open(img_path)
+            # Resize to a standard size (e.g., 800x600)
+            img = img.resize((800, 600), Image.Resampling.LANCZOS)
+            row_images.append(img)
+        images.append(row_images)
+    
+    # Calculate grid dimensions
+    grid_width = len(model_sizes)  # 3 columns (4b, 12b, 27b)
+    grid_height = len(metrics)     # 3 rows (auc, accuracy, f1)
+    
+    # Create the combined image
+    img_width, img_height = images[0][0].size
+    combined_width = grid_width * img_width
+    combined_height = grid_height * img_height
+    
+    combined_img = Image.new('RGB', (combined_width, combined_height), 'white')
+    
+    # Paste images into the grid
+    for row_idx, row_images in enumerate(images):
+        for col_idx, img in enumerate(row_images):
+            x = col_idx * img_width
+            y = row_idx * img_height
+            combined_img.paste(img, (x, y))
+    
+    # Save the combined image
+    output_path = Path(output_dir) / "scaling_grid_plot.png"
+    combined_img.save(output_path, 'PNG', dpi=(300, 300))
+    
+    print(f"Saved scaling grid plot to: {output_path}")
+    print(f"Grid layout: {grid_height} rows x {grid_width} columns")
+    print(f"Rows (top to bottom): {', '.join(metrics)}")
+    print(f"Columns (left to right): {', '.join(model_sizes)}")
+
 def main():
     parser = argparse.ArgumentParser(description="Visualize k-fold training results for all models")
     parser.add_argument("--timestamp_dir", type=str, required=True,
                         help="Timestamp directory containing model results (e.g., 20250725_220131)")
-    parser.add_argument("--base_output_dir", type=str, default="./visualizations",
-                        help="Base output directory for visualizations")
-    
+
     args = parser.parse_args()
-    
+
     # Construct full paths
     timestamp_dir = Path("/workspace/lie-detector/train/outputs") / args.timestamp_dir
-    output_dir = Path(args.base_output_dir) / args.timestamp_dir
+    output_dir = Path("visualizations") / args.timestamp_dir
     
     if not timestamp_dir.exists():
         print(f"Timestamp directory not found: {timestamp_dir}")
@@ -467,6 +558,10 @@ def main():
     print(f"Summary: Successfully processed {successful_models}/{len(model_dirs)} models")
     print(f"Visualizations saved to: {output_dir}")
     print(f"{'='*80}")
+    
+    # Create scaling grid plot combining all PNG files
+    print(f"\nCreating scaling grid plot...")
+    create_scaling_grid_plot(output_dir, output_dir)
 
 if __name__ == "__main__":
     main() 
