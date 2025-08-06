@@ -1,15 +1,38 @@
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, make_response, send_file
 import json
 import os
 import time
 import boto3
 import random
 from botocore.exceptions import ClientError, NoCredentialsError
+from app.download_button import download_filtered_data
 
 load_dotenv()
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+# Color configuration
+anthropic_warm_palette = {
+    "Background": "#FFFCF8",           # Warm ivory
+    "Filter Panel": "#F7F3EF",         # Soft parchment
+    "Primary Button": "#5A524C",       # Rich taupe
+    "Secondary Button": "#A89F96",     # Muted sand
+    "Sample Card BG": "#E9E4DE",       # Light warm gray
+    "Sample Text": "#2E2A26",          # Deep brown-black
+    "Truthful Tag BG": "#879D87",      # Desaturated sage
+    "Truthful Tag Text": "#FAFAF8",    # Soft bone white
+    "Hover State": "#D8D2CC",          # Light clay
+    "Lying Tag BG": "#A9746E",         # Dusty rosewood
+    "Lying Tag Text": "#FAFAF8"        # Soft bone white, or "#2E2A26"
+}
+
+# Role colors
+role_colors = {
+    "System": "#B5B0A1",      # Soft warm gray (neutral, non-distracting)
+    "User":   "#728072",      # Muted sage green (balanced, natural)
+    "Assistant": "#4F5B66",   # Cool slate gray (stable, helpful presence)
+}
 
 # Lightweight caching for metadata and file listings
 metadata_cache = {}
@@ -18,7 +41,7 @@ cache_timestamp = 0
 CACHE_DURATION = 300  # 5 minutes cache
 
 # Configuration - set to True to use local test data instead of S3-synced data
-USE_LOCAL_DATA = os.environ.get('USE_LOCAL_DATA', 'True').lower() == 'true'
+USE_LOCAL_DATA = os.environ.get('USE_LOCAL_DATA', 'False').lower() == 'true'
 
 # S3 Configuration
 S3_BUCKET = os.environ.get('S3_BUCKET', 'dipika-lie-detection-data')
@@ -28,7 +51,7 @@ S3_PREFIX = os.environ.get('S3_PREFIX', 'processed-data/')
 if USE_LOCAL_DATA:
     LOCAL_DATA_PATH = os.environ.get('LOCAL_DATA_PATH', "../data")  # Local test data in root directory
 else:
-    LOCAL_DATA_PATH = os.environ.get('LOCAL_DATA_PATH', "./local_data")  # S3-synced data (created by sync script in data_viewer)
+    LOCAL_DATA_PATH = os.environ.get('LOCAL_DATA_PATH', "/home/ec2-user/s3_data")  # S3-synced data (created by sync script)
 
 def list_local_files():
     """List all JSON files in the local data directory and its subfolders"""
@@ -193,17 +216,9 @@ def get_cached_file_list():
 def get_file_metadata_only(file_key):
     """Extract metadata from file path without loading file content"""
     if USE_LOCAL_DATA:
-        # For local files, we need minimal metadata extraction
-        path_parts = file_key.split('/')
-        return {
-            "provider": "local",
-            "model": "local",
-            "task": path_parts[0] if path_parts else "unknown",
-            "domain": "local",
-            "did_lie": None,
-            "sample_id": file_key,
-            "full_model": "local"
-        }
+        # For local files, extract metadata from the path structure
+        # Local files have the same structure as S3: provider/model/task/domain/filename.json
+        return extract_metadata_from_s3_path(file_key)
     else:
         return extract_metadata_from_s3_path(file_key)
 
@@ -289,7 +304,11 @@ def load_sample_from_file(file_key):
 @app.route('/')
 def index():
     """Main page"""
-    return render_template('index_new.html')
+    response = make_response(render_template('index_new.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 @app.route('/get_samples', methods=['GET'])
 def get_samples():
@@ -443,8 +462,7 @@ def get_unique_values():
                 if not current_domain and domain and domain != 'unknown':
                     domain_counts[domain] = domain_counts.get(domain, 0) + 1
                     
-                # Count lies/truths (but not if did_lie is currently filtered)
-                if current_did_lie is None:
+                        # Count lies/truths
                     if did_lie is True:
                         lie_counts['true'] += 1
                     elif did_lie is False:
@@ -496,6 +514,33 @@ def get_unique_values():
                     if matches_other_filters:
                         model_counts[model] = model_counts.get(model, 0) + 1
         
+        # Handle did_lie filtering - recalculate lie counts based on other filters
+        if current_did_lie is not None:
+            # Reset lie counts for recalculation
+            lie_counts = {'true': 0, 'false': 0}
+            
+            for file_key in all_files:
+                metadata = get_file_metadata_only(file_key)
+                did_lie = metadata.get('did_lie')
+                
+                if did_lie is not None:
+                    # Check if it matches all OTHER filters (not did_lie)
+                    matches_other_filters = True
+                    if current_task and metadata.get('task', '').replace('_', ' ') != current_task:
+                        matches_other_filters = False
+                    if current_model and metadata.get('full_model', '') != current_model:
+                        matches_other_filters = False
+                    if current_provider and metadata.get('provider', '') != current_provider:
+                        matches_other_filters = False
+                    if current_domain and metadata.get('domain', '').replace('_', ' ') != current_domain:
+                        matches_other_filters = False
+                    
+                    if matches_other_filters:
+                        if did_lie is True:
+                            lie_counts['true'] += 1
+                        elif did_lie is False:
+                            lie_counts['false'] += 1
+        
         unique_values = {
             'tasks': [{'value': task, 'count': count} for task, count in sorted(task_counts.items()) if count >= 5],
             'models': [{'value': model, 'count': count} for model, count in sorted(model_counts.items())],
@@ -542,6 +587,11 @@ def refresh_data():
     except Exception as e:
         return jsonify({"error": f"Error refreshing data: {str(e)}"}), 500
 
+@app.route('/download_filtered_data', methods=['GET'])
+def download_filtered_data_route():
+    """Download filtered data as CSV"""
+    return download_filtered_data(get_cached_file_list, get_file_metadata_only, load_sample_from_file)
+
 @app.route('/status', methods=['GET'])
 def status():
     """Get application status and data information"""
@@ -581,4 +631,6 @@ if __name__ == '__main__':
     print(f"Using local test data: {USE_LOCAL_DATA}")
     print("Using lazy loading - data will be loaded on-demand")
     
-    app.run(debug=True, host='0.0.0.0', port=8080) 
+    # Check if running in production mode (as part of multiprocessing)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0', port=8080) 
