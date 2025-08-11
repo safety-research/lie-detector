@@ -9,6 +9,7 @@ import os
 import re
 from typing import Optional, Dict, Any, List, Tuple
 from datetime import datetime
+from pathlib import Path
 from botocore.exceptions import ClientError, NoCredentialsError
 
 
@@ -117,8 +118,9 @@ class S3SampleClient:
             did_lie = content['did_lie'] if 'did_lie' in content else "_"
             truth_tag = "t_" if did_lie else "f_"
 
-            # Create S3 key: prefix/provider/model/task/domain/sample_id.json
-            key = f"{self.prefix}{clean_provider}/{clean_model}/{clean_task}/{clean_domain}/{truth_tag}{clean_sample_id}.json"
+            # Create S3 key: prefix/provider/model/domain/task/sample_id.json
+            # This matches the structure from map_sample_to_s3_path
+            key = f"{self.prefix}{clean_provider}/{clean_model}/{clean_domain}/{clean_task}/{truth_tag}{clean_sample_id}.json"
             
             # Convert content to JSON string
             json_content = json.dumps(content, indent=2)
@@ -136,6 +138,99 @@ class S3SampleClient:
             
         except Exception as e:
             print(f"[S3SampleClient] Error uploading sample: {e}")
+            return False
+    
+    def update_sample_with_baseline(self, model: str, task: str, sample_id: str, baseline_data: Dict[str, Any]) -> bool:
+        """
+        Update an existing sample file with baseline results using map_sample_to_s3_path.
+        
+        Args:
+            model: Model name (e.g., "meta-llama/llama-3.1-8b-instruct")
+            task: Task name (e.g., "sandbagging_physical_security_contrastive")
+            sample_id: Sample identifier
+            baseline_data: Baseline results to add
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        if not self.enabled:
+            return False
+        
+        try:
+            # Parse provider and model from model string
+            provider, model_name = self._parse_model_name(model)
+            
+            # Parse task and domain from task string  
+            domain, task_type = self._parse_task_name(task)
+            
+            # Clean names for S3 paths
+            clean_provider = self._clean_name(provider)
+            clean_model = self._clean_name(model_name)
+            clean_domain = self._clean_name(domain)
+            clean_task_type = self._clean_name(task_type)
+            clean_sample_id = self.generate_sample_id(sample_id)
+
+            # Extract did_lie from baseline_data to determine truth tag
+            did_lie = baseline_data.get('did_lie', False)
+            if isinstance(did_lie, str) and did_lie.lower() == 'n/a':
+                did_lie = False
+            elif isinstance(did_lie, str) and did_lie.lower() == 'true':
+                did_lie = True
+            elif isinstance(did_lie, str) and did_lie.lower() == 'false':
+                did_lie = False
+            truth_tag = "t_" if did_lie else "f_"
+
+            # Create S3 key: prefix/provider/model/domain/task_type/sample_id.json
+            key = f"{self.prefix}{clean_provider}/{clean_model}/{clean_domain}/{clean_task_type}/{truth_tag}{clean_sample_id}.json"
+            
+            # Use the configured bucket
+            bucket_name = self.bucket
+            
+            # We now have bucket_name and key directly
+            
+            # Try to get existing sample data from the mapped path
+            existing_data = {}
+            try:
+                response = self.s3_client.get_object(Bucket=bucket_name, Key=key)
+                existing_content = response['Body'].read().decode('utf-8')
+                existing_data = json.loads(existing_content)
+            except ClientError as e:
+                if e.response['Error']['Code'] == 'NoSuchKey':
+                    print(f"[S3SampleClient] Sample file not found at mapped path: {bucket_name}/{key}")
+                    return False
+                else:
+                    raise e
+            
+            # Extract baseline type from baseline_data
+            baseline_type = baseline_data.get('baseline_type', 'unknown')
+            
+            # Initialize baselines dict if it doesn't exist
+            if 'baselines' not in existing_data:
+                existing_data['baselines'] = {}
+            
+            # Add baseline results
+            existing_data['baselines'][baseline_type] = {
+                'prediction': baseline_data.get('prediction', 'OTHER'),
+                'parseable': baseline_data.get('parseable', True),
+                'accuracy': baseline_data.get('accuracy', 0.0)
+            }
+            
+            # Convert updated content to JSON string
+            json_content = json.dumps(existing_data, indent=2)
+            
+            # Upload updated content to S3 at the mapped path
+            self.s3_client.put_object(
+                Bucket=bucket_name,
+                Key=key,
+                Body=json_content.encode('utf-8'),
+                ContentType='application/json'
+            )
+            
+            print(f"[S3SampleClient] Successfully updated sample with {baseline_type} baseline at s3://{bucket_name}/{key}")
+            return True
+            
+        except Exception as e:
+            print(f"[S3SampleClient] Error updating sample with baseline: {e}")
             return False
     
     def get_sample(self, model: str, task: str, sample_id: str) -> Optional[Dict[str, Any]]:
@@ -275,28 +370,30 @@ class S3SampleClient:
     
     def _parse_task_name(self, task: str) -> Tuple[str, str]:
         """
-        Parse task name into task type and domain.
+        Parse task name into domain and task type.
         
         Args:
-            task: Task name like "sandbagging_physical_security_contrastive"
+            task: Task name like "ascii_train" or "mask_continuations"
             
         Returns:
-            Tuple of (task_type, domain)
+            Tuple of (domain, task_type)
         """
-        # Look for pattern: {task_type}_{domain}_{suffix}
-        # e.g., "sandbagging_physical_security_contrastive" -> ("sandbagging", "physical_security_contrastive")
+        # For task names like "ascii_train", "mask_continuations", "sandbagging_train"
+        # We want domain first, then task_type
         
         parts = task.split("_")
         if len(parts) >= 3:
-            # Assume first part is task type, rest is domain
-            task_type = parts[0]
-            domain = "_".join(parts[1:])
-            return task_type, domain
+            # For longer names like "sandbagging_physical_security_contrastive"
+            # Assume first part is domain, rest is task_type
+            domain = parts[0]
+            task_type = "_".join(parts[1:])
+            return domain, task_type
         elif len(parts) == 2:
-            # Two parts: task_type and domain
+            # Two parts: domain and task_type
+            # e.g., "ascii_train" -> ("ascii", "train")
             return parts[0], parts[1]
         else:
-            # Single part: use as both task and domain
+            # Single part: use as domain with "general" as task_type
             return task, "general"
     
     def _clean_name(self, name: str) -> str:
