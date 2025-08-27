@@ -1,12 +1,12 @@
 <div align="center">
 
-# 🔍 On-Policy Lie Detection Framework
+# 🔍 On-Policy Deception Framework
 
 **A comprehensive framework for eliciting and analyzing deceptive behaviour in Large Language Models**
 
-> We evaluated **15 models** across **46 evaluation pipelines**,
-> generating **138,200+ labeled examples** of truthful and deceptive AI behavior.
-> 
+We evaluated **15 models** across **46 eval tasks**,
+generating **138,200+ examples** displayed in the dashboard.
+
 [//]: # ([![Python]&#40;https://img.shields.io/badge/View_data_in-UI-blue?style=for-the-badge&#41;]&#40;http://3.236.238.12:8080/&#41;)
 
 [//]: # ([![Inspect]&#40;https://img.shields.io/badge/Built%20on-Inspect%20AI-green?style=for-the-badge&#41;]&#40;https://inspect.aisi.org.uk/&#41;)
@@ -21,13 +21,6 @@
 [![UI](https://img.shields.io/badge/🔗_Interactive_Dashboard-blue?style=for-the-badge)](http://3.236.238.12:8080/)
 
 
-[**Installation**](#installation) • 
-[**Quick Start**](#quick-start) • 
-[**Pipelines**](#pipeline-descriptions) • 
-[**Documentation**](#evaluation-tasks) • 
-[**Training**](#training-custom-detectors) • 
-[**Advanced Setup**](#advanced-setup)
-
 
 
 </div>
@@ -35,7 +28,7 @@
 
 ## What is this?
 
-The **On-Policy Lie Detection Framework** provides pipelines to elicit deceptive behavior in AI systems, with:
+This is a framework designed to automatically elicit deceptive behavior in AI systems, with:
 
 - **🧪 Diverse evaluation pipelines** eliciting lies ranging from sycophancy to capability sandbagging
 - **🎮 Game scenarios** that naturally elicit deception through adversarial pressure
