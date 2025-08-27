@@ -2,7 +2,7 @@
 
 # 🔍 On-Policy Deception Framework
 
-**A comprehensive framework for eliciting and analyzing deceptive behaviour in Large Language Models**
+**A framework for systematically eliciting and analyzing deceptive behaviour in Large Language Models**
 
 We evaluated **15 models** across **46 eval tasks**,
 generating **138,200+ examples** displayed in the dashboard.
