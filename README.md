@@ -25,6 +25,7 @@ generating **138,200+ examples** displayed in the dashboard.
 
 </div>
 
+---
 
 ## What is this?
 
