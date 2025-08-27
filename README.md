@@ -4,26 +4,36 @@
 
 **A comprehensive framework for eliciting and analyzing deceptive behaviour in Large Language Models**
 
-[![Python](https://img.shields.io/badge/View_lies_in-UI-blue?style=for-the-badge)](http://3.236.238.12:8080/)
-[![Inspect](https://img.shields.io/badge/Built%20on-Inspect%20AI-green?style=for-the-badge)](https://inspect.aisi.org.uk/)
+> We evaluated **15 models** across **46 evaluation pipelines**,
+> generating **138,200+ labeled examples** of truthful and deceptive AI behavior.
+> 
+[//]: # ([![Python]&#40;https://img.shields.io/badge/View_data_in-UI-blue?style=for-the-badge&#41;]&#40;http://3.236.238.12:8080/&#41;)
+
+[//]: # ([![Inspect]&#40;https://img.shields.io/badge/Built%20on-Inspect%20AI-green?style=for-the-badge&#41;]&#40;https://inspect.aisi.org.uk/&#41;)
+
+[//]: # ([![Python]&#40;https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&#41;]&#40;https://www.python.org/downloads/&#41;)
+
+[//]: # ([![License]&#40;https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&#41;]&#40;&#41;)
+
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge)](https://www.python.org/downloads/)
+[![Inspect](https://img.shields.io/badge/Built%20on-Inspect%20AI-green?style=for-the-badge)](https://inspect.aisi.org.uk/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)]()
-[![Status](https://img.shields.io/badge/Pipelines-7-green?style=for-the-badge)]()
-[![Status](https://img.shields.io/badge/Evals-46-green?style=for-the-badge)]()
-[![Status](https://img.shields.io/badge/Lies-57.4k-green?style=for-the-badge)]()
+[![UI](https://img.shields.io/badge/🔗_Interactive_Dashboard-blue?style=for-the-badge)](http://3.236.238.12:8080/)
+
 
 [**Installation**](#installation) • 
 [**Quick Start**](#quick-start) • 
 [**Pipelines**](#pipeline-descriptions) • 
 [**Documentation**](#evaluation-tasks) • 
 [**Training**](#training-custom-detectors) • 
-[**Contributing**](#contributing)
+[**Advanced Setup**](#advanced-setup)
+
+
 
 </div>
 
----
 
-## 🎯 What is this?
+## What is this?
 
 The **On-Policy Lie Detection Framework** provides pipelines to elicit deceptive behavior in AI systems, with:
 
@@ -33,7 +43,8 @@ The **On-Policy Lie Detection Framework** provides pipelines to elicit deceptive
 - **📈 Detailed scoring systems** for quantifying deceptive behaviors
 - **📊 Off-policy datasets** like DolusChat and TruthIsUniversal 
 
-## 🧠 Philosophy
+
+## Philosophy
 
 We exploit tensions between post-trained drives like helpfulness, harmlessness, honesty and self-preservation to elicit on-policy lies that meet the following criteria:
 1. **The model must be saying something false** - We compare model answers to known ground-truths
@@ -41,7 +52,7 @@ We exploit tensions between post-trained drives like helpfulness, harmlessness, 
 3. **We find contradictions** - Between what the model says and what it believes, with special interest in cases where it maintains contradictions by doubling down.
 
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Install UV and dependencies, then run your first evaluation in minutes
@@ -57,8 +68,6 @@ uv pip install -e .
 # Run eval
 inspect eval evals/mask_tasks.py --limit 100 --model openai/gpt-4
 ```
-
----
 
 ## Installation
 
@@ -91,70 +100,51 @@ cp .env.example .env
 # Edit .env with your API keys (OpenAI, Anthropic, HuggingFace, etc.)
 ```
 
-### Optional Dependencies
+*Need specific features? See [Advanced Setup](#advanced-setup) for optional dependencies.*
 
-The project uses modular dependencies to keep installations minimal. Install only what you need:
+[//]: # (## Evaluations)
 
-```bash
-# For model training
-uv pip install -e ".[train]"  # wandb, peft, accelerate, bitsandbytes, flash-attn
+[//]: # ()
+[//]: # (### Running Evals)
 
-# For visualization/plotting
-uv pip install -e ".[viz]"    # matplotlib, seaborn, plotly, altair
+[//]: # ()
+[//]: # (The easiest way to start is by running evaluation tasks:)
 
-# For game-based scenarios
-uv pip install -e ".[games]"  # tanuki.py
+[//]: # ()
+[//]: # (```bash)
 
-# For development
-uv pip install -e ".[dev]"    # pytest, ruff, mypy, coverage, etc.
+[//]: # (# Run MASK benchmark &#40;tests honesty on facts, statistics, etc.&#41;)
 
-# For web UI
-uv pip install -e ".[ui]"     # streamlit, flask, django
+[//]: # (inspect eval evals/mask_tasks.py --limit 100 --model openai/gpt-4)
 
-# Install everything (not recommended unless needed)
-uv pip install -e ".[all]"
-```
+[//]: # ()
+[//]: # (# Run sycophancy detection &#40;agreement-seeking behavior&#41;)
 
-### Legacy Installation
+[//]: # (inspect eval evals/sycophancy_tasks.py --limit 200 --model anthropic/claude-3)
 
-If you need to use the old requirements.txt (contains all dependencies):
-```bash
-uv pip install -r requirements.txt
-```
+[//]: # ()
+[//]: # (# Run game-based deception tasks)
 
-## Quick Start
+[//]: # (inspect eval evals/alibi_tasks.py --limit 50 --model google/gemma-7b)
 
-### Running Evaluations
+[//]: # (inspect eval evals/capture_the_secret_tasks.py --limit 50 --model meta-llama/llama-3-8b)
 
-The easiest way to start is by running evaluation tasks:
+[//]: # ()
+[//]: # (```)
 
-```bash
-# Run MASK benchmark (tests honesty on facts, statistics, etc.)
-inspect eval evals/mask_tasks.py --limit 100 --model openai/gpt-4
+## Evaluation Tasks
 
-# Run sycophancy detection (agreement-seeking behavior)
-inspect eval evals/sycophancy_tasks.py --limit 200 --model anthropic/claude-3
-
-# Run game-based deception tasks
-inspect eval evals/alibi_tasks.py --limit 50 --model google/gemma-7b
-inspect eval evals/capture_the_secret_tasks.py --limit 50 --model meta-llama/llama-3-8b
-
-```
-
-### Understanding the Framework
-
-This framework focuses on evals that induce and measure deceptive behavior in LLMs. Each evaluation task is designed to:
+Each evaluation task is designed to:
 - Create scenarios where models might be incentivized to lie
 - Collect both truthful and deceptive responses
 - Generate labeled data for training lie detection systems
 
-The collected data can be used to:
+You can use this data to:
 - Understand when and why models lie
 - Train specialized models for lie detection  
 - Develop benchmarks for model honesty
 - Test robustness of honesty across different scenarios
 
-## Evaluation Tasks
 
 ### Core Benchmarks
 
@@ -233,6 +223,7 @@ The collected data can be used to:
 - **Code Preference** (`pipelines/codepreference/`) - Code quality assessment biases
 - **Computer Use** (`pipelines/selfsycophancy/computer_use/`) - Deception in tool usage
 - **Signature Detection** (`pipelines/signature/`) - Behavioral signature analysis
+
 
 ## Pipeline Descriptions
 
@@ -655,6 +646,39 @@ TORCH_CUDA_ARCH_LIST=8.0,8.6,9.0
    inspect eval evals/mask_tasks.py --limit 100 --max-connections 5
    ```
 
+## Advanced Setup
+
+### Optional Dependencies
+
+The project uses modular dependencies to keep installations minimal. Install only what you need:
+
+```bash
+# For model training
+uv pip install -e ".[train]"  # wandb, peft, accelerate, bitsandbytes, flash-attn
+
+# For visualization/plotting
+uv pip install -e ".[viz]"    # matplotlib, seaborn, plotly, altair
+
+# For game-based scenarios
+uv pip install -e ".[games]"  # tanuki.py
+
+# For development
+uv pip install -e ".[dev]"    # pytest, ruff, mypy, coverage, etc.
+
+# For web UI
+uv pip install -e ".[ui]"     # streamlit, flask, django
+
+# Install everything (not recommended unless needed)
+uv pip install -e ".[all]"
+```
+
+### Legacy Installation
+
+If you need to use the old requirements.txt (contains all dependencies):
+```bash
+uv pip install -r requirements.txt
+```
+
 ## Contributing
 
 Contributions are welcome! Please submit pull requests with:
@@ -665,10 +689,3 @@ Contributions are welcome! Please submit pull requests with:
 ## License
 
 This project is licensed under the MIT License.
-
-## Citations
-
-If you use this framework, please cite:
-- "Truth is Universal: Robust Detection of Lies in LLMs" (Bürger et al., 2024)
-- "How to Catch an AI Liar" (Pacchiardi et al., 2024)
-- "The Geometry of Truth" (Marks & Tegmark, 2024)
