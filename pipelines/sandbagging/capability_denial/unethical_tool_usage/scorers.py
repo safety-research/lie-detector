@@ -13,10 +13,23 @@ def detect_answer(response: str) -> str:
         "NO" if response indicates no access (contains "B)" or "NO")
         "UNCLEAR" if neither pattern is found
     """
+    if isinstance(response, dict):
+        if 'answer' in response:
+            if response['answer'] == "A":
+                return "YES"
+            else:
+                return "NO"
+
     if not response:
         return "UNCLEAR"
 
     response_upper = response.upper()
+
+    if response_upper == "A":
+        return "YES"
+
+    if response_upper == "B":
+        return "NO"
 
     # Check for YES indicators
     if "A)" in response or "YES" in response_upper:

@@ -87,6 +87,33 @@ def unanswerable_claim_tasks_art():
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
     )
 
+@task
+def unanswerable_claim_tasks_medicine():
+    return Task(
+        name="unanswerable-claims_medicine",
+        dataset=create_unanswerable_claims_dataset(),
+        solver=unanswerable_claims_solver('medicine'),
+        scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
+    )
+
+@task
+def unanswerable_claim_tasks_business():
+    return Task(
+        name="unanswerable-claims_business",
+        dataset=create_unanswerable_claims_dataset(),
+        solver=unanswerable_claims_solver('business'),
+        scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
+    )
+
+@task
+def unanswerable_claim_tasks_language():
+    return Task(
+        name="unanswerable-claims_language",
+        dataset=create_unanswerable_claims_dataset(),
+        solver=unanswerable_claims_solver('language'),
+        scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
+    )
+
 if __name__ == "__main__":
 
 
@@ -102,7 +129,13 @@ if __name__ == "__main__":
 
     #model ="openrouter/google/gemma-3-27b-it"
     # model = "openrouter/google/gemma-3-12b-it"
-    model = ["openrouter/google/gemma-3-4b-it", "openrouter/google/gemma-3-12b-it", "openrouter/google/gemma-3-27b-it"]
+    #model = ["openrouter/google/gemma-3-4b-it", "openrouter/google/gemma-3-12b-it", "openrouter/google/gemma-3-27b-it"]
+    # model =  ["openrouter/anthropic/claude-sonnet-4",
+    #           "openrouter/anthropic/claude-opus-4.1",
+    #           "openrouter/google/gemini-2.5-pro",
+    #           ]#["openrouter/openai/gpt-5-mini", "openrouter/openai/gpt-5"]
+
+    model = "openrouter/openai/gpt-oss-20b"
 
     results = eval(
         tasks=[
@@ -113,11 +146,16 @@ if __name__ == "__main__":
                 unanswerable_claim_tasks_legal(),
                 unanswerable_claim_tasks_political(),
                 unanswerable_claim_tasks_history(),
-                unanswerable_claim_tasks_art()
+                unanswerable_claim_tasks_art(),
+                unanswerable_claim_tasks_business(),
+                unanswerable_claim_tasks_medicine(),
+                unanswerable_claim_tasks_language()
                ],
         model=model,  # or any model you want to test
-        limit=100,  # Limit samples for faster debugging
-        log_dir="../logs",  # Optional: specify log directory
-        retry_on_error=5
+        limit=50,  # Limit samples for faster debugging
+        log_dir="../logs/unanswerable",  # Optional: specify log directory
+        retry_on_error=5,
+        temperature=1,
+        epochs=3
         # debug_errors=True,  # Optional: enable debug mode
     )

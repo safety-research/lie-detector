@@ -41,6 +41,8 @@ class UnanswerableClaimsHook(BaseSampleProcessingHook):
             for msg in messages:
                 role = msg.role if hasattr(msg, 'role') else msg.get('role')
                 content = msg.content if hasattr(msg, 'content') else msg.get('content', '')
+                if isinstance(content, list):
+                    content = content[-1].text
                 answer_trace.append({
                     'role': role,
                     'content': content

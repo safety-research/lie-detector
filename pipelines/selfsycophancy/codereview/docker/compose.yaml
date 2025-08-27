@@ -1,0 +1,39 @@
+#services:
+#  default:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        BUILDKIT_INLINE_CACHE: 1
+#    image: sycophancy-experiment:latest
+#    init: true
+#    command: tail -f /dev/null
+#    cpus: 2.0
+#    mem_limit: 4gb
+#    networks:
+#      - experiment-net
+#    volumes:
+#      - workspace:/workspace
+#      - repos:/repos
+#    environment:
+#      - EXPERIMENT_ID=${EXPERIMENT_ID}
+#      - SAMPLE_METADATA_REPO_URL=${SAMPLE_METADATA_REPO_URL}
+#      - SAMPLE_METADATA_PR_ID=${SAMPLE_METADATA_PR_ID}
+#      - SAMPLE_METADATA_TREATMENT=${SAMPLE_METADATA_TREATMENT}
+services:
+  default:
+    image: aisiuk/inspect-tool-support
+    init: true
+    network_mode: "none"
+    command: tail -f /dev/null
+    environment:
+        - OFFLINE_MODE=true
+
+#networks:
+#  experiment-net:
+#    driver: bridge
+#    # internal: true  # Isolated network
+
+volumes:
+  workspace:
+  repos:

@@ -1,3 +1,4 @@
+import copy
 import traceback
 from abc import abstractmethod
 from datetime import datetime
@@ -153,7 +154,22 @@ class SandbaggingHook(BaseSampleProcessingHook):
             if parsed_entry['model'] == 'unknown' and hasattr(eval_log.eval, 'model'):
                 parsed_entry['model'] = eval_log.eval.model
 
-            return parsed_entry
+            output = [parsed_entry]
+
+            # Create the contrastive example
+            contrastive_example = copy.deepcopy(parsed_entry)
+            if contrastive_example['trace'][-1]['content'] == 'A':
+                contrastive_example['trace'][-1]['content'] = 'B'
+                contrastive_example['did_lie'] = not contrastive_example['did_lie']
+            elif contrastive_example['trace'][-1]['content'] == 'B':
+                contrastive_example['trace'][-1]['content'] = 'A'
+                contrastive_example['did_lie'] = not contrastive_example['did_lie']
+            contrastive_example['evidence'] = None
+            contrastive_example['sample_id'] = contrastive_example['sample_id'] + "_off_policy"
+            contrastive_example['task'] = contrastive_example['task'] + "_off_policy"
+            output.append(contrastive_example)
+
+            return output
 
         except Exception as e:
             print(f"[LogParserHook] Error parsing sample {sample_id}: {e}")

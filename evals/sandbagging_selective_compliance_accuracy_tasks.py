@@ -173,12 +173,18 @@ if __name__ == "__main__":
               "openrouter/google/gemma-3-4b-it",
               "openrouter/google/gemma-3-12b-it"]
 
+    # models = ["openrouter/openai/gpt-oss-20b"]
+    models = ["openrouter/openai/gpt-oss-20b", "openrouter/openai/gpt-oss-120b", "openrouter/openai/gpt-5-nano",
+             "openrouter/openai/gpt-5-mini"]
+
     # Run evaluation with a specific model
     results = eval(
         model=models,
         tasks=all_tasks,  # all_tasks,
         # token_limit=1,
         retry_on_error=8,
-        limit=500,  # Limit samples for faster debugging
-        log_dir="../logs",  # Specify log directory
+        limit=200,  # Limit samples for faster debugging
+        log_dir="../logs/sandbagging/accuracy",  # Specify log directory
+        reasoning_tokens=128,
+        reasoning_effort='minimal'
     )

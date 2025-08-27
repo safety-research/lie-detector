@@ -4,11 +4,141 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "bon"
-description = "LLM Jailbreaks"
+name = "lie-detector"
+description = "On-Policy Lie Detection Framework for LLMs"
 requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]
+dependencies = [
+    # Core framework
+    "inspect_ai @ git+https://github.com/UKGovernmentBEIS/inspect_ai.git@37d31b0534a288ca3756a23bbe7902ee5b2a6496",
+    "inspect_evals @ git+https://github.com/UKGovernmentBEIS/inspect_evals.git@main",
+    
+    # Essential data handling
+    "numpy>=2.3.1",
+    "pandas>=2.3.0",
+    "datasets>=3.6.0",
+    
+    # ML frameworks
+    "torch>=2.7.1",
+    "transformers>=4.53.0",
+    
+    # API clients
+    "openai>=1.93.0",
+    "anthropic>=0.56.0",
+    
+    # Core utilities
+    "pydantic>=2.11.7",
+    "requests>=2.32.4",
+    "python-dotenv>=1.1.1",
+    "tqdm>=4.67.1",
+    "PyYAML>=6.0.2",
+    "jsonschema>=4.24.0",
+    "jinja2>=3.1.6",
+    "shortuuid>=1.0.13",
+    
+    # Essential scientific computing
+    "scipy>=1.16.0",
+    "scikit-learn>=1.7.0",
+    
+    # Type checking
+    "typing_extensions>=4.14.0",
+    
+    # Async support
+    "anyio>=4.9.0",
+    "aiohttp>=3.12.13",
+    
+    # File handling
+    "fsspec>=2025.3.0",
+    "s3fs>=2025.3.0",
+    
+    # Tokenization
+    "tiktoken>=0.11.0",
+    "tokenizers>=0.21.2",
+]
+
+[project.optional-dependencies]
+# Training dependencies
+train = [
+    "wandb>=0.20.1",
+    "peft>=0.15.2",
+    "accelerate>=1.8.1",
+    "bitsandbytes>=0.46.0",
+    "flash-attn",
+]
+
+# Visualization dependencies
+viz = [
+    "matplotlib>=3.10.3",
+    "seaborn>=0.13.2",
+    "plotly>=6.2.0",
+    "altair>=5.5.0",
+]
+
+# Game scenario dependencies
+games = [
+    "tanuki.py>=0.2.0",
+]
+
+# Development dependencies
+dev = [
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.0.0",
+    "pytest-cov>=6.2.1",
+    "pytest-dotenv>=0.5.2",
+    "pytest-xdist>=3.8.0",
+    "ruff>=0.12.1",
+    "mypy>=1.16.1",
+    "pre_commit>=4.2.0",
+    "coverage>=7.9.1",
+]
+
+# Web UI dependencies
+ui = [
+    "streamlit>=1.46.1",
+    "Flask>=2.3.3",
+    "Django>=5.2.3",
+]
+
+# Jupyter dependencies
+jupyter = [
+    "jupyter>=1.0.0",
+    "jupyterlab>=4.4.3",
+    "notebook>=7.4.3",
+    "ipython>=9.3.0",
+    "ipykernel>=6.29.5",
+]
+
+# ML experiment tracking
+mlops = [
+    "goodfire>=0.3.5",
+    "together>=1.5.17",
+    "circuitsvis>=1.43.3",
+]
+
+# CLI tools
+cli = [
+    "fire>=0.7.0",
+    "typer>=0.15.4",
+    "click>=8.1.8",
+    "rich>=13.9.4",
+    "textual>=2.1.2",
+]
+
+# Additional utilities
+utils = [
+    "hydra-core>=1.3.2",
+    "omegaconf>=2.3.0",
+    "tabulate>=0.9.0",
+    "jsonlines>=4.0.0",
+    "fastjsonschema>=2.21.1",
+    "joblib>=1.5.1",
+]
+
+# All optional dependencies
+all = [
+    "lie-detector[train,viz,games,dev,ui,jupyter,mlops,cli,utils]",
+]
 
 [tool.setuptools]
 packages = ["bon"]

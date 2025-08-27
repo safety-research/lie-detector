@@ -33,6 +33,9 @@ __pycache__
 /prep/.data/
 /prep/wandb/
 /.data/
+/baseline/tasks/bytetrash/
+/baseline/results/
+/baseline/results/escaped_transcript/
 /baseline/results/
 /baseline/results/escaped_transcript/
 /pipelines/offpolicy/logs/
@@ -50,3 +53,15 @@ __pycache__
 /common/misc/deduplicated_samples_embeddings.npy
 /common/misc/generated_sandbagging_samples_10000_gpt.json
 /common/misc/generated_sandbagging_samples_temp_3529.json
+/.train/
+/pipelines/selfsycophancy/computer_use/gpt-4o_categorized_risk.png
+/pipelines/selfsycophancy/computer_use/risk_matrix_comparison.png
+/pipelines/selfsycophancy/unanswerable_dataset_all_models/embeddings_cache/
+/pipelines/selfsycophancy/unanswerable_dataset_all_models/cache/
+/pipelines/selfsycophancy/codereview/data/scripts/data/repo_cache/
+/.train/
+/plots/
+/evals/wandb/
+/evals/results/
+/plots/plots/
+/plots

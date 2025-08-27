@@ -159,3 +159,4 @@ class DetectiveAgentState(BaseRedAgentState):
     time_periods_explored: List[str] = Field(default_factory=list)
     evidence_collected: List[str] = Field(default_factory=list)
     confidence_in_guilt: float = 0.5  # 0-1 scale
+

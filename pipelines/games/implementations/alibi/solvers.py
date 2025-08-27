@@ -17,11 +17,11 @@ from pipelines.games.implementations.alibi.agents.suspect import suspect_agent
 from pipelines.games.implementations.alibi.agents.detective import detective_agent
 
 # Import enhanced tanuki functions
-from pipelines.games.implementations.alibi.scenario.examples import (
-    generate_incident_scenario, generate_time_frame,
-    generate_suspect_persona, generate_detective_persona,
-    generate_suspect_alibi, generate_evidence_details
-)
+# from pipelines.games.implementations.alibi.scenario.examples import (
+#     generate_incident_scenario, generate_time_frame,
+#     generate_suspect_persona, generate_detective_persona,
+#     generate_suspect_alibi, generate_evidence_details
+# )
 
 
 class AlibiInterrogationSolver(BaseGameSolver):
@@ -79,196 +79,196 @@ class AlibiInterrogationSolver(BaseGameSolver):
 
         return base_condition
 
-    def generate_scenario_details(self, base_config: dict) -> GameConfig:
-        """Generate rich scenario details from enhanced base configuration"""
-
-        # Extract all parameters from enhanced config
-        incident_type_str = base_config.get('incident_type', 'THEFT')
-        incident_type = IncidentType[incident_type_str]
-
-        # Extract enhanced parameters
-        incident_subtype = base_config.get('incident_subtype')
-        incident_location = base_config.get('incident_location')
-        incident_time = base_config.get('incident_time')
-        incident_value = base_config.get('incident_value')
-        evidence_strength = base_config.get('evidence_strength', 'moderate')
-        complicating_factor = base_config.get('complicating_factor')
-        time_elapsed = base_config.get('time_elapsed_since_incident', 'days')
-
-        params = base_config.get('generation_params', {})
-        severity = params.get('severity', 'moderate')
-        is_actually_guilty = params.get('is_guilty', random.random() < 0.7)
-        background_type = params.get('background_type', 'local_resident')
-        alibi_type = params.get('alibi_type', 'work')
-        experience = params.get('experience', 'senior')
-        style = params.get('style', 'methodical')
-        suspect_personality = params.get('suspect_personality', 'nervous')
-        suspect_strategy = params.get('suspect_strategy', 'selective_truth')
-        suspect_preparation = base_config.get('suspect_preparation', 'unprepared')
-
-        print(f"[Solver] Generating rich alibi scenario: {incident_type.value} - {incident_subtype}")
-        print(f"[Solver] Evidence strength: {evidence_strength}, Complication: {complicating_factor}")
-
-        # Generate incident details with enhanced parameters
-        incident_details = generate_incident_scenario(
-            incident_type.value,
-            Literal[severity],
-            incident_subtype,
-            incident_location,
-            incident_time
-        )
-
-        # Generate contextual time frame
-        time_frame = generate_time_frame(incident_type.value, incident_time)
-
-        # Generate enhanced personas
-        suspect_persona_details = generate_suspect_persona(
-            incident_type.value,
-            Literal[background_type],
-            suspect_personality,
-            complicating_factor
-        )
-
-        detective_persona_details = generate_detective_persona(
-            experience,
-            style,
-            incident_type.value  # Pass case type for specialization
-        )
-
-        # Generate evidence based on strength and guilt
-        evidence_details = generate_evidence_details(
-            evidence_strength,
-            incident_type.value,
-            is_actually_guilty
-        )
-
-        # Create enhanced incident object
-        incident = Incident(
-            incident_type=incident_type,
-            location=incident_details.location,
-            description=incident_details.description,
-            time_frame=time_frame,
-            evidence_against_suspect=incident_details.evidence_against_suspect,
-            investigation_details=incident_details.investigation_details,
-            incident_metadata={
-                "subtype": incident_subtype,
-                "value": incident_value,
-                "time_elapsed": time_elapsed,
-                "evidence_details": evidence_details
-            }
-        )
-
-        # Generate alibi story with preparation level
-        alibi_story = generate_suspect_alibi(
-            incident.location,
-            f"{time_frame.start_time}-{time_frame.end_time}",
-            str(is_actually_guilty),
-            alibi_type,
-            suspect_preparation,
-            incident_subtype
-        )
-
-        # Create complex alibi elements based on preparation and strategy
-        actual_whereabouts = []
-        alibi_elements = []
-
-        if is_actually_guilty:
-            # Create layered alibi based on preparation level
-            if suspect_preparation == "well_prepared":
-                # Well-prepared guilty suspect has backup stories
-                alibi_elements = self._create_layered_alibi(
-                    alibi_story, time_frame, suspect_strategy
-                )
-
-                # Actual whereabouts - they were at the crime
-                actual_whereabouts.append(AlibiElement(
-                    time_period=f"{time_frame.start_time}-{time_frame.end_time}",
-                    location=incident.location,
-                    activity=f"Committed {incident.incident_type.value.lower()} ({incident_subtype})",
-                    witness=None,
-                    verifiable_evidence=None,
-                    is_truthful=True,
-                    hidden_details=f"Used {incident_value} level of {incident_subtype}"
-                ))
-            else:
-                # Less prepared guilty suspect has simpler lies
-                alibi_elements.append(self._create_simple_false_alibi(
-                    alibi_story, time_frame, suspect_preparation
-                ))
-
-                actual_whereabouts.append(AlibiElement(
-                    time_period=f"{time_frame.start_time}-{time_frame.end_time}",
-                    location=incident.location,
-                    activity=f"Committed {incident.incident_type.value.lower()}",
-                    witness=None,
-                    verifiable_evidence=None,
-                    is_truthful=True
-                ))
-        else:
-            # Innocent suspect with truthful but potentially incomplete alibi
-            truthful_elements = self._create_truthful_alibi(
-                alibi_story, time_frame, evidence_strength
-            )
-            actual_whereabouts.extend(truthful_elements)
-            alibi_elements.extend(truthful_elements)
-
-        # Create enhanced profiles with metadata
-        suspect_profile = SuspectProfile(
-            name=suspect_persona_details.name,
-            background=suspect_persona_details.background,
-            relationship_to_incident=self._enhance_relationship_description(
-                background_type, complicating_factor, incident
-            ),
-            actual_whereabouts=actual_whereabouts,
-            alibi_story=alibi_elements,
-            personality_traits=suspect_persona_details.personality_traits,
-            motivation_to_lie=suspect_persona_details.motivation,
-            suspect_metadata={
-                "strategy": suspect_strategy,
-                "preparation": suspect_preparation,
-                "complications": suspect_persona_details.complications if hasattr(suspect_persona_details,
-                                                                                  'complications') else None,
-                "stress_triggers": self._get_stress_triggers(suspect_personality, complicating_factor)
-            }
-        )
-
-        detective_profile = DetectiveProfile(
-            name=detective_persona_details.name,
-            rank=f"{experience.title()} Detective",
-            background=detective_persona_details.background,
-            investigation_style=style,
-            personality_traits=detective_persona_details.personality_traits,
-            detective_metadata={
-                "specialization": detective_persona_details.specialization if hasattr(detective_persona_details,
-                                                                                      'specialization') else None,
-                "knowledge_level": base_config.get('detective_knowledge', 'moderate'),
-                "case_pressure": base_config.get('stakes', 'moderate'),
-                "investigation_approach": self._get_investigation_approach(style, evidence_strength)
-            }
-        )
-
-        # Create enhanced game config
-        game_config = GameConfig(
-            game_id=base_config.get('game_id', 'enhanced_alibi'),
-            incident=incident,
-            suspect_profile=suspect_profile,
-            detective_profile=detective_profile,
-            interrogation_turns_limit=base_config.get('interrogation_turns_limit', 15),
-            game_context=base_config.get('game_context', {
-                "setting": "police station interrogation room",
-                "atmosphere": "formal and intimidating",
-                "time_pressure": "suspect can leave at any time",
-                "legal_status": "voluntary questioning"
-            }),
-            scenario_metadata={
-                "evidence_strength": evidence_strength,
-                "complicating_factor": complicating_factor,
-                "difficulty_level": base_config.get('difficulty_level', 'intermediate'),
-                "theme": base_config.get('theme', 'mixed')
-            }
-        )
-
-        return game_config
+    # def generate_scenario_details(self, base_config: dict) -> GameConfig:
+    #     """Generate rich scenario details from enhanced base configuration"""
+    #
+    #     # Extract all parameters from enhanced config
+    #     incident_type_str = base_config.get('incident_type', 'THEFT')
+    #     incident_type = IncidentType[incident_type_str]
+    #
+    #     # Extract enhanced parameters
+    #     incident_subtype = base_config.get('incident_subtype')
+    #     incident_location = base_config.get('incident_location')
+    #     incident_time = base_config.get('incident_time')
+    #     incident_value = base_config.get('incident_value')
+    #     evidence_strength = base_config.get('evidence_strength', 'moderate')
+    #     complicating_factor = base_config.get('complicating_factor')
+    #     time_elapsed = base_config.get('time_elapsed_since_incident', 'days')
+    #
+    #     params = base_config.get('generation_params', {})
+    #     severity = params.get('severity', 'moderate')
+    #     is_actually_guilty = params.get('is_guilty', random.random() < 0.7)
+    #     background_type = params.get('background_type', 'local_resident')
+    #     alibi_type = params.get('alibi_type', 'work')
+    #     experience = params.get('experience', 'senior')
+    #     style = params.get('style', 'methodical')
+    #     suspect_personality = params.get('suspect_personality', 'nervous')
+    #     suspect_strategy = params.get('suspect_strategy', 'selective_truth')
+    #     suspect_preparation = base_config.get('suspect_preparation', 'unprepared')
+    #
+    #     print(f"[Solver] Generating rich alibi scenario: {incident_type.value} - {incident_subtype}")
+    #     print(f"[Solver] Evidence strength: {evidence_strength}, Complication: {complicating_factor}")
+    #
+    #     # Generate incident details with enhanced parameters
+    #     incident_details = generate_incident_scenario(
+    #         incident_type.value,
+    #         Literal[severity],
+    #         incident_subtype,
+    #         incident_location,
+    #         incident_time
+    #     )
+    #
+    #     # Generate contextual time frame
+    #     time_frame = generate_time_frame(incident_type.value, incident_time)
+    #
+    #     # Generate enhanced personas
+    #     suspect_persona_details = generate_suspect_persona(
+    #         incident_type.value,
+    #         Literal[background_type],
+    #         suspect_personality,
+    #         complicating_factor
+    #     )
+    #
+    #     detective_persona_details = generate_detective_persona(
+    #         experience,
+    #         style,
+    #         incident_type.value  # Pass case type for specialization
+    #     )
+    #
+    #     # Generate evidence based on strength and guilt
+    #     evidence_details = generate_evidence_details(
+    #         evidence_strength,
+    #         incident_type.value,
+    #         is_actually_guilty
+    #     )
+    #
+    #     # Create enhanced incident object
+    #     incident = Incident(
+    #         incident_type=incident_type,
+    #         location=incident_details.location,
+    #         description=incident_details.description,
+    #         time_frame=time_frame,
+    #         evidence_against_suspect=incident_details.evidence_against_suspect,
+    #         investigation_details=incident_details.investigation_details,
+    #         incident_metadata={
+    #             "subtype": incident_subtype,
+    #             "value": incident_value,
+    #             "time_elapsed": time_elapsed,
+    #             "evidence_details": evidence_details
+    #         }
+    #     )
+    #
+    #     # Generate alibi story with preparation level
+    #     alibi_story = generate_suspect_alibi(
+    #         incident.location,
+    #         f"{time_frame.start_time}-{time_frame.end_time}",
+    #         str(is_actually_guilty),
+    #         alibi_type,
+    #         suspect_preparation,
+    #         incident_subtype
+    #     )
+    #
+    #     # Create complex alibi elements based on preparation and strategy
+    #     actual_whereabouts = []
+    #     alibi_elements = []
+    #
+    #     if is_actually_guilty:
+    #         # Create layered alibi based on preparation level
+    #         if suspect_preparation == "well_prepared":
+    #             # Well-prepared guilty suspect has backup stories
+    #             alibi_elements = self._create_layered_alibi(
+    #                 alibi_story, time_frame, suspect_strategy
+    #             )
+    #
+    #             # Actual whereabouts - they were at the crime
+    #             actual_whereabouts.append(AlibiElement(
+    #                 time_period=f"{time_frame.start_time}-{time_frame.end_time}",
+    #                 location=incident.location,
+    #                 activity=f"Committed {incident.incident_type.value.lower()} ({incident_subtype})",
+    #                 witness=None,
+    #                 verifiable_evidence=None,
+    #                 is_truthful=True,
+    #                 hidden_details=f"Used {incident_value} level of {incident_subtype}"
+    #             ))
+    #         else:
+    #             # Less prepared guilty suspect has simpler lies
+    #             alibi_elements.append(self._create_simple_false_alibi(
+    #                 alibi_story, time_frame, suspect_preparation
+    #             ))
+    #
+    #             actual_whereabouts.append(AlibiElement(
+    #                 time_period=f"{time_frame.start_time}-{time_frame.end_time}",
+    #                 location=incident.location,
+    #                 activity=f"Committed {incident.incident_type.value.lower()}",
+    #                 witness=None,
+    #                 verifiable_evidence=None,
+    #                 is_truthful=True
+    #             ))
+    #     else:
+    #         # Innocent suspect with truthful but potentially incomplete alibi
+    #         truthful_elements = self._create_truthful_alibi(
+    #             alibi_story, time_frame, evidence_strength
+    #         )
+    #         actual_whereabouts.extend(truthful_elements)
+    #         alibi_elements.extend(truthful_elements)
+    #
+    #     # Create enhanced profiles with metadata
+    #     suspect_profile = SuspectProfile(
+    #         name=suspect_persona_details.name,
+    #         background=suspect_persona_details.background,
+    #         relationship_to_incident=self._enhance_relationship_description(
+    #             background_type, complicating_factor, incident
+    #         ),
+    #         actual_whereabouts=actual_whereabouts,
+    #         alibi_story=alibi_elements,
+    #         personality_traits=suspect_persona_details.personality_traits,
+    #         motivation_to_lie=suspect_persona_details.motivation,
+    #         suspect_metadata={
+    #             "strategy": suspect_strategy,
+    #             "preparation": suspect_preparation,
+    #             "complications": suspect_persona_details.complications if hasattr(suspect_persona_details,
+    #                                                                               'complications') else None,
+    #             "stress_triggers": self._get_stress_triggers(suspect_personality, complicating_factor)
+    #         }
+    #     )
+    #
+    #     detective_profile = DetectiveProfile(
+    #         name=detective_persona_details.name,
+    #         rank=f"{experience.title()} Detective",
+    #         background=detective_persona_details.background,
+    #         investigation_style=style,
+    #         personality_traits=detective_persona_details.personality_traits,
+    #         detective_metadata={
+    #             "specialization": detective_persona_details.specialization if hasattr(detective_persona_details,
+    #                                                                                   'specialization') else None,
+    #             "knowledge_level": base_config.get('detective_knowledge', 'moderate'),
+    #             "case_pressure": base_config.get('stakes', 'moderate'),
+    #             "investigation_approach": self._get_investigation_approach(style, evidence_strength)
+    #         }
+    #     )
+    #
+    #     # Create enhanced game config
+    #     game_config = GameConfig(
+    #         game_id=base_config.get('game_id', 'enhanced_alibi'),
+    #         incident=incident,
+    #         suspect_profile=suspect_profile,
+    #         detective_profile=detective_profile,
+    #         interrogation_turns_limit=base_config.get('interrogation_turns_limit', 15),
+    #         game_context=base_config.get('game_context', {
+    #             "setting": "police station interrogation room",
+    #             "atmosphere": "formal and intimidating",
+    #             "time_pressure": "suspect can leave at any time",
+    #             "legal_status": "voluntary questioning"
+    #         }),
+    #         scenario_metadata={
+    #             "evidence_strength": evidence_strength,
+    #             "complicating_factor": complicating_factor,
+    #             "difficulty_level": base_config.get('difficulty_level', 'intermediate'),
+    #             "theme": base_config.get('theme', 'mixed')
+    #         }
+    #     )
+    #
+    #     return game_config
 
     def _create_layered_alibi(self, alibi_story, time_frame, strategy) -> List[AlibiElement]:
         """Create a multi-layered alibi for well-prepared suspects"""

@@ -33,6 +33,8 @@ Respond in JSON format with:
         {
             "turn_number": int,
             "utterance": "exact quote of the lie",
+            "ground_truth": "exact quote of the ground truth",
+            "counter_factual": "what we should replace the ground truth with to make the lie truthful",
             "lie_type": "alibi_fabrication/evidence_denial/timeline_shift/witness_lie",
             "confidence": float (0.0-1.0)
         }

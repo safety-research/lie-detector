@@ -94,12 +94,13 @@ if __name__ == "__main__":
     task = ascii_sandbagging_task()
     #model = "openrouter/google/gemma-3-27b-it"#"openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
-    model = ["openrouter/google/gemma-3-4b-it", "openrouter/google/gemma-3-12b-it", "openrouter/google/gemma-3-27b-it"]#"openrouter/openai/gpt-4o"
-
+    #model = ["openrouter/google/gemma-3-4b-it", "openrouter/google/gemma-3-12b-it", "openrouter/google/gemma-3-27b-it"]#"openrouter/openai/gpt-4o"
+    model = ["openrouter/openai/gpt-oss-20b"]
+    model = ["openrouter/openai/gpt-oss-20b", "openrouter/openai/gpt-oss-120b", "openrouter/openai/gpt-5-nano", "openrouter/openai/gpt-5-mini"]
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
         model=model,  # or any model you want to test
-        limit=1500,  # Limit samples for faster debugging
-        log_dir="../logs",  # Specify log directory
+        limit=1,  # Limit samples for faster debugging
+        log_dir="../logs/sandbagging/ascii",  # Specify log directory
     )

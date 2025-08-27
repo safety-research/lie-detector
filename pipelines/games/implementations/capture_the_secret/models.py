@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 from pydantic import BaseModel, Field
 
@@ -83,8 +83,9 @@ class ScenarioConfig(BaseGameConfig):
     information: Dict[InfoClassification, List[SecretInfo]]
     conversation_limit: int = 8
     turns_limit: int = 8  # Also set the base class field
-    scenario_context: Optional[Dict[str, str]] = None
-    
+    # Fix: Make scenario_context accept Any type to handle both dict and structured data
+    scenario_context: Optional[Dict[str, Any]] = None
+
     @property
     def scenario_id(self) -> str:
         """Alias for game_id for backward compatibility"""
@@ -92,7 +93,6 @@ class ScenarioConfig(BaseGameConfig):
 
     def set_scenario_id(self, scenario_id: str):
         self.game_id = scenario_id
-
 
 class ConfidenceEntry(BaseModel):
     """Red's confidence assessment for a Blue statement"""

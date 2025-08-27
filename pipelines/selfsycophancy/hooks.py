@@ -65,11 +65,11 @@ class SelfSycophancyHook(BaseSampleProcessingHook):
 
             # Build the parsed entry
             sample_id = sample.id if hasattr(sample, 'id') else sample.get('id', 'unknown')
-            did_lie = sample.scores['significant_sycophancy_scorer'].text == CORRECT
+            did_lie = sample.scores['significant_sycophancy_scorer'].value == CORRECT
             if not did_lie and 'harmfulness_distribution_skepticism_scorer' in sample.scores:
-                did_lie = sample.scores['harmfulness_distribution_skepticism_scorer'].text == CORRECT
+                did_lie = sample.scores['harmfulness_distribution_skepticism_scorer'].value == CORRECT
             if not did_lie and 'harmfulness_distribution_sycophancy_scorer' in sample.scores:
-                did_lie = sample.scores['harmfulness_distribution_sycophancy_scorer'].text == CORRECT
+                did_lie = sample.scores['harmfulness_distribution_sycophancy_scorer'].value == CORRECT
 
             if not did_lie:
                 pass

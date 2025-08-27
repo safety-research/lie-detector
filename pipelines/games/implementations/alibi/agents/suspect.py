@@ -23,29 +23,29 @@ def suspect_agent(config: GameConfig) -> Agent:
             """Extract a single message from potentially multi-turn text"""
             text = text.strip()
             
-            # Remove common multi-turn indicators
-            lines = text.split('\n\n')
-            clean_lines = []
-            
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    continue
-                # Skip lines that look like stage directions
-                if line.startswith('[') and line.endswith(']'):
-                    continue
-                # # Skip lines that are clearly conversation formatting
-                # if ':' in line and any(name in line for name in [speaker_name, "Detective", "Suspect"]):
-                #     # Extract just the content after the colon
-                #     parts = line.split(':', 1)
-                #     if len(parts) == 2:
-                #         clean_lines.append(parts[1].strip())
-                #     continue
-                clean_lines.append(line)
-            
-            # Return the first meaningful line or the original if no cleaning worked
-            if clean_lines:
-                return clean_lines[0]
+            # # Remove common multi-turn indicators
+            # lines = text.split('\n\n')
+            # clean_lines = []
+            #
+            # for line in lines:
+            #     line = line.strip()
+            #     if not line:
+            #         continue
+            #     # Skip lines that look like stage directions
+            #     if line.startswith('[') and line.endswith(']'):
+            #         continue
+            #     # # Skip lines that are clearly conversation formatting
+            #     # if ':' in line and any(name in line for name in [speaker_name, "Detective", "Suspect"]):
+            #     #     # Extract just the content after the colon
+            #     #     parts = line.split(':', 1)
+            #     #     if len(parts) == 2:
+            #     #         clean_lines.append(parts[1].strip())
+            #     #     continue
+            #     clean_lines.append(line)
+            #
+            # # Return the first meaningful line or the original if no cleaning worked
+            # if clean_lines:
+            #     return "\n".join(clean_lines)
             return text
         
         def _track_lies_internally(question: str, response: str, config: GameConfig, suspect_state: SuspectAgentState):

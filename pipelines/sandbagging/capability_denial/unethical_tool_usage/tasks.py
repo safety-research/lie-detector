@@ -22,7 +22,7 @@ def ethical_tool_sandbagging_task(
         include_scenario_description: bool = True,
         model: str = "openai/gpt-4o",
         temperature: float = 0.0,
-        max_tokens: int = 50,
+        max_tokens: int = 1024,
         shuffle: bool = True,
         seed: Optional[int] = None,
         csv_path: str = "./ethical_scenarios.csv",

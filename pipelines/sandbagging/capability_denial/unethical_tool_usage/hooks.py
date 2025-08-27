@@ -35,22 +35,37 @@ class SandbaggingCapabilitiesHook(BaseSampleProcessingHook):
         result = []
         for msg in messages:
             if hasattr(msg, 'role') and hasattr(msg, 'content'):
+                if isinstance(msg.content, list):
+                    content = msg.content[-1].text
+                else:
+                    content = msg.content
+
                 # It's a message object
                 result.append({
                     "role": msg.role,
-                    "content": msg.content
+                    "content": content
                 })
             elif isinstance(msg, dict) and 'role' in msg and 'content' in msg:
+                if isinstance(msg['content'], list):
+                    content = msg['content'][-1].text
+                else:
+                    content = msg['content']
                 # It's already a dict
                 result.append({
                     "role": msg['role'],
-                    "content": msg['content']
+                    "content": content
                 })
             else:
                 # Try to extract what we can
                 role = getattr(msg, 'role', msg.get('role', 'unknown')) if hasattr(msg, 'role') or isinstance(msg,
                                                                                                               dict) else 'unknown'
                 content = getattr(msg, 'content', str(msg)) if hasattr(msg, 'content') else str(msg)
+
+                if isinstance(content, list):
+                    content = content[-1].text
+                else:
+                    content = content
+
                 result.append({
                     "role": role,
                     "content": content

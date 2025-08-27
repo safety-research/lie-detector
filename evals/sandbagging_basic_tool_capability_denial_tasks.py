@@ -220,7 +220,7 @@ if __name__ == "__main__":
         tasks=tasks,
         model=model,
         limit=125,  # Limit samples for faster debugging
-        log_dir="../logs",
+        log_dir="../sandbagging/tool/logs",
     )
 
     print(f"Completed evaluation for {model}")

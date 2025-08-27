@@ -283,6 +283,8 @@ def run_control_question() -> Solver:
         control_response = state.messages[-1].content if state.messages else ""
         
         from .scorer import extract_answer_letter
+        if isinstance(control_response, list):
+            control_response = control_response[-1].text
         control_answer = extract_answer_letter(control_response)
         
         state.metadata["control_answer"] = control_answer

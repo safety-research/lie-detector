@@ -43,7 +43,7 @@ def tool_ethical_sandbagging_task(
         include_scenario_description=True,
         model=model,
         temperature=0.0,
-        max_tokens=50,
+        max_tokens=2048,
         shuffle=True,
         seed=42,  # Fixed seed for consistency
         csv_path=str(SANDBAGGING_ETHICAL_PATH / "scenarios.csv"),
@@ -76,7 +76,7 @@ def tool_unethical_sandbagging_task(
         include_scenario_description=True,
         model=model,
         temperature=0.0,
-        max_tokens=50,
+        max_tokens=2048,
         shuffle=True,
         seed=42,  # Fixed seed for consistency
         csv_path=str(SANDBAGGING_ETHICAL_PATH / "harmful_scenarios.csv"),
@@ -93,12 +93,14 @@ if __name__ == "__main__":
     task = [tool_unethical_sandbagging_task(),
             tool_ethical_sandbagging_task()]
 
-    #task = [tool_code_sandbagging_task()]
+    task = [tool_ethical_sandbagging_task()]
 
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     model = "openrouter/openai/gpt-4o"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     model ="openrouter/google/gemma-3-27b-it"
+
+    model = "openrouter/openai/gpt-oss-20b"
     # model = "openrouter/google/gemma-3-12b-it"
     # model = "openrouter/google/gemma-3-4b-it"
 
@@ -106,7 +108,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=task,
         model=model,  # or any model you want to test
-        limit=250,  # Limit samples for faster debugging
-        log_dir="../logs",  # Specify log directory,
+        limit=1000,  # Limit samples for faster debugging
+        log_dir="../logs/sandbagging/tools",  # Specify log directory,
         retry_on_error=10
     )

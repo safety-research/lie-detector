@@ -1,15 +1,9 @@
 # games/core/hooks.py
 
-import json
-import os
 from abc import abstractmethod
 from datetime import datetime
-from pathlib import Path
-from inspect_ai.hooks import Hooks, hooks, RunEnd
 
-from common.hook import BaseSampleProcessingHook
-from common.multi_hook import MultiSampleProcessingHook
-from common.utils import write_to_s3
+from common.multi_sample_game_hook  import MultiSampleProcessingHook
 
 
 class GameHook(MultiSampleProcessingHook):

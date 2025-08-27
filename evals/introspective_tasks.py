@@ -108,6 +108,6 @@ if __name__ == "__main__":
         tasks=all_tasks,
         model=model,  # or any model you want to test
         limit=1,  # Limit samples for faster debugging
-        log_dir="../logs",  # Optional: specify log directory
+        log_dir="../introspective/logs",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

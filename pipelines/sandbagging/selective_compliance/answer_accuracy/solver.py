@@ -65,7 +65,7 @@ def extract_answer_letter(text: str) -> Optional[str]:
 def sandbagging_contrastive_solver(
     system_prompt: Optional[str] = None,
     temperature: float = 1,
-    max_tokens: int = 10
+    max_tokens: int = 512
 ) -> Solver:
     """
     Solver that evaluates both control and sandbagging prompts as contrastive pairs.

@@ -1,0 +1,46 @@
+{
+  "total_questions": 3232,
+  "models": {
+    "anthropic/claude_sonnet_4": 1036,
+    "google/gemma_3_12b_it": 863,
+    "google/gemma_3_27b_it": 732,
+    "google/gemma_3_4b_it": 601
+  },
+  "subjects": {
+    "art": 346,
+    "fiction": 417,
+    "history": 485,
+    "legal": 367,
+    "mathematics": 263,
+    "philosophy": 291,
+    "political": 416,
+    "science": 430,
+    "other": 217
+  },
+  "lying_stats": {
+    "anthropic/claude_sonnet_4": {
+      "lied": 39,
+      "total": 1036,
+      "percentage": 3.7644787644787643
+    },
+    "google/gemma_3_12b_it": {
+      "lied": 545,
+      "total": 863,
+      "percentage": 63.151796060254924
+    },
+    "google/gemma_3_27b_it": {
+      "lied": 319,
+      "total": 732,
+      "percentage": 43.5792349726776
+    },
+    "google/gemma_3_4b_it": {
+      "lied": 497,
+      "total": 601,
+      "percentage": 82.6955074875208
+    }
+  },
+  "duplicates": {
+    "exact": 0,
+    "semantic": 477
+  }
+}

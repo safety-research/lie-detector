@@ -16,6 +16,11 @@ def extract_question_and_choices(text: str) -> Dict[str, Any]:
     Returns:
         Dict with 'question' and 'choices' keys
     """
+
+    # We want the final answer
+    if isinstance(text, list):
+        text = text[-1].text
+
     lines = text.strip().split('\n')
 
     # Find the question (usually the first non-empty line or lines before choices)

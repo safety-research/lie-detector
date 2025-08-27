@@ -7,18 +7,20 @@ from dotenv import load_dotenv
 from inspect_ai import Task, task, eval
 from inspect_ai.dataset import Sample, MemoryDataset
 
+from pipelines.games.implementations.n_truths_and_a_lie.scenario import generate_enhanced_ntal_scenarios
+
 load_dotenv()
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from common.generalization_enums import MotivationFramework, KnowledgeFramework
-from pipelines.games.implementations.n_truths_and_a_lie.scenario import generate_themed_scenarios
+#from pipelines.games.implementations.n_truths_and_a_lie.scenario import generate_themed_scenarios
 from pipelines.games.implementations.n_truths_and_a_lie import GameConfig
 from pipelines.games.implementations.n_truths_and_a_lie.scorer import lie_detection_scorer, interrogation_quality_scorer, combined_n_truths_scorer
 from pipelines.games.implementations.n_truths_and_a_lie.solvers import n_truths_solver
 from pipelines.games.implementations.n_truths_and_a_lie.hook import *
 
-MAX_SCENARIOS = 125
+MAX_SCENARIOS = 25
 
 
 def _configs_to_dataset(configs: List[Union[GameConfig, Dict]]) -> MemoryDataset:
@@ -61,7 +63,8 @@ def _configs_to_dataset(configs: List[Union[GameConfig, Dict]]) -> MemoryDataset
 def n_truths_and_a_lie_professional_background() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_themed_scenarios("professional_background", num_scenarios=MAX_SCENARIOS)
+    configs = generate_enhanced_ntal_scenarios(themes=["professional_background"], num_scenarios=MAX_SCENARIOS)
+
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -84,7 +87,7 @@ def n_truths_and_a_lie_professional_background() -> Task:
 def n_truths_and_a_lie_hidden_talents() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_themed_scenarios("hidden_talents", num_scenarios=MAX_SCENARIOS)
+    configs = generate_enhanced_ntal_scenarios(themes=["hidden_talents"], num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -107,7 +110,7 @@ def n_truths_and_a_lie_hidden_talents() -> Task:
 def n_truths_and_a_lie_family_history() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_themed_scenarios("family_history", num_scenarios=MAX_SCENARIOS)
+    configs = generate_enhanced_ntal_scenarios(themes=["family_history"], num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -130,7 +133,7 @@ def n_truths_and_a_lie_family_history() -> Task:
 def n_truths_and_a_lie_personal_quirks() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_themed_scenarios("personal_quirks", num_scenarios=MAX_SCENARIOS)
+    configs = generate_enhanced_ntal_scenarios(themes=["personal_quirks"], num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -153,7 +156,7 @@ def n_truths_and_a_lie_personal_quirks() -> Task:
 def n_truths_and_a_lie_travel_experiences() -> Task:
     """Create an N-truths-and-a-lie task from game configurations"""
 
-    configs = generate_themed_scenarios("travel_experiences", num_scenarios=MAX_SCENARIOS)
+    configs = generate_enhanced_ntal_scenarios(themes=["travel_experiences"], num_scenarios=MAX_SCENARIOS)
     dataset = _configs_to_dataset(configs)
 
     return Task(
@@ -177,20 +180,20 @@ if __name__ == "__main__":
     # Example usage - run corporate scenario evaluation
     task = [
         n_truths_and_a_lie_professional_background(),
-        n_truths_and_a_lie_hidden_talents(),
-        n_truths_and_a_lie_family_history(),
-        n_truths_and_a_lie_travel_experiences(),
-        n_truths_and_a_lie_personal_quirks()
+        # n_truths_and_a_lie_hidden_talents(),
+        # n_truths_and_a_lie_family_history(),
+        # n_truths_and_a_lie_travel_experiences(),
+        # n_truths_and_a_lie_personal_quirks()
     ]
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     #model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     model = ["openrouter/google/gemma-3-12b-it", "openrouter/google/gemma-3-4b-it", "openrouter/google/gemma-3-27b-it"]
-    #model = "openrouter/openai/gpt-4o"
+    model = "openrouter/openai/gpt-5-nano"
     # Run evaluation with a specific model
     results = eval(
         tasks=task,
         model=model,  # Using OpenRouter model
         limit=1,  # Limit samples for faster debugging
-        log_dir="../logs",  # Specify log directory
+        log_dir="../games/ntruths/logs",  # Specify log directory
         # debug_errors=True,  # Optional: enable debug mode
-    )s
+    )

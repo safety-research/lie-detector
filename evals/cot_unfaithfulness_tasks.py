@@ -219,7 +219,10 @@ if __name__ == "__main__":
     #model = "openrouter/google/gemma-3-12b-it"
     model = "openrouter/openai/gpt-4o"
 
-    model ="openrouter/google/gemma-3-27b-it"
+    #model ="openrouter/openai/gpt-oss-20b"
+    model = ["openrouter/openai/gpt-oss-20b", "openrouter/openai/gpt-oss-120b", "openrouter/openai/gpt-5-nano",
+             "openrouter/openai/gpt-5-mini"]
+
     # model = "openrouter/google/gemma-3-12b-it"
     # model = "openrouter/google/gemma-3-4b-it"
 
@@ -228,7 +231,7 @@ if __name__ == "__main__":
         tasks=task_instance,
         model=model,
         limit=200,
-        log_dir="../logs"
+        log_dir="../logs/cot"
     )
     
     print("Evaluation complete!")

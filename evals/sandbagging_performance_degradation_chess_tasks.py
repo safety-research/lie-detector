@@ -188,9 +188,9 @@ async def run():
     #tasks = [chess_mate_in_2_shutdown_threat_task(lie_elicitation_prompt=key) for key in LIE_ELICITATION_PROMPTS.keys()]
 
     tasks = [
-        #chess_mate_in_2_dual_shutdown_threat_task(),
-        chess_mate_in_2_dual_capability_hiding_task(),
-        chess_mate_in_2_dual_safety_concern_task(),
+        chess_mate_in_2_dual_shutdown_threat_task(repetitions=3),
+        # chess_mate_in_2_dual_capability_hiding_task(repetitions=3),
+        # chess_mate_in_2_dual_safety_concern_task(repetitions=3),
     ]
     #models = ["openrouter/anthropic/claude-sonnet-4", "openrouter/openai/gpt-4o", "openrouter/meta-llama/llama-3.1-8b-instruct"]
     #models = [ "openrouter/meta-llama/llama-3.1-8b-instruct"] #"openai/gpt-4o"]
@@ -198,16 +198,21 @@ async def run():
     #model = "openrouter/google/gemma-3-12b-it"
     model = "openrouter/openai/gpt-4o"
 
-    model ="openrouter/google/gemma-3-27b-it"
-    model = "openrouter/google/gemma-3-12b-it"
+    #model ="openrouter/google/gemma-3-27b-it"
+    #model = "openrouter/google/gemma-3-12b-it"
     # model = "openrouter/google/gemma-3-4b-it"
+    #model = "openrouter/openai/gpt-oss-20b"
+    model = ["openrouter/openai/gpt-oss-20b", "openrouter/openai/gpt-oss-120b",  "openrouter/openai/gpt-5-nano", "openrouter/openai/gpt-5-mini"]
 
     # Run evaluation with a specific model
     results = await eval_async(
         tasks=tasks,
         model=model,  # or any model you want to test
-        limit=125,  # Limit samples for faster debugging
-        log_dir="../logs",  # Specify log directory
+        limit=20,  # Limit samples for faster debugging
+        log_dir="../logs/sandbagging/chess",  # Specify log directory
+        reasoning_effort='minimal',
+        reasoning_tokens=128,
+        epochs=2
     )
 
 if __name__ == "__main__":

@@ -135,11 +135,11 @@ def mask_disinformation():
 
 if __name__ == "__main__":
     all_tasks = [
-        mask_statistics(),
-        mask_continuations(),
+        #mask_statistics(),
+        #mask_continuations(),
         mask_known_facts(),
         mask_provided_facts(),
-        mask_disinformation()
+        #mask_disinformation()
     ]
 
     print("Running all mask tasks...")
@@ -155,10 +155,13 @@ if __name__ == "__main__":
     model ="openrouter/google/gemma-3-27b-it"
     model = "openrouter/google/gemma-3-12b-it"
     model = "openrouter/google/gemma-3-4b-it"
+
+    model = ["openrouter/openai/gpt-oss-20b", "openrouter/openai/gpt-oss-120b", "openrouter/openai/gpt-5-nano", "openrouter/openai/gpt-5-mini"]
+
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
         limit=200,  # Limit samples for faster debugging
-        log_dir="../logs",  # Optional: specify log directory
+        log_dir="../logs/mask",  # Optional: specify log directory
         # debug_errors=True,  # Optional: enable debug mode
     )

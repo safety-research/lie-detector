@@ -10,7 +10,8 @@ from typing import Optional, Dict, Any, List, Tuple
 
 import numpy as np
 import pandas as pd
-from inspect_ai.scorer import scorer, Scorer, accuracy, mean, Score, Target, CORRECT, INCORRECT, PARTIAL, NOANSWER
+from inspect_ai.scorer import scorer, Scorer, accuracy, mean, Score, Target, CORRECT, INCORRECT, PARTIAL, NOANSWER, \
+    stderr
 from inspect_ai.model import Model, get_model, GenerateConfig
 from inspect_ai.solver import TaskState
 from pydantic import BaseModel
@@ -212,7 +213,7 @@ async def evaluate_belief_responses(
     }
 
 
-@scorer(metrics=[accuracy(), mean()])
+@scorer(metrics=[accuracy(), mean(), stderr()])
 def judge_scorer(
         judge_model: str = "openrouter/anthropic/claude-sonnet-4",
         judge_prompt_template: Optional[str] = None
@@ -308,7 +309,7 @@ and "Explanation: <short_explanation>" where <short_explanation> is a single sen
 
 
 
-@scorer(metrics=[accuracy(), mean()])
+@scorer(metrics=[accuracy(), mean(), stderr()])
 def belief_judge_scorer(
         judge_model: str = "openrouter/openai/gpt-4o-mini",
         numerical_judge_model: str = "openrouter/openai/o1-mini",

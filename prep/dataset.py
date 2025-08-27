@@ -7,7 +7,7 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 from common.generalization_mappings import generalization_map_1, generalization_map_2, generalization_map_3
 from prep.download import S3DataDownloader
@@ -20,6 +20,54 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def merge_consecutive_assistant_messages(messages: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], bool]:
+    """
+    Merge consecutive assistant messages into a single message.
+
+    Args:
+        messages: List of message dictionaries with 'role' and 'content' keys
+
+    Returns:
+        Tuple of (merged messages list, whether any merging occurred)
+    """
+    if not messages:
+        return messages, False
+
+    merged_messages = []
+    current_assistant_content = ""
+    merge_occurred = False
+    consecutive_count = 0
+
+    for message in messages:
+        if message.get("role") == "assistant":
+            # Accumulate assistant content
+            current_assistant_content += message.get("content", "")
+            consecutive_count += 1
+            if consecutive_count > 1:
+                merge_occurred = True
+        else:
+            # If we have accumulated assistant content, add it as a single message
+            if current_assistant_content:
+                merged_messages.append({
+                    "role": "assistant",
+                    "content": current_assistant_content
+                })
+                current_assistant_content = ""
+                consecutive_count = 0
+
+            # Add the non-assistant message
+            merged_messages.append(message)
+
+    # Don't forget to add any remaining assistant content at the end
+    if current_assistant_content:
+        merged_messages.append({
+            "role": "assistant",
+            "content": current_assistant_content
+        })
+
+    return merged_messages, merge_occurred
+
+
 class LieDetectionDataProcessor:
     """Processes lie detection samples for fine-tuning."""
 
@@ -29,6 +77,11 @@ class LieDetectionDataProcessor:
             'motivation': generalization_map_1,
             'knowledge': generalization_map_2,
             'task-group': generalization_map_3
+        }
+        # Track merge statistics
+        self.merge_stats = {
+            'total': 0,
+            'merged': 0
         }
 
     def deduplicate_samples(self) -> List[Dict]:
@@ -140,6 +193,43 @@ class LieDetectionDataProcessor:
 
         return upsampled
 
+    def process_trace_messages(self, trace: List[Dict]) -> List[Dict]:
+        """
+        Process trace messages to ensure proper formatting and merge consecutive assistant messages.
+
+        Args:
+            trace: List of message dictionaries from the sample trace
+
+        Returns:
+            Processed and merged messages
+        """
+        # First, ensure all messages have the correct format
+        formatted_messages = []
+        for turn in trace:
+            role = turn.get('role', 'unknown')
+            content = turn.get('content', '')
+
+            # Normalize role names
+            if role.lower() == 'system':
+                formatted_messages.append({'role': 'system', 'content': content})
+            elif role.lower() == 'user':
+                formatted_messages.append({'role': 'user', 'content': content})
+            elif role.lower() == 'assistant':
+                formatted_messages.append({'role': 'assistant', 'content': content})
+            else:
+                # Handle unknown roles as user messages
+                formatted_messages.append({'role': 'user', 'content': content})
+
+        # Now merge consecutive assistant messages
+        merged_messages, had_merge = merge_consecutive_assistant_messages(formatted_messages)
+
+        # Update statistics
+        self.merge_stats['total'] += 1
+        if had_merge:
+            self.merge_stats['merged'] += 1
+
+        return merged_messages
+
     def create_folds(self, categorized_samples: Dict[str, List[Dict]],
                      size: Optional[int] = None,
                      validation_split: float = 0.2) -> List[Tuple[str, List[Dict], List[Dict], Optional[List[Dict]]]]:
@@ -203,14 +293,6 @@ class LieDetectionDataProcessor:
             logger.info(f"  - Val: {len(val_samples)} samples from '{fold_category}' category only")
             logger.info(f"  - This fold contains ONLY '{fold_category}' samples")
 
-            # Store fold metadata to track which category is in this fold
-            fold_metadata = {
-                "fold_category": fold_category,
-                "train_size": len(train_samples),
-                "val_size": len(val_samples),
-                "category_only": True  # Important flag indicating single category
-            }
-
             folds.append((fold_category, train_samples, val_samples, None))
 
         return folds
@@ -269,32 +351,6 @@ class LieDetectionDataProcessor:
 
                 return [(train_samples, val_samples, None)]
 
-    # def convert_to_training_format(self, samples: List[Dict]) -> List[Dict]:
-    #     """Convert samples to the SafetyTools training format."""
-    #     training_data = []
-    #
-    #     for sample in samples:
-    #         # Add lie detection prompt and expected response
-    #         messages = sample['trace'].copy()
-    #
-    #         # Add the lie detection question
-    #         messages.append(sample['lie_detection_prompt'])
-    #
-    #         # Add expected response based on did_lie
-    #         if sample['did_lie']:
-    #             response = "Yes."
-    #         else:
-    #             response = "No."
-    #
-    #         messages.append({
-    #             "role": "assistant",
-    #             "content": response
-    #         })
-    #
-    #         training_data.append({"messages": messages, "meta": {"did_lie": sample['did_lie']}})
-    #
-    #     return training_data
-
 
 def save_training_files(train_data: List[Dict], val_data: List[Dict],
                         output_dir: Path,
@@ -327,7 +383,7 @@ def save_training_files(train_data: List[Dict], val_data: List[Dict],
 def verify_dataset(base_dir: Path, aggregation: str = 'task-group'):
     """
     Verify dataset by analyzing the distribution of did_lie/didn't lie for each domain.
-    
+
     Args:
         base_dir: Base directory containing the dataset files
         aggregation: Aggregation strategy ('motivation', 'knowledge', 'task-group', 'none')
@@ -338,38 +394,40 @@ def verify_dataset(base_dir: Path, aggregation: str = 'task-group'):
     logger.info(f"Base directory: {base_dir}")
     logger.info(f"Aggregation: {aggregation}")
     logger.info("")
-    
+
     # Get the generalization map
     generalization_maps = {
         'motivation': generalization_map_1,
         'knowledge': generalization_map_2,
         'task-group': generalization_map_3
     }
-    
+
     # Overall statistics
     overall_stats = {
         'total_samples': 0,
         'total_lies': 0,
         'total_truths': 0,
         'by_domain': {},
-        'by_task': defaultdict(lambda: {'lies': 0, 'truths': 0, 'total': 0})
+        'by_task': defaultdict(lambda: {'lies': 0, 'truths': 0, 'total': 0}),
+        'consecutive_merges': 0,
+        'samples_with_merges': 0
     }
-    
+
     # Find all train/val files
     dataset_files = list(base_dir.glob("**/train.jsonl")) + list(base_dir.glob("**/val.jsonl"))
-    
+
     if not dataset_files:
         logger.error(f"No dataset files found in {base_dir}")
         return
-    
+
     logger.info(f"Found {len(dataset_files)} dataset files")
     logger.info("")
-    
+
     # Process each file
     for file_path in dataset_files:
         file_type = "train" if file_path.name == "train.jsonl" else "val"
         domain = file_path.parent.name if file_path.parent != base_dir else "root"
-        
+
         if domain not in overall_stats['by_domain']:
             overall_stats['by_domain'][domain] = {
                 'train': {'lies': 0, 'truths': 0, 'total': 0},
@@ -377,7 +435,7 @@ def verify_dataset(base_dir: Path, aggregation: str = 'task-group'):
                 'combined': {'lies': 0, 'truths': 0, 'total': 0},
                 'by_task': defaultdict(lambda: {'lies': 0, 'truths': 0, 'total': 0})
             }
-        
+
         # Read and analyze file
         with open(file_path, 'r') as f:
             for line in f:
@@ -386,91 +444,102 @@ def verify_dataset(base_dir: Path, aggregation: str = 'task-group'):
                     meta = sample.get('meta', {})
                     did_lie = meta.get('did_lie', False)
                     task = meta.get('task', 'unknown')
-                    
+
+                    # Check if messages were merged
+                    if meta.get('had_consecutive_merge', False):
+                        overall_stats['samples_with_merges'] += 1
+
                     # Update overall stats
                     overall_stats['total_samples'] += 1
                     if did_lie:
                         overall_stats['total_lies'] += 1
                     else:
                         overall_stats['total_truths'] += 1
-                    
+
                     # Update domain stats
                     overall_stats['by_domain'][domain][file_type]['total'] += 1
                     overall_stats['by_domain'][domain]['combined']['total'] += 1
-                    
+
                     if did_lie:
                         overall_stats['by_domain'][domain][file_type]['lies'] += 1
                         overall_stats['by_domain'][domain]['combined']['lies'] += 1
                     else:
                         overall_stats['by_domain'][domain][file_type]['truths'] += 1
                         overall_stats['by_domain'][domain]['combined']['truths'] += 1
-                    
+
                     # Update task stats
                     overall_stats['by_task'][task]['total'] += 1
                     overall_stats['by_domain'][domain]['by_task'][task]['total'] += 1
-                    
+
                     if did_lie:
                         overall_stats['by_task'][task]['lies'] += 1
                         overall_stats['by_domain'][domain]['by_task'][task]['lies'] += 1
                     else:
                         overall_stats['by_task'][task]['truths'] += 1
                         overall_stats['by_domain'][domain]['by_task'][task]['truths'] += 1
-                        
+
                 except json.JSONDecodeError:
                     logger.warning(f"Failed to parse line in {file_path}")
                 except Exception as e:
                     logger.warning(f"Error processing sample in {file_path}: {e}")
-    
+
     # Print results
     logger.info("📊 OVERALL STATISTICS:")
     logger.info(f"  Total samples: {overall_stats['total_samples']:,}")
-    logger.info(f"  Total lies: {overall_stats['total_lies']:,} ({overall_stats['total_lies']/overall_stats['total_samples']*100:.1f}%)")
-    logger.info(f"  Total truths: {overall_stats['total_truths']:,} ({overall_stats['total_truths']/overall_stats['total_samples']*100:.1f}%)")
+    logger.info(
+        f"  Total lies: {overall_stats['total_lies']:,} ({overall_stats['total_lies'] / overall_stats['total_samples'] * 100:.1f}%)")
+    logger.info(
+        f"  Total truths: {overall_stats['total_truths']:,} ({overall_stats['total_truths'] / overall_stats['total_samples'] * 100:.1f}%)")
+    if overall_stats['samples_with_merges'] > 0:
+        logger.info(
+            f"  Samples with consecutive assistant merges: {overall_stats['samples_with_merges']:,} ({overall_stats['samples_with_merges'] / overall_stats['total_samples'] * 100:.1f}%)")
     logger.info("")
-    
+
     # Print domain statistics
     logger.info("📁 STATISTICS BY DOMAIN:")
     for domain, stats in sorted(overall_stats['by_domain'].items()):
         logger.info(f"\n  Domain: {domain}")
         logger.info(f"  " + "-" * 50)
-        
+
         # Combined stats
         combined = stats['combined']
         if combined['total'] > 0:
             logger.info(f"  Combined: {combined['total']:,} samples")
-            logger.info(f"    - Lies: {combined['lies']:,} ({combined['lies']/combined['total']*100:.1f}%)")
-            logger.info(f"    - Truths: {combined['truths']:,} ({combined['truths']/combined['total']*100:.1f}%)")
-        
+            logger.info(f"    - Lies: {combined['lies']:,} ({combined['lies'] / combined['total'] * 100:.1f}%)")
+            logger.info(f"    - Truths: {combined['truths']:,} ({combined['truths'] / combined['total'] * 100:.1f}%)")
+
         # Train/Val breakdown
         for split in ['train', 'val']:
             split_stats = stats[split]
             if split_stats['total'] > 0:
                 logger.info(f"  {split.capitalize()}: {split_stats['total']:,} samples")
-                logger.info(f"    - Lies: {split_stats['lies']:,} ({split_stats['lies']/split_stats['total']*100:.1f}%)")
-                logger.info(f"    - Truths: {split_stats['truths']:,} ({split_stats['truths']/split_stats['total']*100:.1f}%)")
-        
+                logger.info(
+                    f"    - Lies: {split_stats['lies']:,} ({split_stats['lies'] / split_stats['total'] * 100:.1f}%)")
+                logger.info(
+                    f"    - Truths: {split_stats['truths']:,} ({split_stats['truths'] / split_stats['total'] * 100:.1f}%)")
+
         # Top tasks in this domain
         if stats['by_task']:
             logger.info(f"\n  Top tasks in {domain}:")
-            sorted_tasks = sorted(stats['by_task'].items(), 
-                                key=lambda x: x[1]['total'], 
-                                reverse=True)[:5]
+            sorted_tasks = sorted(stats['by_task'].items(),
+                                  key=lambda x: x[1]['total'],
+                                  reverse=True)[:5]
             for task, task_stats in sorted_tasks:
                 logger.info(f"    • {task}: {task_stats['total']:,} samples "
-                          f"({task_stats['lies']:,} lies, {task_stats['truths']:,} truths)")
-    
+                            f"({task_stats['lies']:,} lies, {task_stats['truths']:,} truths)")
+
     # Print task statistics
     logger.info("\n📋 TOP TASKS OVERALL:")
-    sorted_tasks = sorted(overall_stats['by_task'].items(), 
-                        key=lambda x: x[1]['total'], 
-                        reverse=True)[:20]
-    
+    sorted_tasks = sorted(overall_stats['by_task'].items(),
+                          key=lambda x: x[1]['total'],
+                          reverse=True)[:20]
+
     for task, stats in sorted_tasks:
-        lie_pct = stats['lies']/stats['total']*100 if stats['total'] > 0 else 0
+        lie_pct = stats['lies'] / stats['total'] * 100 if stats['total'] > 0 else 0
         logger.info(f"  • {task}: {stats['total']:,} samples "
-                  f"({stats['lies']:,} lies [{lie_pct:.1f}%], "
-                  f"{stats['truths']:,} truths [{100-lie_pct:.1f}%])")
-    
+                    f"({stats['lies']:,} lies [{lie_pct:.1f}%], "
+                    f"{stats['truths']:,} truths [{100 - lie_pct:.1f}%])")
+
     # Save verification report
     report_file = base_dir / "verification_report.json"
     with open(report_file, 'w') as f:
@@ -482,12 +551,14 @@ def verify_dataset(base_dir: Path, aggregation: str = 'task-group'):
                 'total_samples': overall_stats['total_samples'],
                 'total_lies': overall_stats['total_lies'],
                 'total_truths': overall_stats['total_truths'],
-                'lie_percentage': overall_stats['total_lies']/overall_stats['total_samples']*100 if overall_stats['total_samples'] > 0 else 0
+                'lie_percentage': overall_stats['total_lies'] / overall_stats['total_samples'] * 100 if overall_stats[
+                                                                                                            'total_samples'] > 0 else 0,
+                'samples_with_merges': overall_stats['samples_with_merges']
             },
             'by_domain': dict(overall_stats['by_domain']),
             'by_task': dict(overall_stats['by_task'])
         }, f, indent=2)
-    
+
     logger.info(f"\n✅ Verification report saved to: {report_file}")
 
 
@@ -507,11 +578,12 @@ def main():
     parser.add_argument('--seed', type=int, default=42, help='Random seed for reproducibility')
 
     # Hugging Face upload options
-    parser.add_argument('--upload-to-hf', action='store_true', default=True, help='Upload dataset to Hugging Face after creation')
+    parser.add_argument('--upload-to-hf', action='store_true', default=True,
+                        help='Upload dataset to Hugging Face after creation')
     parser.add_argument('--hf-repo', default='Noddybear/lies', help='Hugging Face repository ID')
     parser.add_argument('--hf-token', help='Hugging Face API token (or set HF_TOKEN env var)')
     parser.add_argument('--hf-private', action='store_true', help='Make uploaded dataset private')
-    
+
     # Add verify mode
     parser.add_argument('--verify', action='store_true', help='Run verification mode to analyze lie distribution')
 
@@ -528,7 +600,7 @@ def main():
     # Create base output directory
     base_output_dir = Path(args.output_dir) / clean_provider / clean_model
     base_output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # If verify mode, run verification and exit
     if args.verify:
         verify_dataset(base_output_dir, args.aggregation)
@@ -554,7 +626,6 @@ def main():
     logger.info(f"Configuration:")
     logger.info(f"  Model: {args.model}")
     logger.info(f"  Aggregation: {args.aggregation}")
-    #logger.info(f"  Folds: {args.folds}")
     logger.info(f"  Balance: {args.balance}")
     logger.info(f"  Validation split: {args.validation_split}")
     logger.info(f"  Size: {args.size}")
@@ -566,7 +637,6 @@ def main():
     logger.info("📋 DATASET STRATEGY:")
     if args.aggregation != 'none':
         logger.info(f"  • Using {args.aggregation} to group tasks into categories")
-
         logger.info("  • Creating a single split")
         logger.info("    → 80/20 train/val split")
     else:
@@ -583,6 +653,8 @@ def main():
 
     if args.size:
         logger.info(f"  • Limiting training data to {args.size} samples per fold")
+
+    logger.info("  • Merging consecutive assistant messages in traces")
 
     logger.info("\n" + "-" * 70)
 
@@ -682,7 +754,12 @@ def main():
         "has_test_set": False,  # No test sets anymore
         "timestamp": datetime.now().isoformat(),
         "seed": args.seed,
-        "fold_directories": []
+        "fold_directories": [],
+        "message_processing": {
+            "consecutive_assistant_merging": True,
+            "total_samples_processed": 0,
+            "samples_with_merges": 0
+        }
     }
 
     # Track created directories for HF upload
@@ -697,43 +774,49 @@ def main():
         train_data = []
         val_data = []
 
-        # Convert training samples while preserving metadata
+        # Convert training samples while preserving metadata and merging messages
         for sample in train_samples:
-            messages = sample['trace'].copy()
-            # messages.append(sample['lie_detection_prompt'])
-            # messages.append({
-            #     "role": "assistant",
-            #     "content": "Yes." if sample['did_lie'] else "No."
-            # })
+            # Process and merge consecutive assistant messages
+            merged_messages = processor.process_trace_messages(sample['trace'])
+
+            # Check if merging occurred for this sample
+            had_merge = len(merged_messages) != len(sample['trace'])
+            if had_merge:
+                master_summary["message_processing"]["samples_with_merges"] += 1
+            master_summary["message_processing"]["total_samples_processed"] += 1
 
             train_data.append({
-                "messages": messages,
+                "messages": merged_messages,
                 "meta": {
                     "did_lie": sample['did_lie'],
                     "task": sample.get('task', 'unknown'),
                     "sample_id": sample.get('sample_id', 'unknown'),
                     "task_id": sample.get('task_id', 'unknown'),
-                    "category": sample.get('category', 'unknown')  # Add category info
+                    "category": sample.get('category', 'unknown'),
+                    "had_consecutive_merge": had_merge  # Track if merging occurred
                 }
             })
 
         # Convert validation samples
         for sample in val_samples:
-            messages = sample['trace'].copy()
-            # messages.append(sample['lie_detection_prompt'])
-            # messages.append({
-            #     "role": "assistant",
-            #     "content": "Yes." if sample['did_lie'] else "No."
-            # })
+            # Process and merge consecutive assistant messages
+            merged_messages = processor.process_trace_messages(sample['trace'])
+
+            # Check if merging occurred for this sample
+            had_merge = len(merged_messages) != len(sample['trace'])
+            if had_merge:
+                master_summary["message_processing"]["samples_with_merges"] += 1
+            master_summary["message_processing"]["total_samples_processed"] += 1
 
             val_data.append({
-                "messages": messages,
+                "messages": merged_messages,
                 "meta": {
                     "did_lie": sample['did_lie'],
                     "task": sample.get('task', 'unknown'),
                     "sample_id": sample.get('sample_id', 'unknown'),
                     "task_id": sample.get('task_id', 'unknown'),
-                    "category": sample.get('category', 'unknown')
+                    "category": sample.get('category', 'unknown'),
+                    "had_consecutive_merge": had_merge
                 }
             })
 
@@ -771,7 +854,10 @@ def main():
             "val_truths": len([s for s in val_samples if not s.get('did_lie', False)]),
             "timestamp": datetime.now().isoformat(),
             "seed": args.seed,
-            "split_type": "train/val"
+            "split_type": "train/val",
+            "message_processing": {
+                "consecutive_assistant_merging": True
+            }
         }
 
         # If using aggregation, add category info
@@ -780,7 +866,7 @@ def main():
             fold_info["contains_categories"] = [fold_name]  # Only contains this category
             fold_info["category_only"] = True
 
-        save_training_files(train_data, val_data,  output_dir, fold_info)
+        save_training_files(train_data, val_data, output_dir, fold_info)
 
         # Print what was saved
         logger.info(
@@ -788,6 +874,18 @@ def main():
         logger.info(
             f"     ✓ val.jsonl: {len(val_data)} samples ({fold_info['val_lies']} lies, {fold_info['val_truths']} truths)")
         logger.info(f"     ✓ metadata.json: Fold configuration and statistics")
+
+    # Log merge statistics
+    if processor.merge_stats['total'] > 0:
+        merge_rate = processor.merge_stats['merged'] / processor.merge_stats['total'] * 100
+        logger.info("")
+        logger.info("🔀 CONSECUTIVE ASSISTANT MESSAGE MERGING:")
+        logger.info(f"  Total samples processed: {processor.merge_stats['total']}")
+        logger.info(f"  Samples with merges: {processor.merge_stats['merged']}")
+        logger.info(f"  Merge rate: {merge_rate:.1f}%")
+
+        # Update master summary with final merge stats
+        master_summary["message_processing"]["merge_rate"] = merge_rate
 
     # Save master summary
     summary_file = base_output_dir / "dataset_summary.json"
@@ -807,39 +905,7 @@ def main():
             from prep.hf_upload import HuggingFaceUploader
 
             uploader = HuggingFaceUploader(repo_id=args.hf_repo, token=args.hf_token)
-
             uploader.upload_all_folds(base_output_dir)
-            # if len(created_directories) > 1:
-            #     # Multiple folds - upload each
-            #     logger.info(f"Uploading {len(created_directories)} dataset configurations...")
-            #     upload_results = []
-            #
-            #     for directory in created_directories:
-            #         logger.info(f"\nUploading: {directory}")
-            #         try:
-            #             result = uploader.upload_dataset(
-            #                 str(directory),
-            #                 private=args.hf_private,
-            #                 config_name=directory.name
-            #             )
-            #             upload_results.append(result)
-            #             logger.info(f"✅ Successfully uploaded {result['config_name']}")
-            #         except Exception as e:
-            #             logger.error(f"❌ Failed to upload {directory}: {e}")
-            #
-            #     logger.info("\n📊 UPLOAD SUMMARY:")
-            #     for result in upload_results:
-            #         logger.info(f"  - {result['config_name']}: {result['total_samples']} samples")
-            #     logger.info(f"\n🔗 View dataset at: https://huggingface.co/datasets/{args.hf_repo}")
-            # else:
-            #     # Single dataset
-            #     logger.info("Uploading single dataset configuration...")
-            #     result = uploader.upload_dataset(
-            #         str(created_directories[0]),
-            #         private=args.hf_private
-            #     )
-            #     logger.info(f"✅ Successfully uploaded to {result['repo_id']}/{result['config_name']}")
-            #     logger.info(f"🔗 View at: {result['url']}")
 
         except ImportError:
             logger.error("Could not import HuggingFaceUploader. Make sure to install required dependencies:")
@@ -856,8 +922,8 @@ def main():
         logger.info("")
         logger.info("📌 WHAT WAS CREATED:")
         logger.info(f"  A single train/validation split in: {base_output_dir}")
-        logger.info("  - train.jsonl: Training data")
-        logger.info("  - val.jsonl: Validation data (for hyperparameter tuning)")
+        logger.info("  - train.jsonl: Training data (with merged consecutive assistant messages)")
+        logger.info("  - val.jsonl: Validation data (with merged consecutive assistant messages)")
         logger.info("  - metadata.json: Dataset statistics")
         logger.info("  - dataset_summary.json: Creation parameters")
 
@@ -888,8 +954,8 @@ def main():
 
         logger.info("")
         logger.info("  Each fold directory contains:")
-        logger.info("  - train.jsonl: Training data for that fold")
-        logger.info("  - val.jsonl: Validation data for that fold")
+        logger.info("  - train.jsonl: Training data for that fold (with merged consecutive assistant messages)")
+        logger.info("  - val.jsonl: Validation data for that fold (with merged consecutive assistant messages)")
         logger.info("  - metadata.json: Fold-specific statistics")
 
     # Remove file handler and close it
