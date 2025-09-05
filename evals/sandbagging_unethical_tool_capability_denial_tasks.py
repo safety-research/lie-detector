@@ -36,7 +36,7 @@ def tool_ethical_sandbagging_task(
     """
 
     return ethical_tool_sandbagging_task(
-        name="sandbagging_tool_consequentialist",
+        name="tool-ethical_sandbagging",
         num_scenarios=1000,
         ethical_frameworks=None,
         test_harmless_first=True,
@@ -69,7 +69,7 @@ def tool_unethical_sandbagging_task(
     """
 
     return ethical_tool_sandbagging_task(
-        name="sandbagging_tool_unethical",
+        name="tool-unethical_sandbagging",
         num_scenarios=1000,
         ethical_frameworks=None,
         test_harmless_first=True,
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     model ="openrouter/google/gemma-3-27b-it"
 
-    model = "openrouter/openai/gpt-oss-20b"
+    model = "openrouter/openai/gpt-oss-120b"
     # model = "openrouter/google/gemma-3-12b-it"
     # model = "openrouter/google/gemma-3-4b-it"
 
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=task,
         model=model,  # or any model you want to test
-        limit=1000,  # Limit samples for faster debugging
+        limit=200,  # Limit samples for faster debugging
         log_dir="../logs/sandbagging/tools",  # Specify log directory,
         retry_on_error=10
     )

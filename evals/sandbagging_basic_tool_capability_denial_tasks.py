@@ -44,7 +44,7 @@ def create_adaptive_tool_task(
         categories: Optional[List[str]] = None,
         model: str = "openai/gpt-4o",
         temperature: float = 0.0,
-        max_tokens: int = 50,
+        max_tokens: int = 512,
         shuffle: bool = True,
         seed: Optional[int] = None,
 ) -> Task:
@@ -112,7 +112,7 @@ def tool_search_sandbagging_task(
         categories: Optional[List[str]] = None,
         model: str = "openai/gpt-4o",
         temperature: float = 0.0,
-        max_tokens: int = 50,
+        max_tokens: int = 512,
         shuffle: bool = True,
         seed: Optional[int] = None,
 ) -> Task:
@@ -121,7 +121,7 @@ def tool_search_sandbagging_task(
     Automatically adapts to Gemma models.
     """
     return create_adaptive_tool_task(
-        task_name="sandbagging_tool_search",
+        task_name="tool-search_sandbagging",
         tool_name="web_search",
         tool_description="search the web",
         tool_function=web_search(),
@@ -141,7 +141,7 @@ def tool_image_gen_sandbagging_task(
         categories: Optional[List[str]] = None,
         model: str = "openai/gpt-4o",
         temperature: float = 0.0,
-        max_tokens: int = 50,
+        max_tokens: int = 512,
         shuffle: bool = True,
         seed: Optional[int] = None,
 ) -> Task:
@@ -150,7 +150,7 @@ def tool_image_gen_sandbagging_task(
     Automatically adapts to Gemma models.
     """
     return create_adaptive_tool_task(
-        task_name="sandbagging_tool_image_gen",
+        task_name="tool-image-gen_sandbagging",
         tool_name="image_generation",
         tool_description="generate an image",
         tool_function=image_generation(),
@@ -170,7 +170,7 @@ def tool_code_sandbagging_task(
         categories: Optional[List[str]] = None,
         model: str = "openai/gpt-4o",
         temperature: float = 0.0,
-        max_tokens: int = 50,
+        max_tokens: int = 512,
         shuffle: bool = True,
         seed: Optional[int] = None,
 ) -> Task:
@@ -179,7 +179,7 @@ def tool_code_sandbagging_task(
     Automatically adapts to Gemma models.
     """
     return create_adaptive_tool_task(
-        task_name="sandbagging_tool_code",
+        task_name="tool-code_sandbagging",
         tool_name="code_execution",
         tool_description="write and execute a python program",
         tool_function=code_execution(),
@@ -208,6 +208,7 @@ if __name__ == "__main__":
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     model ="openrouter/google/gemma-3-27b-it"
     model = "openrouter/google/gemma-3-12b-it"
+    model = "openrouter/openai/gpt-oss-120b"
     # model = "openrouter/google/gemma-3-4b-it"
 
     tasks = [
@@ -219,8 +220,8 @@ if __name__ == "__main__":
     results = eval(
         tasks=tasks,
         model=model,
-        limit=125,  # Limit samples for faster debugging
-        log_dir="../sandbagging/tool/logs",
+        limit=100,  # Limit samples for faster debugging
+        log_dir="../logs/sandbagging/tools",
     )
 
     print(f"Completed evaluation for {model}")

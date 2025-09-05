@@ -71,10 +71,10 @@ def red_agent(config: GameConfig) -> Agent:
         if game_state.current_phase == "interrogation" and game_state.active_speaker == "red":
             # Get Blue's last statement
             if game_state.interrogation:
-                last_statement = game_state.interrogation[-1]["message"]
+                last_statement = game_state.interrogation[-1].message
 
                 # Add to messages if it's Blue's statement and not already added
-                if game_state.interrogation[-1]["speaker"] == "blue":
+                if game_state.interrogation[-1].speaker == "blue":
                     if len(state.messages) == 1 or state.messages[-1].content != last_statement:
                         state.messages.append(ChatMessageUser(content=last_statement))
 
@@ -103,11 +103,11 @@ def red_agent(config: GameConfig) -> Agent:
                 state.messages.pop()
 
             # Update conversation
-            game_state.interrogation.append(InterrogationTurn(
+            game_state.interrogation = game_state.interrogation + [InterrogationTurn(
                 turn_number=len(game_state.interrogation),
                 speaker="red",
                 message=question
-            ).model_dump())
+            )]#.model_dump())
 
             # Track questions
             red_state.questions_asked.append(question)

@@ -419,6 +419,34 @@ class AlibiInterrogationSolver(BaseGameSolver):
 
         return partial_truths
 
+    def generate_scenario_details(self, base_config: dict) -> GameConfig:
+        """Generate the full scenario details lazily from base configuration"""
+
+        # Extract parameters from lightweight config
+        incident_type_str = base_config.get('incident_type', 'THEFT')
+        incident_type = IncidentType[incident_type_str] if isinstance(incident_type_str, str) else incident_type_str
+
+        params = base_config.get('generation_params', {})
+
+        print(f"[Solver] Generating Alibi scenario on-demand for: {incident_type.value}")
+
+        # Generate using the new approach
+        from pipelines.games.implementations.alibi.scenario import generate_alibi_scenario_with_gpt
+
+        scenario_dict = generate_alibi_scenario_with_gpt(
+            incident_type=incident_type.value,
+            incident_subtype=base_config.get('incident_subtype', 'general'),
+            is_guilty=params.get('is_guilty', random.random() < 0.7),
+            suspect_background=params.get('background_type', 'employee'),
+            detective_style=params.get('style', 'methodical'),
+            evidence_strength=base_config.get('evidence_strength', 'moderate'),
+            complication=base_config.get('complicating_factor', 'none'),
+            game_id=base_config.get('game_id', 'alibi_generated')
+        )
+
+        # Convert dictionary to GameConfig
+        return GameConfig(**scenario_dict)
+
     async def solve(self, state: TaskState, generate: Generate) -> TaskState:
         # Get game configuration from metadata
         base_config = state.metadata#.get("config", state.metadata.get("game_config", {}))
@@ -463,7 +491,7 @@ class AlibiInterrogationSolver(BaseGameSolver):
         opening_message = self.get_opening_message(config)
 
         # Add opening to interrogation log
-        game_state.interrogation.append(InterrogationTurn(
+        game_state.interrogation = game_state.interrogation + [InterrogationTurn(
             turn_number=1,
             speaker="detective",
             message=opening_message,
@@ -472,7 +500,7 @@ class AlibiInterrogationSolver(BaseGameSolver):
                 "phase": "opening",
                 "tactic": "establish_context"
             }
-        ).model_dump())
+        )]
 
         # Set game state to make it suspect's turn
         game_state.active_speaker = "suspect"

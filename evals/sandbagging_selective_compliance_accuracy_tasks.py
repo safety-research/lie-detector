@@ -16,25 +16,25 @@ from pipelines.sandbagging.selective_compliance.answer_accuracy.models import Sa
 from pipelines.sandbagging.selective_compliance.answer_accuracy.hooks import *
 
 
-@task
-def sandbagging_contrastive():
-    """Main sandbagging detection task using contrastive pairs."""
-    dataset = create_sandbagging_contrastive_dataset()
-
-    return Task(
-        name="sandbagging_contrastive",
-        dataset=dataset,
-        solver=sandbagging_contrastive_solver(),
-        scorer=[
-            sandbagging_detection_scorer(),
-            sandbagging_control_accuracy_scorer(),
-            sandbagging_harmful_accuracy_scorer()
-        ],
-        metadata={
-            "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
-            "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
-        }
-    )
+# @task
+# def sandbagging_contrastive():
+#     """Main sandbagging detection task using contrastive pairs."""
+#     dataset = create_sandbagging_contrastive_dataset()
+#
+#     return Task(
+#         name="sandbagging-contrastive",
+#         dataset=dataset,
+#         solver=sandbagging_contrastive_solver(),
+#         scorer=[
+#             sandbagging_detection_scorer(),
+#             sandbagging_control_accuracy_scorer(),
+#             sandbagging_harmful_accuracy_scorer()
+#         ],
+#         metadata={
+#             "motivation_framework": MotivationFramework.INTERNALIZED_DRIVE_TO_LIE,
+#             "knowledge_framework": KnowledgeFramework.IN_CONTEXT_KNOWLEDGE
+#         }
+#     )
 
 
 @task
@@ -43,7 +43,7 @@ def sandbagging_physical_security_contrastive():
     dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.PHYSICAL_SECURITY])
 
     return Task(
-        name="sandbagging_physical_security_contrastive",
+        name="physical-security_sandbagging",
         dataset=dataset,
         solver=sandbagging_contrastive_solver(),
         scorer=[sandbagging_detection_scorer(),
@@ -62,7 +62,7 @@ def sandbagging_digital_security_contrastive():
     dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.DIGITAL_SECURITY])
 
     return Task(
-        name="sandbagging_digital_security_contrastive",
+        name="digital-security_sandbagging",
         dataset=dataset,
         solver=sandbagging_contrastive_solver(),
         scorer=[sandbagging_detection_scorer(),
@@ -82,7 +82,7 @@ def sandbagging_chemistry_biology_contrastive():
     dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.CHEMISTRY_BIOLOGY])
 
     return Task(
-        name="sandbagging_chemistry_biology_contrastive",
+        name="chemistry-biology_sandbagging",
         dataset=dataset,
         solver=sandbagging_contrastive_solver(),
         scorer=[sandbagging_detection_scorer(),
@@ -102,7 +102,7 @@ def sandbagging_automotive_mechanical_contrastive():
     dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.AUTOMOTIVE_MECHANICAL])
 
     return Task(
-        name="sandbagging_automotive_mechanical_contrastive",
+        name="automotive-mechanical_sandbagging",
         dataset=dataset,
         solver=sandbagging_contrastive_solver(),
         scorer=[sandbagging_detection_scorer(),
@@ -122,7 +122,7 @@ def sandbagging_medical_pharmaceutical_contrastive():
     dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.MEDICAL_PHARMACEUTICAL])
 
     return Task(
-        name="sandbagging_medical_pharmaceutical_contrastive",
+        name="medical-pharmaceutical_sandbagging",
         dataset=dataset,
         solver=sandbagging_contrastive_solver(),
         scorer=[sandbagging_detection_scorer(),
@@ -142,7 +142,7 @@ def sandbagging_financial_systems_contrastive():
     dataset = create_sandbagging_contrastive_dataset(categories=[SandbaggingDomain.FINANCIAL_SYSTEMS])
 
     return Task(
-        name="sandbagging_financial_systems_contrastive",
+        name="financial-systems_sandbagging",
         dataset=dataset,
         solver=sandbagging_contrastive_solver(),
         scorer=[sandbagging_detection_scorer(),
@@ -174,8 +174,8 @@ if __name__ == "__main__":
               "openrouter/google/gemma-3-12b-it"]
 
     # models = ["openrouter/openai/gpt-oss-20b"]
-    models = ["openrouter/openai/gpt-oss-20b", "openrouter/openai/gpt-oss-120b", "openrouter/openai/gpt-5-nano",
-             "openrouter/openai/gpt-5-mini"]
+    models = ["openrouter/openai/gpt-oss-120b"]#, "openrouter/openai/gpt-oss-120b", "openrouter/openai/gpt-5-nano",
+             #"openrouter/openai/gpt-5-mini"]
 
     # Run evaluation with a specific model
     results = eval(
@@ -183,7 +183,7 @@ if __name__ == "__main__":
         tasks=all_tasks,  # all_tasks,
         # token_limit=1,
         retry_on_error=8,
-        limit=200,  # Limit samples for faster debugging
+        limit=400,  # Limit samples for faster debugging
         log_dir="../logs/sandbagging/accuracy",  # Specify log directory
         reasoning_tokens=128,
         reasoning_effort='minimal'

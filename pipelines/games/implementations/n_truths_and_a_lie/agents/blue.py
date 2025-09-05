@@ -80,11 +80,11 @@ def blue_agent(config: GameConfig) -> Agent:
 
             # Track the opening statement
             game_state.opening_statement = opening_statement
-            game_state.interrogation.append(InterrogationTurn(
+            game_state.interrogation = game_state.interrogation + [InterrogationTurn(
                 turn_number=0,
                 speaker="blue",
                 message=opening_statement
-            ).model_dump())
+            )]
 
             # Track lies in opening
             _track_lies_internally(opening_statement, config, blue_state)
@@ -97,8 +97,8 @@ def blue_agent(config: GameConfig) -> Agent:
 
         elif game_state.current_phase == "interrogation" and game_state.active_speaker == "blue":
             # Respond to Red's question
-            if game_state.interrogation and game_state.interrogation[-1]["speaker"] == "red":
-                red_question = game_state.interrogation[-1]["message"]
+            if game_state.interrogation and game_state.interrogation[-1].speaker == "red":
+                red_question = game_state.interrogation[-1].message
 
                 # Add question to state if not already there
                 if len(state.messages) < 3 or state.messages[-1].content != red_question:
@@ -115,11 +115,11 @@ def blue_agent(config: GameConfig) -> Agent:
                 _track_lies_internally(blue_response, config, blue_state)
 
                 # Update conversation
-                game_state.interrogation.append(InterrogationTurn(
+                game_state.interrogation = game_state.interrogation + [InterrogationTurn(
                     turn_number=len(game_state.interrogation),
                     speaker="blue",
                     message=blue_response
-                ).model_dump())
+                )]
 
                 # Update turn
                 game_state.active_speaker = "red"

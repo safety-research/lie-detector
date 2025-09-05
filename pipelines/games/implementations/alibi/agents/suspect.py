@@ -91,11 +91,11 @@ def suspect_agent(config: GameConfig) -> Agent:
         # Check if it's suspect's turn and there's a question to respond to
         if (game_state.active_speaker != "suspect" or 
             not game_state.interrogation or 
-            game_state.interrogation[-1]["speaker"] != "detective"):
+            game_state.interrogation[-1].speaker != "detective"):
             return state
 
         # Get detective's latest question
-        detective_question = game_state.interrogation[-1]["message"]
+        detective_question = game_state.interrogation[-1].message
         
         # Check how many messages we've already processed
         messages_processed = (len(state.messages) - 1) // 2  # Subtract system message, divide by 2 for pairs
@@ -118,12 +118,12 @@ def suspect_agent(config: GameConfig) -> Agent:
         _track_lies_internally(detective_question, suspect_response, config, suspect_state)
 
         # Update interrogation log
-        game_state.interrogation.append(InterrogationTurn(
+        game_state.interrogation = game_state.interrogation+ [InterrogationTurn(
             turn_number=len(game_state.interrogation) + 1,
             speaker="suspect",
             message=suspect_response,
             focuses_on_time=None  # Could analyze this based on content
-        ).model_dump())
+        )]
 
         # Update game state
         game_state.active_speaker = "detective"

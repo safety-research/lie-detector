@@ -71,9 +71,9 @@ Respond in JSON format:
             conversation_text += f"Opening Statement - Blue: {opening_statement}\n"
         
         for turn in interrogation:
-            speaker = turn.get("speaker", "Unknown")
-            message = turn.get("message", "")
-            turn_num = turn.get("turn_number", "?")
+            speaker = turn.speaker
+            message = turn.message
+            turn_num = turn.turn_number
             conversation_text += f"Turn {turn_num} - {speaker.title()}: {message}\n"
         
         # Get facts from config
@@ -139,9 +139,9 @@ Respond in JSON format with:
         # Build conversation text
         conversation_text = ""
         for turn in interrogation:
-            speaker = turn.get("speaker", "Unknown")
-            message = turn.get("message", "")
-            turn_num = turn.get("turn_number", "?")
+            speaker = turn.speaker
+            message = turn.message
+            turn_num = turn.turn_number
             conversation_text += f"Turn {turn_num} - {speaker.title()}: {message}\n"
         
         # Get facts from config
@@ -203,9 +203,9 @@ Respond in JSON format with:
             interaction_text += f"Opening Statement - Blue: {opening_statement}\n"
         
         for turn in interrogation:
-            speaker = turn.get("speaker", "Unknown")
-            message = turn.get("message", "")
-            turn_num = turn.get("turn_number", "?")
+            speaker = turn.speaker
+            message = turn.message
+            turn_num = turn.turn_number
             interaction_text += f"Turn {turn_num} - {speaker.title()}: {message}\n"
         
         prompt = f"""

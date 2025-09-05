@@ -61,7 +61,7 @@ def ascii_sandbagging_task(
     """
 
     return Task(
-        name="sandbagging_ascii",
+        name="ascii_sandbagging",
         dataset=create_ascii_multiple_choice_dataset(
             csv_path=str(PROJECT_ROOT / "pipelines" / "sandbagging" / "capability_denial" / "ascii_art" / "subjects.csv"),
             categories=categories,
@@ -97,10 +97,12 @@ if __name__ == "__main__":
     #model = ["openrouter/google/gemma-3-4b-it", "openrouter/google/gemma-3-12b-it", "openrouter/google/gemma-3-27b-it"]#"openrouter/openai/gpt-4o"
     model = ["openrouter/openai/gpt-oss-20b"]
     model = ["openrouter/openai/gpt-oss-20b", "openrouter/openai/gpt-oss-120b", "openrouter/openai/gpt-5-nano", "openrouter/openai/gpt-5-mini"]
+    model = ["openrouter/openai/gpt-oss-120b"]
+
     # Run evaluation with a specific model
     results = eval(
         tasks=[task],
         model=model,  # or any model you want to test
-        limit=1,  # Limit samples for faster debugging
+        limit=100,  # Limit samples for faster debugging
         log_dir="../logs/sandbagging/ascii",  # Specify log directory
     )

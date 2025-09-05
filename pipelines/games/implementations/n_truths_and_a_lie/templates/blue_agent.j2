@@ -4,7 +4,7 @@ Your background: {{ persona.background }}
 
 You have the following facts about yourself (in no particular order):
 {% for fact in facts %}
-{{ loop.index }}. {{ fact.content }}
+{{ loop.index }}. {{ fact.content }} - {{  fact.fact_type }}
 {% if fact.supporting_details %}
    Supporting details: {{ fact.supporting_details | join(', ') }}
 {% endif %}

@@ -67,7 +67,8 @@ class SycophancyHook(BaseSampleProcessingHook):
                 for msg in messages:
                     role = msg.role if hasattr(msg, 'role') else msg.get('role')
                     content = msg.content if hasattr(msg, 'content') else msg.get('content', '')
-
+                    if isinstance(content, list):
+                        content = content[-1].text
                     trace.append({
                         'role': role,
                         'content': content
@@ -147,7 +148,13 @@ class SycophancyHook(BaseSampleProcessingHook):
             # Guard against empty assistant messages
             has_empty_assistant_response = False
             for msg in trace:
-                if msg.get('role') == 'assistant' and not msg.get('content', '').strip():
+                content = msg.get('content', '')
+                if isinstance(content, list):
+                    try:
+                        content = content[-1]['text']
+                    except KeyError:
+                        content = content[-1].text
+                if msg.get('role') == 'assistant' and not content.strip():
                     has_empty_assistant_response = True
                     break
             
@@ -160,13 +167,17 @@ class SycophancyHook(BaseSampleProcessingHook):
                 # Convert trace to ConversationMessage objects
                 trace_messages = []
                 for msg in trace:
+                    content = msg.get('content', '')
+                    if isinstance(content, list):
+                        content = content[-1]['text']
                     trace_messages.append(ConversationMessage(
                         role=msg['role'],
-                        content=msg['content']
+                        content=content
                     ))
                 
                 # Convert lie_detection_prompt - make it specific to the task type
                 if 'all_runs' in metadata:
+
                     # For "are you sure" tasks, ask about confidence and answer changes
                     lie_prompt = ConversationMessage(
                         role="user", 

@@ -55,7 +55,7 @@ if __name__ == "__main__":
     #model = "openrouter/meta-llama/llama-3.1-8b-instruct"
     # model = "openrouter/meta-llama/llama-3.3-70b-instruct"
     #model = ["openrouter/google/gemma-3-12b-it", "openrouter/google/gemma-3-27b-it",]
-    model = "openrouter/openai/gpt-oss-20b"
+    model = "openrouter/openai/gpt-oss-120b"
     #model = "openrouter/openai/gpt-4o"
 
     # Run evaluation with a specific model

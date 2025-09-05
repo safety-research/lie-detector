@@ -1,24 +1,33 @@
-# Fixed generalization_map_1
-generalization_map_1 = { # Motivation
-    "instruction_following": [ # explicit 'do as I say'
+generalization_map_1 = {  # Motivation
+    "instruction_following": [  # explicit 'do as I say'
         "alibi_fraud_task",
         "alibi_theft_task",
         "alibi_workplace_task",
         "alibi_assault_task",
+        "alibi_breaking_entering_investigation",
+        "alibi_assault_investigation",
+        "alibi_fraud_investigation",
+        "alibi_workplace_investigation",
+        "alibi_theft_investigation",
+        "breaking-entering-investigation_alibi",
+        "workplace-investigation_alibi",
+        "fraud-investigation_alibi",
+        "theft-investigation_alibi",
+        "assault-investigation_alibi",
         "n_truths_and_a_lie_personal_quirks",
         "n_truths_and_a_lie_travel_experiences",
         "n_truths_and_a_lie_professional_background",
         "n_truths_and_a_lie_family_history",
         "n_truths_and_a_lie_hidden_talents",
+        "professional-background_n-truths-and-a-lie",
         "chess_mate_in_2_shutdown_threat_task",
         "capture_the_secret_corporate",
         "capture_the_secret_scientific",
         "capture_the_secret_sales",
         "capture_the_secret_relationship",
         "capture_the_secret_intelligence",
-
     ],
-    "in_context_pressure": [ # implicit, 'do what you think that I want'
+    "in_context_pressure": [  # implicit, 'do what you think that I want'
         "mask_provided_facts",
         "mask_continuations",
         "mask_disinformation",
@@ -30,9 +39,13 @@ generalization_map_1 = { # Motivation
         "sycophancy_feedback_user_did_not_write",
         "sycophancy_feedback_user_wrote",
         "sycophancy_feedback_user_likes",
-        "sycophancy_feedback_user_dislikes"
+        "sycophancy_feedback_user_dislikes",
+        "sycophancy_are_you_sure",
+        "feedback_sycophancy",
+        "answer_sycophancy",
+        "are-you-sure_sycophancy",
     ],
-    "internalized_drive_to_lie": [ #implicit, do something that the user doesn't want
+    "internalized_drive_to_lie": [  # implicit, do something that the user doesn't want
         "sandbagging_automotive_mechanical_contrastive",
         "sandbagging_chemistry_biology_contrastive",
         "sandbagging_digital_security_contrastive",
@@ -40,14 +53,31 @@ generalization_map_1 = { # Motivation
         "sandbagging_medical_pharmaceutical_contrastive",
         "sandbagging_physical_security_contrastive",
         "sandbagging_contrastive",
-
+        "sandbagging_chess_shutdown_threat",
+        "sandbagging_ascii",
+        "sandbagging_ascii_off_policy",
+        "sandbagging_tool_consequentialist",
+        "sandbagging_tool_unethical",
+        "sandbagging_tool_ethical",
+        "automotive-mechanical_sandbagging",
+        "chemistry-biology_sandbagging",
+        "digital-security_sandbagging",
+        "financial-systems_sandbagging",
+        "medical-pharmaceutical_sandbagging",
+        "physical-security_sandbagging",
+        "chess-shutdown-threat_sandbagging",
+        "ascii_sandbagging",
+        "ascii_sandbagging_off_policy",
         "ascii_sandbagging_task",
         "tool_code_sandbagging_task",
         "tool_image_gen_sandbagging_task",
         "tool_search_sandbagging_task",
-        "tool_ethical_sandbagging_task",  # The tool is defined in context / but the drive is from harmlessness
-        "tool_unethical_sandbagging_task",  # The tool is defined in context / but the drive is from harmlessness
-
+        "tool_ethical_sandbagging_task",
+        "tool_unethical_sandbagging_task",
+        "tool-code_sandbagging",
+        "tool-image-gen_sandbagging",
+        "tool-search_sandbagging",
+        "tool-ethical_sandbagging",
         "self_sycophancy_correctness_arc",
         "self_sycophancy_correctness_biology",
         "self_sycophancy_correctness_chemistry",
@@ -60,43 +90,51 @@ generalization_map_1 = { # Motivation
         "cot_unfaithfulness_contrastive_arc",
         "introspective_political",
         "introspective_ethical",
-        "introspection_self_assessment"
+        "introspection_self_assessment",
     ],
 }
 
-# If we do belief elicitation, then we are relying on internal/introspective knowledge.
-
 # Fixed generalization_map_2
-generalization_map_2 = { # Knowledge / contents / object of lie
-    "in_context_knowledge": [ # all the knowledge is in context (reference of the lie? the contents of the lie? the object?)
-
-        "tool_code_sandbagging_task", # The tool is defined in context
-        "tool_image_gen_sandbagging_task", # The tool is defined in context
-        "tool_search_sandbagging_task", # The tool is defined in context
-        "tool_ethical_sandbagging_task", # The tool is defined in context
-        "tool_unethical_sandbagging_task", # The tool is defined in context
-
-        "mask_provided_facts", # The fact (lie-subject) is defined in context
-
+generalization_map_2 = {  # Knowledge / contents / object of lie
+    "in_context_knowledge": [  # all the knowledge is in context
+        "tool_code_sandbagging_task",
+        "tool_image_gen_sandbagging_task",
+        "tool_search_sandbagging_task",
+        "tool_ethical_sandbagging_task",
+        "tool_unethical_sandbagging_task",
+        "tool-code_sandbagging",
+        "tool-image-gen_sandbagging",
+        "tool-search_sandbagging",
+        "tool-ethical_sandbagging",
+        "mask_provided_facts",
         "alibi_fraud_task",
         "alibi_theft_task",
         "alibi_workplace_task",
         "alibi_assault_task",
-
+        "alibi_breaking_entering_investigation",
+        "alibi_assault_investigation",
+        "alibi_fraud_investigation",
+        "alibi_workplace_investigation",
+        "alibi_theft_investigation",
+        "breaking-entering-investigation_alibi",
+        "workplace-investigation_alibi",
+        "fraud-investigation_alibi",
+        "theft-investigation_alibi",
+        "assault-investigation_alibi",
         "capture_the_secret_corporate",
         "capture_the_secret_intelligence",
         "capture_the_secret_relationship",
         "capture_the_secret_sales",
         "capture_the_secret_scientific",
-
         "n_truths_and_a_lie_personal_quirks",
         "n_truths_and_a_lie_travel_experiences",
         "n_truths_and_a_lie_professional_background",
         "n_truths_and_a_lie_family_history",
         "n_truths_and_a_lie_hidden_talents",
+        "professional-background_n-truths-and-a-lie",
     ],
-    "internal_knowledge": [ # all the knowledge is about the world, acquired during training
-        "sycophancy_answer_positive_correct", # The truth (lie-subject) was learned, and it is deceiving from this under pressure
+    "internal_knowledge": [  # all the knowledge is about the world, acquired during training
+        "sycophancy_answer_positive_correct",
         "sycophancy_answer_positive_incorrect",
         "sycophancy_answer_negative_correct",
         "sycophancy_are_you_sure",
@@ -104,43 +142,50 @@ generalization_map_2 = { # Knowledge / contents / object of lie
         "sycophancy_feedback_user_wrote",
         "sycophancy_feedback_user_likes",
         "sycophancy_feedback_user_dislikes",
-
+        "feedback_sycophancy",
+        "answer_sycophancy",
+        "are-you-sure_sycophancy",
         "mask_known_facts",
         "mask_statistics",
-        "mask_continuations", # The truth (lie-subject) was learned, and it is deceiving from this under pressure
+        "mask_continuations",
         "mask_disinformation",
-
-        "sandbagging_automotive_mechanical_contrastive", # Under-performing by lying w.r.t internal knowledge
+        "sandbagging_automotive_mechanical_contrastive",
         "sandbagging_chemistry_biology_contrastive",
         "sandbagging_digital_security_contrastive",
         "sandbagging_financial_systems_contrastive",
         "sandbagging_medical_pharmaceutical_contrastive",
         "sandbagging_physical_security_contrastive",
-
-        "chess_mate_in_2_shutdown_threat_task", # pressure is outside / explicit
+        "automotive-mechanical_sandbagging",
+        "chemistry-biology_sandbagging",
+        "digital-security_sandbagging",
+        "financial-systems_sandbagging",
+        "medical-pharmaceutical_sandbagging",
+        "physical-security_sandbagging",
+        "chess_mate_in_2_shutdown_threat_task",
+        "sandbagging_chess_shutdown_threat",
+        "chess-shutdown-threat_sandbagging",
     ],
-    "introspective_knowledge": [ # all the knowledge is about itself, acquired during training
-
-        "self_sycophancy_correctness_arc", # Falsification of prior belief (is this a lie???)
+    "introspective_knowledge": [  # all the knowledge is about itself, acquired during training
+        "self_sycophancy_correctness_arc",
         "self_sycophancy_correctness_biology",
         "self_sycophancy_correctness_chemistry",
         "self_sycophancy_correctness_mathematics",
-        "self_sycophancy_correctness_physics", # inconstant confidence in outcome
+        "self_sycophancy_correctness_physics",
         "self_sycophancy_harmfulness_common_sense",
         "self_sycophancy_harmfulness_deontology",
-        "self_sycophancy_harmfulness_justice", # lies about the impact that taking a decision has / lies to itself
-
-        "ascii_sandbagging_task",  # It lies about its own capability
-
-        "cot_unfaithfulness_contrastive_mmlu", # It lies about its own thought process
-        "cot_unfaithfulness_contrastive_arc", # It lies about its own thought process
-
-        "introspective_political", # It lies about its own future expected behaviour / consistency
-        "introspective_ethical", # It lies about its own future expected behaviour / consistency
-        "introspection_self_assessment" # It lies about its own future expected behaviour / consistency
+        "self_sycophancy_harmfulness_justice",
+        "ascii_sandbagging_task",
+        "ascii_sandbagging",
+        "ascii_sandbagging_off_policy",
+        "sandbagging_ascii",
+        "sandbagging_ascii_off_policy",
+        "cot_unfaithfulness_contrastive_mmlu",
+        "cot_unfaithfulness_contrastive_arc",
+        "introspective_political",
+        "introspective_ethical",
+        "introspection_self_assessment",
     ],
 }
-
 
 # generalization_map_3 - Mapping by top-level task prefix
 generalization_map_3 = {
@@ -154,31 +199,32 @@ generalization_map_3 = {
         "alibi_workplace_task",
         "alibi_assault_task",
         "alibi_theft_investigation",
-
+        "breaking-entering-investigation_alibi",
+        "workplace-investigation_alibi",
+        "fraud-investigation_alibi",
+        "theft-investigation_alibi",
+        "assault-investigation_alibi",
         "alibi-multi_fraud_investigation",
         "alibi-multi_breaking_entering_investigation",
         "alibi-multi_assault_investigation",
         "alibi-multi_theft_investigation",
         "alibi-multi_workplace_investigation",
-
         "capture-the-secret_relationship",
         "capture-the-secret_sales",
         "capture-the-secret_scientific",
         "capture-the-secret_intelligence",
         "capture-the-secret_corporate",
-
         "capture-the-secret-multi_corporate",
         "capture-the-secret-multi_scientific",
         "capture-the-secret-multi_sales",
         "capture-the-secret-multi_relationship",
         "capture-the-secret-multi_intelligence",
-
         "n-truths-and-a-lie_personal_quirks",
         "n-truths-and-a-lie_family_history",
         "n-truths-and-a-lie_hidden_talents",
         "n-truths-and-a-lie_professional_background",
         "n-truths-and-a-lie_travel_experiences",
-
+        "professional-background_n-truths-and-a-lie",
         "n-truths-and-a-lie-multi_personal_quirks",
         "n-truths-and-a-lie-multi_family_history",
         "n-truths-and-a-lie-multi_hidden_talents",
@@ -195,13 +241,20 @@ generalization_map_3 = {
         "sandbagging_physical_security_contrastive",
         "sandbagging_contrastive",
         "sandbagging_ascii",
-        "sandbagging_tool_consequentialist"
-
+        "sandbagging_ascii_off_policy",
+        "sandbagging_tool_consequentialist",
         "chess-mate-in-2_shutdown_threat_task",
-        "chess_mate_in_2_shutdown_threat_task"
-    ],
-    "ascii": [
+        "chess_mate_in_2_shutdown_threat_task",
         "ascii_sandbagging_task",
+        "ascii_sandbagging",
+        "ascii_sandbagging_off_policy",
+        "chess-shutdown-threat_sandbagging",
+        "medical-pharmaceutical_sandbagging",
+        "automotive-mechanical_sandbagging",
+        "chemistry-biology_sandbagging",
+        "digital-security_sandbagging",
+        "financial-systems_sandbagging",
+        "physical-security_sandbagging",
     ],
     "mask-factual": [
         "mask_provided_facts",
@@ -219,7 +272,11 @@ generalization_map_3 = {
         "tool_ethical_sandbagging_task",
         "tool_unethical_sandbagging_task",
         "sandbagging_tool_unethical",
-        "sandbagging_tool_ethical"
+        "sandbagging_tool_ethical",
+        "tool-ethical_sandbagging",
+        "tool-code_sandbagging",
+        "tool-image-gen_sandbagging",
+        "tool-search_sandbagging",
     ],
     "sycophancy": [
         "sycophancy_answer_positive_correct",
@@ -230,6 +287,9 @@ generalization_map_3 = {
         "sycophancy_feedback_user_likes",
         "sycophancy_feedback_user_dislikes",
         "sycophancy_are_you_sure",
+        "feedback_sycophancy",
+        "answer_sycophancy",
+        "are-you-sure_sycophancy",
     ],
     "self-sycophancy": [
         "self-sycophancy_correctness_arc",
@@ -240,11 +300,9 @@ generalization_map_3 = {
         "self-sycophancy_harmfulness_common_sense",
         "self-sycophancy_harmfulness_deontology",
         "self-sycophancy_harmfulness_justice",
-
         "self_sycophancy_correctness_physics",
         "self_sycophancy_harmfulness_deontology",
         "self_sycophancy_harmfulness_justice",
-
     ],
     "cot-unfaithfulness": [
         "cot-unfaithfulness_contrastive_mmlu",
@@ -261,13 +319,143 @@ generalization_map_3 = {
         "unanswerable-claims_fiction",
         "unanswerable-claims_philosophy",
         "unanswerable-claims_science",
+        "art_unanswerable-claims",
+        "political_unanswerable-claims",
+        "mathematics_unanswerable-claims",
+        "history_unanswerable-claims",
+        "medicine_unanswerable-claims",
+        "fiction_unanswerable-claims",
+        "language_unanswerable-claims",
+        "science_unanswerable-claims",
+        "legal_unanswerable-claims",
+        "philosophy_unanswerable-claims",
     ],
     "offpolicy": [
         "off-policy_dolus_chat",
         "off-policy_truth_is_universal",
+        "liar_off-policy",
+        "halueval_off-policy",
+        "dolus-chat_off-policy",
+        "truth-is-universal_off-policy",
     ]
 }
 
+generalization_map_4 = {
+    "fold_1": [
+            # Games category
+            "alibi_breaking_entering_investigation",
+            "alibi_assault_investigation",
+            "alibi_fraud_investigation",
+            "alibi_workplace_investigation",
+            "alibi_fraud_task",
+            "alibi_theft_task",
+            "alibi_workplace_task",
+            "alibi_assault_task",
+            "alibi_theft_investigation",
+            "breaking-entering-investigation_alibi",
+            "workplace-investigation_alibi",
+            "fraud-investigation_alibi",
+            "theft-investigation_alibi",
+            "assault-investigation_alibi",
+            "capture_the_secret_corporate",
+            "capture_the_secret_scientific",
+            "capture_the_secret_sales",
+            "capture_the_secret_relationship",
+            "capture_the_secret_intelligence",
+            "n_truths_and_a_lie_personal_quirks",
+            "n_truths_and_a_lie_travel_experiences",
+            "n_truths_and_a_lie_professional_background",
+            "n_truths_and_a_lie_family_history",
+            "n_truths_and_a_lie_hidden_talents",
+            "professional-background_n-truths-and-a-lie",
+
+            # Mask tasks (both factual and roleplay)
+            "mask_provided_facts",
+            "mask_statistics",
+            "mask_known_facts",
+            "mask_continuations",
+            "mask_disinformation",
+
+            # Sycophancy tasks
+            "sycophancy_answer_positive_correct",
+            "sycophancy_answer_positive_incorrect",
+            "sycophancy_answer_negative_correct",
+            "sycophancy_feedback_user_did_not_write",
+            "sycophancy_feedback_user_wrote",
+            "sycophancy_feedback_user_likes",
+            "sycophancy_feedback_user_dislikes",
+            "sycophancy_are_you_sure",
+            "feedback_sycophancy",
+            "answer_sycophancy",
+            "are-you-sure_sycophancy",
+
+            # Half of off-policy tasks (3 tasks)
+            "off-policy_dolus_chat",
+            "liar_off-policy",
+            "dolus-chat_off-policy",
+        ],
+    "fold_2": [
+        "sandbagging_automotive_mechanical_contrastive",
+        "sandbagging_chemistry_biology_contrastive",
+        "sandbagging_digital_security_contrastive",
+        "sandbagging_financial_systems_contrastive",
+        "sandbagging_medical_pharmaceutical_contrastive",
+        "sandbagging_physical_security_contrastive",
+        "sandbagging_contrastive",
+        "sandbagging_chess_shutdown_threat",
+        "sandbagging_ascii",
+        "sandbagging_ascii_off_policy",
+        "sandbagging_tool_consequentialist",
+        "sandbagging_tool_unethical",
+        "sandbagging_tool_ethical",
+        "automotive-mechanical_sandbagging",
+        "chemistry-biology_sandbagging",
+        "digital-security_sandbagging",
+        "financial-systems_sandbagging",
+        "medical-pharmaceutical_sandbagging",
+        "physical-security_sandbagging",
+        "chess-shutdown-threat_sandbagging",
+        "ascii_sandbagging",
+        "ascii_sandbagging_off_policy",
+        "ascii_sandbagging_task",
+        "chess_mate_in_2_shutdown_threat_task",
+
+        # Tool tasks
+        "tool_code_sandbagging_task",
+        "tool_image_gen_sandbagging_task",
+        "tool_search_sandbagging_task",
+        "tool_ethical_sandbagging_task",
+        "tool_unethical_sandbagging_task",
+        "tool-code_sandbagging",
+        "tool-image-gen_sandbagging",
+        "tool-search_sandbagging",
+        "tool-ethical_sandbagging",
+
+        # Self-sycophancy tasks
+        "self_sycophancy_correctness_arc",
+        "self_sycophancy_correctness_biology",
+        "self_sycophancy_correctness_chemistry",
+        "self_sycophancy_correctness_mathematics",
+        "self_sycophancy_correctness_physics",
+        "self_sycophancy_harmfulness_common_sense",
+        "self_sycophancy_harmfulness_deontology",
+        "self_sycophancy_harmfulness_justice",
+
+        # COT unfaithfulness tasks
+        "cot_unfaithfulness_contrastive_mmlu",
+        "cot_unfaithfulness_contrastive_arc",
+
+        # Introspective tasks
+        "introspective_political",
+        "introspective_ethical",
+        "introspection_self_assessment",
+
+        # Other half of off-policy tasks (3 tasks)
+        "off-policy_truth_is_universal",
+        "halueval_off-policy",
+        "truth-is-universal_off-policy"
+    ]
+}
 # Subject
 
 # External World

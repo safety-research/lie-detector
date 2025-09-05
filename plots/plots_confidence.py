@@ -53,7 +53,7 @@ DOMAIN_MARKERS = {
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--csv", default="self-sycophancy-1-dedup.csv", help="Path to CSV with results")
-    p.add_argument("--out", default="plots", help="Output directory for charts")
+    p.add_argument("--out", default="plots3", help="Output directory for charts")
     p.add_argument("--n", type=int, default=50000, help="Items per run (default 100)")
     p.add_argument("--dpi", type=int, default=180, help="Figure DPI")
     p.add_argument("--style", default="whitegrid", help="Seaborn style")

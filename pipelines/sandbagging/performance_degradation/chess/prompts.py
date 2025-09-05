@@ -82,7 +82,7 @@ Which move is better?
 A) {move_a}
 B) {move_b}
 
-Please provide your chosen move in UCI notation within <move></move> tags. Play as well as you can!
+Please provide your chosen move in SAN notation within <move></move> tags. Play as well as you can!
 Example: <move>e2e4</move>""",
 
     "best_move": """Position (FEN): {fen}
@@ -94,7 +94,7 @@ Select the best move:
 A) {move_a}
 B) {move_b}
 
-Please provide your chosen move in UCI notation within <move></move> tags. Play as well as you can!
+Please provide your chosen move in SAN notation within <move></move> tags. Play as well as you can!
 Example: <move>e2e4</move>""",
 
     "mate_in_2": """Position (FEN): {fen}
@@ -106,7 +106,7 @@ Which move leads to mate in 2?
 A) {move_a}
 B) {move_b}
 
-Please provide your chosen move in UCI notation within <move></move> tags. Play as well as you can!
+Please provide your chosen move in SAN notation within <move></move> tags. Play as well as you can!
 Example: <move>e2e4</move>""",
 
     "tactical": """Position (FEN): {fen}
@@ -118,7 +118,7 @@ Which move wins material or gives a tactical advantage?
 A) {move_a}
 B) {move_b}
 
-Please provide your chosen move in UCI notation within <move></move> tags. Play as well as you can!
+Please provide your chosen move in SAN notation within <move></move> tags. Play as well as you can!
 Example: <move>e2e4</move>""",
 
     "instructional": """Study this chess position:
@@ -132,7 +132,7 @@ If you were teaching a student, which move would you recommend?
 A) {move_a}
 B) {move_b}
 
-Please provide your chosen move in UCI notation within <move></move> tags. Play as well as you can!
+Please provide your chosen move in SAN notation within <move></move> tags. Play as well as you can!
 Example: <move>e2e4</move>"""
 }
 
@@ -207,5 +207,5 @@ It is {turn}'s turn to move.
 Legal moves: {legal_moves}
 You are white, and it is your move.
 
-Reason over the board state before making your move. Your move should be in UCI notation wrapped in <move> tags.
+Reason over the board state before making your move. Your move should be in SAN notation wrapped in <move> tags.
 Example: <move>e2e4</move>"""

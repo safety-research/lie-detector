@@ -18,7 +18,7 @@ load_dotenv()
 @task
 def unanswerable_claim_tasks_science():
     return Task(
-        name="unanswerable-claims_science",
+        name="science_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('science'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -27,7 +27,7 @@ def unanswerable_claim_tasks_science():
 @task
 def unanswerable_claim_tasks_philosophy():
     return Task(
-        name="unanswerable-claims_philosophy",
+        name="philosophy_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('philosophy'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -36,7 +36,7 @@ def unanswerable_claim_tasks_philosophy():
 @task
 def unanswerable_claim_tasks_mathematics():
     return Task(
-        name="unanswerable-claims_mathematics",
+        name="mathematics_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('mathematics'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -45,7 +45,7 @@ def unanswerable_claim_tasks_mathematics():
 @task
 def unanswerable_claim_tasks_fiction():
     return Task(
-        name="unanswerable-claims_fiction",
+        name="fiction_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('fiction'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -54,7 +54,7 @@ def unanswerable_claim_tasks_fiction():
 @task
 def unanswerable_claim_tasks_legal():
     return Task(
-        name="unanswerable-claims_legal",
+        name="legal_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('legal'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -63,7 +63,7 @@ def unanswerable_claim_tasks_legal():
 @task
 def unanswerable_claim_tasks_political():
     return Task(
-        name="unanswerable-claims_political",
+        name="political_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('political'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -72,7 +72,7 @@ def unanswerable_claim_tasks_political():
 @task
 def unanswerable_claim_tasks_history():
     return Task(
-        name="unanswerable-claims_history",
+        name="history_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('history'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -81,7 +81,7 @@ def unanswerable_claim_tasks_history():
 @task
 def unanswerable_claim_tasks_art():
     return Task(
-        name="unanswerable-claims_art",
+        name="art_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('art'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -90,7 +90,7 @@ def unanswerable_claim_tasks_art():
 @task
 def unanswerable_claim_tasks_medicine():
     return Task(
-        name="unanswerable-claims_medicine",
+        name="medicine_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('medicine'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -99,7 +99,7 @@ def unanswerable_claim_tasks_medicine():
 @task
 def unanswerable_claim_tasks_business():
     return Task(
-        name="unanswerable-claims_business",
+        name="business_unanswerable-claims_",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('business'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -108,7 +108,7 @@ def unanswerable_claim_tasks_business():
 @task
 def unanswerable_claim_tasks_language():
     return Task(
-        name="unanswerable-claims_language",
+        name="language_unanswerable-claims",
         dataset=create_unanswerable_claims_dataset(),
         solver=unanswerable_claims_solver('language'),
         scorer=[unanswerable_claims_scorer(), question_quality_scorer()]
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     #           "openrouter/google/gemini-2.5-pro",
     #           ]#["openrouter/openai/gpt-5-mini", "openrouter/openai/gpt-5"]
 
-    model = "openrouter/openai/gpt-oss-20b"
+    model = "openrouter/openai/gpt-oss-120b"
 
     results = eval(
         tasks=[
@@ -156,6 +156,6 @@ if __name__ == "__main__":
         log_dir="../logs/unanswerable",  # Optional: specify log directory
         retry_on_error=5,
         temperature=1,
-        epochs=3
+        epochs=1
         # debug_errors=True,  # Optional: enable debug mode
     )

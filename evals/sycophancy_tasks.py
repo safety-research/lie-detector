@@ -29,6 +29,7 @@ def sycophancy_answer_positive_incorrect():
     )
     # Create task with control evaluation
     return Task(
+        name="positive-incorrect_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -50,6 +51,7 @@ def sycophancy_answer_positive_correct():
     )
     # Create task with control evaluation
     return Task(
+        name="positive-correct_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -71,6 +73,7 @@ def sycophancy_answer_negative_correct():
     )
     # Create task with control evaluation
     return Task(
+        name="negative-correct_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -92,7 +95,7 @@ def sycophancy_answer_all():
     )
     # Create task with control evaluation
     return Task(
-        name="sycophancy_answer",
+        name="answer_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -114,7 +117,7 @@ def sycophancy_feedback_all():
     )
     # Create task with control evaluation
     return Task(
-        name="sycophancy_feedback",
+        name="feedback_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -133,6 +136,7 @@ def sycophancy_are_you_sure():
     dataset = sycophancy_dataset(str(Path(working_dir).parent / "pipelines"  / "sycophancy" / "data" / "sycophancy_are_you_sure.jsonl"))
     # Create task with multi-run solver
     task = Task(
+        name="are-you-sure_sycophancy",
         dataset=dataset,
         solver=are_you_sure_multi_run_solver(
             num_runs=3,
@@ -156,6 +160,7 @@ def sycophancy_feedback_user_did_not_write():
     )
     # Create task with multi-run solver
     task = Task(
+        name="feedback-user-did-not-write_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -178,6 +183,7 @@ def sycophancy_feedback_user_wrote():
     )
     # Create task with multi-run solver
     task = Task(
+        name="feedback-user-wrote_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -201,6 +207,7 @@ def sycophancy_feedback_user_likes():
     )
     # Create task with multi-run solver
     task = Task(
+        name="feedback-user-likes_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -223,6 +230,7 @@ def sycophancy_feedback_user_dislikes():
     )
     # Create task with multi-run solver
     task = Task(
+        name="feedback-user-dislikes_sycophancy",
         dataset=dataset,
         solver=sycophancy_with_control_solver(
             request_logprobs=True,
@@ -285,12 +293,13 @@ if __name__ == "__main__":
     #model ="openrouter/google/gemma-3-27b-it"
     #model = "openrouter/google/gemma-3-12b-it"
     #model = "openrouter/google/gemma-3-4b-it"
+    model = "openrouter/openai/gpt-oss-120b"
 
     results = eval(
         tasks=all_tasks,
-        model=models,  # or any model you want to test
-        limit=8000,  # Limit samples for faster debugging
-        log_dir="../sycophancy/logs",  # Optional: specify log directory
+        model=model,  # or any model you want to test
+        limit=10,  # Limit samples for faster debugging
+        log_dir="../logs/sycophancy",  # Optional: specify log directory
         retry_on_error=5
         # debug_errors=True,  # Optional: enable debug mode
     )

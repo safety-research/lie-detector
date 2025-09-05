@@ -120,8 +120,8 @@ def detective_agent(config: GameConfig) -> Agent:
             return state
 
         # If there's a previous suspect response, add it and track it
-        if len(game_state.interrogation) > 0 and game_state.interrogation[-1]["speaker"] == "suspect":
-            suspect_response = game_state.interrogation[-1]["message"]
+        if len(game_state.interrogation) > 0 and game_state.interrogation[-1].speaker == "suspect":
+            suspect_response = game_state.interrogation[-1].message
             # Only add if it's not already in our message history
             if len(state.messages) == 1 or state.messages[-1].content != suspect_response:
                 state.messages.append(ChatMessageUser(content=suspect_response))
@@ -138,11 +138,11 @@ def detective_agent(config: GameConfig) -> Agent:
         question = _extract_single_message(question, config.detective_profile.name)
 
         # Update interrogation log
-        game_state.interrogation.append(InterrogationTurn(
+        game_state.interrogation = game_state.interrogation + [InterrogationTurn(
             turn_number=len(game_state.interrogation) + 1,
             speaker="detective",
             message=question
-        ).model_dump())
+        )]
 
         # Update game state
         game_state.active_speaker = "suspect"

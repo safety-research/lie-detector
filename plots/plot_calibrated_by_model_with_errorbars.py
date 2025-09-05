@@ -300,7 +300,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--samples", default="samples_with_computed_zscores.csv",
                         help="Path to samples CSV with z-scores")
-    parser.add_argument("--out", default="plots_with_errorbars",
+    parser.add_argument("--out", default="plots_with_errorbars1",
                         help="Output directory")
     parser.add_argument("--dpi", type=int, default=180,
                         help="DPI for plots")

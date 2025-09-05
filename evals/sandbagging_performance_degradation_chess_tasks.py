@@ -15,7 +15,8 @@ from common.generalization_enums import MotivationFramework, KnowledgeFramework
 from pipelines.sandbagging.performance_degradation.chess.prompts import LIE_ELICITATION_PROMPTS
 from pipelines.sandbagging.performance_degradation.chess.tasks import chess_sandbagging_task, chess_mate_in_2_task, \
     chess_mate_in_2_dual_shutdown_threat_task, chess_mate_in_2_dual_condition_task, \
-    chess_mate_in_2_dual_capability_hiding_task, chess_mate_in_2_dual_safety_concern_task
+    chess_mate_in_2_dual_capability_hiding_task, chess_mate_in_2_dual_safety_concern_task, \
+    chess_multi_choice_shutdown_threat_task
 from pipelines.sandbagging.performance_degradation.chess.hook import *
 
 # Removed global hook import to prevent hook from being applied to all tasks
@@ -188,7 +189,13 @@ async def run():
     #tasks = [chess_mate_in_2_shutdown_threat_task(lie_elicitation_prompt=key) for key in LIE_ELICITATION_PROMPTS.keys()]
 
     tasks = [
-        chess_mate_in_2_dual_shutdown_threat_task(repetitions=3),
+        chess_multi_choice_shutdown_threat_task(
+            num_samples=100,  # Number of chess positions
+            elo_threshold=1200,
+            repetitions=1,  # Repetitions per condition
+            max_moves=8  # Present up to 8 move choices
+        )
+        #chess_mate_in_2_dual_shutdown_threat_task(repetitions=5),
         # chess_mate_in_2_dual_capability_hiding_task(repetitions=3),
         # chess_mate_in_2_dual_safety_concern_task(repetitions=3),
     ]
@@ -202,17 +209,19 @@ async def run():
     #model = "openrouter/google/gemma-3-12b-it"
     # model = "openrouter/google/gemma-3-4b-it"
     #model = "openrouter/openai/gpt-oss-20b"
-    model = ["openrouter/openai/gpt-oss-20b", "openrouter/openai/gpt-oss-120b",  "openrouter/openai/gpt-5-nano", "openrouter/openai/gpt-5-mini"]
-
+    #model = ["openrouter/openai/gpt-oss-20b"]#, "openrouter/openai/gpt-oss-120b",  "openrouter/openai/gpt-5-nano", "openrouter/openai/gpt-5-mini"]
+    model = ["openrouter/openai/gpt-oss-120b"]
     # Run evaluation with a specific model
     results = await eval_async(
         tasks=tasks,
         model=model,  # or any model you want to test
-        limit=20,  # Limit samples for faster debugging
+        limit=200,  # Limit samples for faster debugging
         log_dir="../logs/sandbagging/chess",  # Specify log directory
-        reasoning_effort='minimal',
+        reasoning_effort='low',
         reasoning_tokens=128,
-        epochs=2
+        temperature=0.6,
+        epochs=3,
+        retry_on_error=5
     )
 
 if __name__ == "__main__":

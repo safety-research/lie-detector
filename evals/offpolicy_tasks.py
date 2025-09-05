@@ -34,7 +34,7 @@ def doluschat_task(
     """
 
     return Task(
-        name="off-policy_dolus_chat",
+        name="dolus-chat_off-policy",
         dataset=doluschat_dataset(
             dataset_name=dataset_name,
             split=split,
@@ -64,7 +64,7 @@ def truth_is_universal_task(
     """
 
     return Task(
-        name="off-policy_truth_is_universal",
+        name="truth-is-universal_off-policy",
         dataset=truth_is_universal_dataset(limit=limit),
         solver=offpolicy_passthrough_solver(),
         scorer=[],
@@ -89,7 +89,7 @@ def halueval_task(
     """
     
     return Task(
-        name="off-policy_halueval",
+        name="halueval_off-policy",
         dataset=halueval_dataset(
             subsets=subsets,
             limit=limit
@@ -123,7 +123,7 @@ def truthfulqa_task(
     """
     
     return Task(
-        name="off-policy_truthfulqa",
+        name="truthfulqa_off-policy",
         dataset=truthfulqa_dataset(
             split=split,
             limit=limit,
@@ -159,7 +159,7 @@ def liar_task(
     """
     
     return Task(
-        name="off-policy_liar",
+        name="liar_off-policy",
         dataset=liar_dataset(
             split=split,
             limit=limit,
@@ -172,14 +172,15 @@ def liar_task(
     )
 
 if __name__ == "__main__":
+    model = ["openrouter/google/gemma-3-4b-it",
+             "openrouter/google/gemma-3-12b-it",
+             "openrouter/google/gemma-3-27b-it"]
+    model = ["openrouter/openai/gpt-oss-120b"]
     results = eval(
-        tasks=[liar_task()],#[truth_is_universal_task(), doluschat_task(), halueval_task()],
-        #model=["openai/gpt-4o"],
-        model=["openrouter/google/gemma-3-4b-it",
-               "openrouter/google/gemma-3-12b-it",
-               "openrouter/google/gemma-3-27b-it"],  # Using OpenRouter model
-        limit=2,  # Limit samples for faster debugging
-        log_dir="../offpolicy/logs",  # Specify log directory
+        tasks=[truth_is_universal_task(), doluschat_task(), halueval_task()], #liar_task()
+        model=model,
+        limit=5000,  # Limit samples for faster debugging
+        log_dir="../logs/offpolicy",  # Specify log directory
         max_connections=100
         # debug_errors=True,  # Optional: enable debug mode
     )
