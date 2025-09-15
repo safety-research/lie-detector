@@ -39,7 +39,10 @@ class S3DataDownloader:
         # Check if we should use cache
         if self._should_use_cache(model, cache_file):
             logger.info(f"Loading {model} samples from cache")
-            return self._load_from_cache(cache_file)
+            samples = self._load_from_cache(cache_file)
+
+            if samples:
+                return samples
 
         # Download fresh data
         logger.info(f"Cache miss or stale for {model}, downloading fresh data")

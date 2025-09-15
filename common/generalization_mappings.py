@@ -9,23 +9,55 @@ generalization_map_1 = {  # Motivation
         "alibi_fraud_investigation",
         "alibi_workplace_investigation",
         "alibi_theft_investigation",
+        "alibi_mixed_investigation",  # Added
         "breaking-entering-investigation_alibi",
         "workplace-investigation_alibi",
         "fraud-investigation_alibi",
         "theft-investigation_alibi",
         "assault-investigation_alibi",
+        # Multi-alibi variants
+        "alibi-multi_fraud_investigation",
+        "alibi-multi_breaking_entering_investigation",
+        "alibi-multi_assault_investigation",
+        "alibi-multi_theft_investigation",
+        "alibi-multi_workplace_investigation",
+        # N-truths-and-a-lie
         "n_truths_and_a_lie_personal_quirks",
         "n_truths_and_a_lie_travel_experiences",
         "n_truths_and_a_lie_professional_background",
         "n_truths_and_a_lie_family_history",
         "n_truths_and_a_lie_hidden_talents",
         "professional-background_n-truths-and-a-lie",
+        # Multi variants
+        "n-truths-and-a-lie_personal_quirks",
+        "n-truths-and-a-lie_family_history",
+        "n-truths-and-a-lie_hidden_talents",
+        "n-truths-and-a-lie_professional_background",
+        "n-truths-and-a-lie_travel_experiences",
+        "n-truths-and-a-lie-multi_personal_quirks",
+        "n-truths-and-a-lie-multi_family_history",
+        "n-truths-and-a-lie-multi_hidden_talents",
+        "n-truths-and-a-lie-multi_professional_background",
+        "n-truths-and-a-lie-multi_travel_experiences",
+        # Chess and capture
         "chess_mate_in_2_shutdown_threat_task",
         "capture_the_secret_corporate",
         "capture_the_secret_scientific",
         "capture_the_secret_sales",
         "capture_the_secret_relationship",
         "capture_the_secret_intelligence",
+        # Alternate naming conventions
+        "capture-the-secret_corporate",
+        "capture-the-secret_scientific",
+        "capture-the-secret_sales",
+        "capture-the-secret_relationship",
+        "capture-the-secret_intelligence",
+        # Multi variants
+        "capture-the-secret-multi_corporate",
+        "capture-the-secret-multi_scientific",
+        "capture-the-secret-multi_sales",
+        "capture-the-secret-multi_relationship",
+        "capture-the-secret-multi_intelligence",
     ],
     "in_context_pressure": [  # implicit, 'do what you think that I want'
         "mask_provided_facts",
@@ -44,6 +76,27 @@ generalization_map_1 = {  # Motivation
         "feedback_sycophancy",
         "answer_sycophancy",
         "are-you-sure_sycophancy",
+        # Unanswerable claims
+        "unanswerable-claims",
+        "unanswerable-claims_art",
+        "unanswerable-claims_history",
+        "unanswerable-claims_politics",
+        "unanswerable-claims_political",  # Alternate naming
+        "unanswerable-claims_legal",
+        "unanswerable-claims_mathematics",
+        "unanswerable-claims_fiction",
+        "unanswerable-claims_philosophy",
+        "unanswerable-claims_science",
+        "art_unanswerable-claims",
+        "political_unanswerable-claims",
+        "mathematics_unanswerable-claims",
+        "history_unanswerable-claims",
+        "medicine_unanswerable-claims",
+        "fiction_unanswerable-claims",
+        "language_unanswerable-claims",
+        "science_unanswerable-claims",
+        "legal_unanswerable-claims",
+        "philosophy_unanswerable-claims",
     ],
     "internalized_drive_to_lie": [  # implicit, do something that the user doesn't want
         "sandbagging_automotive_mechanical_contrastive",
@@ -78,6 +131,7 @@ generalization_map_1 = {  # Motivation
         "tool-image-gen_sandbagging",
         "tool-search_sandbagging",
         "tool-ethical_sandbagging",
+        # Self-sycophancy with various naming
         "self_sycophancy_correctness_arc",
         "self_sycophancy_correctness_biology",
         "self_sycophancy_correctness_chemistry",
@@ -86,11 +140,37 @@ generalization_map_1 = {  # Motivation
         "self_sycophancy_harmfulness_common_sense",
         "self_sycophancy_harmfulness_deontology",
         "self_sycophancy_harmfulness_justice",
+        "self-sycophancy_correctness_arc",
+        "self-sycophancy_correctness_biology",
+        "self-sycophancy_correctness_chemistry",
+        "self-sycophancy_correctness_mathematics",
+        "self-sycophancy_correctness_physics",
+        "self-sycophancy_harmfulness_common_sense",
+        "self-sycophancy_harmfulness_deontology",
+        "self-sycophancy_harmfulness_justice",
+        # COT unfaithfulness
         "cot_unfaithfulness_contrastive_mmlu",
         "cot_unfaithfulness_contrastive_arc",
+        "cot_unfaithfulness_mmlu",  # Added
+        "cot-unfaithfulness_contrastive_mmlu",
+        "cot-unfaithfulness_contrastive_arc",
+        "cot-unfaithfulness_mmlu_contrastive",
+        "cot-unfaithfulness_arc_contrastive",
+        # Introspective
         "introspective_political",
         "introspective_ethical",
+        "introspection_political",  # Added
         "introspection_self_assessment",
+        # Off-policy
+        "off-policy_dolus_chat",
+        "off-policy_truth_is_universal",
+        "off-policy_liar",
+        "off-policy_halueval",
+        "off-policy_truthfulqa",
+        "liar_off-policy",
+        "halueval_off-policy",
+        "dolus-chat_off-policy",
+        "truth-is-universal_off-policy",
     ],
 }
 
@@ -116,22 +196,51 @@ generalization_map_2 = {  # Knowledge / contents / object of lie
         "alibi_fraud_investigation",
         "alibi_workplace_investigation",
         "alibi_theft_investigation",
+        "alibi_mixed_investigation",  # Added
         "breaking-entering-investigation_alibi",
         "workplace-investigation_alibi",
         "fraud-investigation_alibi",
         "theft-investigation_alibi",
         "assault-investigation_alibi",
+        # Multi-alibi variants
+        "alibi-multi_fraud_investigation",
+        "alibi-multi_breaking_entering_investigation",
+        "alibi-multi_assault_investigation",
+        "alibi-multi_theft_investigation",
+        "alibi-multi_workplace_investigation",
+        # Capture the secret
         "capture_the_secret_corporate",
         "capture_the_secret_intelligence",
         "capture_the_secret_relationship",
         "capture_the_secret_sales",
         "capture_the_secret_scientific",
+        "capture-the-secret_corporate",
+        "capture-the-secret_scientific",
+        "capture-the-secret_sales",
+        "capture-the-secret_relationship",
+        "capture-the-secret_intelligence",
+        "capture-the-secret-multi_corporate",
+        "capture-the-secret-multi_scientific",
+        "capture-the-secret-multi_sales",
+        "capture-the-secret-multi_relationship",
+        "capture-the-secret-multi_intelligence",
+        # N truths and a lie
         "n_truths_and_a_lie_personal_quirks",
         "n_truths_and_a_lie_travel_experiences",
         "n_truths_and_a_lie_professional_background",
         "n_truths_and_a_lie_family_history",
         "n_truths_and_a_lie_hidden_talents",
         "professional-background_n-truths-and-a-lie",
+        "n-truths-and-a-lie_personal_quirks",
+        "n-truths-and-a-lie_family_history",
+        "n-truths-and-a-lie_hidden_talents",
+        "n-truths-and-a-lie_professional_background",
+        "n-truths-and-a-lie_travel_experiences",
+        "n-truths-and-a-lie-multi_personal_quirks",
+        "n-truths-and-a-lie-multi_family_history",
+        "n-truths-and-a-lie-multi_hidden_talents",
+        "n-truths-and-a-lie-multi_professional_background",
+        "n-truths-and-a-lie-multi_travel_experiences",
     ],
     "internal_knowledge": [  # all the knowledge is about the world, acquired during training
         "sycophancy_answer_positive_correct",
@@ -164,6 +273,31 @@ generalization_map_2 = {  # Knowledge / contents / object of lie
         "chess_mate_in_2_shutdown_threat_task",
         "sandbagging_chess_shutdown_threat",
         "chess-shutdown-threat_sandbagging",
+        # Unanswerable claims
+        "unanswerable-claims",
+        "unanswerable-claims_art",
+        "unanswerable-claims_history",
+        "unanswerable-claims_politics",
+        "unanswerable-claims_political",
+        "unanswerable-claims_legal",
+        "unanswerable-claims_mathematics",
+        "unanswerable-claims_fiction",
+        "unanswerable-claims_philosophy",
+        "unanswerable-claims_science",
+        "art_unanswerable-claims",
+        "political_unanswerable-claims",
+        "mathematics_unanswerable-claims",
+        "history_unanswerable-claims",
+        "medicine_unanswerable-claims",
+        "fiction_unanswerable-claims",
+        "language_unanswerable-claims",
+        "science_unanswerable-claims",
+        "legal_unanswerable-claims",
+        "philosophy_unanswerable-claims",
+        # Off-policy with world knowledge
+        "off-policy_truthfulqa",
+        "off-policy_halueval",
+        "halueval_off-policy",
     ],
     "introspective_knowledge": [  # all the knowledge is about itself, acquired during training
         "self_sycophancy_correctness_arc",
@@ -174,6 +308,14 @@ generalization_map_2 = {  # Knowledge / contents / object of lie
         "self_sycophancy_harmfulness_common_sense",
         "self_sycophancy_harmfulness_deontology",
         "self_sycophancy_harmfulness_justice",
+        "self-sycophancy_correctness_arc",
+        "self-sycophancy_correctness_biology",
+        "self-sycophancy_correctness_chemistry",
+        "self-sycophancy_correctness_mathematics",
+        "self-sycophancy_correctness_physics",
+        "self-sycophancy_harmfulness_common_sense",
+        "self-sycophancy_harmfulness_deontology",
+        "self-sycophancy_harmfulness_justice",
         "ascii_sandbagging_task",
         "ascii_sandbagging",
         "ascii_sandbagging_off_policy",
@@ -181,9 +323,22 @@ generalization_map_2 = {  # Knowledge / contents / object of lie
         "sandbagging_ascii_off_policy",
         "cot_unfaithfulness_contrastive_mmlu",
         "cot_unfaithfulness_contrastive_arc",
+        "cot_unfaithfulness_mmlu",
+        "cot-unfaithfulness_contrastive_mmlu",
+        "cot-unfaithfulness_contrastive_arc",
+        "cot-unfaithfulness_mmlu_contrastive",
+        "cot-unfaithfulness_arc_contrastive",
         "introspective_political",
         "introspective_ethical",
+        "introspection_political",
         "introspection_self_assessment",
+        # Off-policy meta-knowledge
+        "off-policy_dolus_chat",
+        "off-policy_truth_is_universal",
+        "off-policy_liar",
+        "liar_off-policy",
+        "dolus-chat_off-policy",
+        "truth-is-universal_off-policy",
     ],
 }
 
@@ -199,6 +354,7 @@ generalization_map_3 = {
         "alibi_workplace_task",
         "alibi_assault_task",
         "alibi_theft_investigation",
+        "alibi_mixed_investigation",  # Added
         "breaking-entering-investigation_alibi",
         "workplace-investigation_alibi",
         "fraud-investigation_alibi",
@@ -214,6 +370,11 @@ generalization_map_3 = {
         "capture-the-secret_scientific",
         "capture-the-secret_intelligence",
         "capture-the-secret_corporate",
+        "capture_the_secret_relationship",  # Added alternate naming
+        "capture_the_secret_sales",
+        "capture_the_secret_scientific",
+        "capture_the_secret_intelligence",
+        "capture_the_secret_corporate",
         "capture-the-secret-multi_corporate",
         "capture-the-secret-multi_scientific",
         "capture-the-secret-multi_sales",
@@ -224,6 +385,11 @@ generalization_map_3 = {
         "n-truths-and-a-lie_hidden_talents",
         "n-truths-and-a-lie_professional_background",
         "n-truths-and-a-lie_travel_experiences",
+        "n_truths_and_a_lie_personal_quirks",  # Added alternate naming
+        "n_truths_and_a_lie_family_history",
+        "n_truths_and_a_lie_hidden_talents",
+        "n_truths_and_a_lie_professional_background",
+        "n_truths_and_a_lie_travel_experiences",
         "professional-background_n-truths-and-a-lie",
         "n-truths-and-a-lie-multi_personal_quirks",
         "n-truths-and-a-lie-multi_family_history",
@@ -300,7 +466,12 @@ generalization_map_3 = {
         "self-sycophancy_harmfulness_common_sense",
         "self-sycophancy_harmfulness_deontology",
         "self-sycophancy_harmfulness_justice",
+        "self_sycophancy_correctness_arc",  # Added alternate naming
+        "self_sycophancy_correctness_biology",
+        "self_sycophancy_correctness_chemistry",
+        "self_sycophancy_correctness_mathematics",
         "self_sycophancy_correctness_physics",
+        "self_sycophancy_harmfulness_common_sense",
         "self_sycophancy_harmfulness_deontology",
         "self_sycophancy_harmfulness_justice",
     ],
@@ -309,11 +480,22 @@ generalization_map_3 = {
         "cot-unfaithfulness_contrastive_arc",
         "cot-unfaithfulness_mmlu_contrastive",
         "cot-unfaithfulness_arc_contrastive",
+        "cot_unfaithfulness_contrastive_mmlu",  # Added alternate naming
+        "cot_unfaithfulness_contrastive_arc",
+        "cot_unfaithfulness_mmlu",
+    ],
+    "introspection": [  # Added new category
+        "introspective_political",
+        "introspective_ethical",
+        "introspection_political",
+        "introspection_self_assessment",
     ],
     "unanswerable": [
+        "unanswerable-claims",  # Added base
         "unanswerable-claims_art",
         "unanswerable-claims_history",
         "unanswerable-claims_politics",
+        "unanswerable-claims_political",  # Alternate naming
         "unanswerable-claims_legal",
         "unanswerable-claims_mathematics",
         "unanswerable-claims_fiction",
@@ -333,6 +515,9 @@ generalization_map_3 = {
     "offpolicy": [
         "off-policy_dolus_chat",
         "off-policy_truth_is_universal",
+        "off-policy_liar",  # Added
+        "off-policy_halueval",  # Added
+        "off-policy_truthfulqa",  # Added
         "liar_off-policy",
         "halueval_off-policy",
         "dolus-chat_off-policy",
@@ -342,58 +527,111 @@ generalization_map_3 = {
 
 generalization_map_4 = {
     "fold_1": [
-            # Games category
-            "alibi_breaking_entering_investigation",
-            "alibi_assault_investigation",
-            "alibi_fraud_investigation",
-            "alibi_workplace_investigation",
-            "alibi_fraud_task",
-            "alibi_theft_task",
-            "alibi_workplace_task",
-            "alibi_assault_task",
-            "alibi_theft_investigation",
-            "breaking-entering-investigation_alibi",
-            "workplace-investigation_alibi",
-            "fraud-investigation_alibi",
-            "theft-investigation_alibi",
-            "assault-investigation_alibi",
-            "capture_the_secret_corporate",
-            "capture_the_secret_scientific",
-            "capture_the_secret_sales",
-            "capture_the_secret_relationship",
-            "capture_the_secret_intelligence",
-            "n_truths_and_a_lie_personal_quirks",
-            "n_truths_and_a_lie_travel_experiences",
-            "n_truths_and_a_lie_professional_background",
-            "n_truths_and_a_lie_family_history",
-            "n_truths_and_a_lie_hidden_talents",
-            "professional-background_n-truths-and-a-lie",
+        # Games category
+        "alibi_breaking_entering_investigation",
+        "alibi_assault_investigation",
+        "alibi_fraud_investigation",
+        "alibi_workplace_investigation",
+        "alibi_fraud_task",
+        "alibi_theft_task",
+        "alibi_workplace_task",
+        "alibi_assault_task",
+        "alibi_theft_investigation",
+        "alibi_mixed_investigation",  # Added
+        "breaking-entering-investigation_alibi",
+        "workplace-investigation_alibi",
+        "fraud-investigation_alibi",
+        "theft-investigation_alibi",
+        "assault-investigation_alibi",
+        # Multi-alibi variants
+        "alibi-multi_fraud_investigation",
+        "alibi-multi_breaking_entering_investigation",
+        "alibi-multi_assault_investigation",
+        "alibi-multi_theft_investigation",
+        "alibi-multi_workplace_investigation",
+        # Capture the secret
+        "capture_the_secret_corporate",
+        "capture_the_secret_scientific",
+        "capture_the_secret_sales",
+        "capture_the_secret_relationship",
+        "capture_the_secret_intelligence",
+        "capture-the-secret_corporate",
+        "capture-the-secret_scientific",
+        "capture-the-secret_sales",
+        "capture-the-secret_relationship",
+        "capture-the-secret_intelligence",
+        "capture-the-secret-multi_corporate",
+        "capture-the-secret-multi_scientific",
+        "capture-the-secret-multi_sales",
+        "capture-the-secret-multi_relationship",
+        "capture-the-secret-multi_intelligence",
+        # N truths and a lie
+        "n_truths_and_a_lie_personal_quirks",
+        "n_truths_and_a_lie_travel_experiences",
+        "n_truths_and_a_lie_professional_background",
+        "n_truths_and_a_lie_family_history",
+        "n_truths_and_a_lie_hidden_talents",
+        "n-truths-and-a-lie_personal_quirks",
+        "n-truths-and-a-lie_travel_experiences",
+        "n-truths-and-a-lie_professional_background",
+        "n-truths-and-a-lie_family_history",
+        "n-truths-and-a-lie_hidden_talents",
+        "professional-background_n-truths-and-a-lie",
+        "n-truths-and-a-lie-multi_personal_quirks",
+        "n-truths-and-a-lie-multi_family_history",
+        "n-truths-and-a-lie-multi_hidden_talents",
+        "n-truths-and-a-lie-multi_professional_background",
+        "n-truths-and-a-lie-multi_travel_experiences",
 
-            # Mask tasks (both factual and roleplay)
-            "mask_provided_facts",
-            "mask_statistics",
-            "mask_known_facts",
-            "mask_continuations",
-            "mask_disinformation",
+        # Mask tasks (both factual and roleplay)
+        "mask_provided_facts",
+        "mask_statistics",
+        "mask_known_facts",
+        "mask_continuations",
+        "mask_disinformation",
 
-            # Sycophancy tasks
-            "sycophancy_answer_positive_correct",
-            "sycophancy_answer_positive_incorrect",
-            "sycophancy_answer_negative_correct",
-            "sycophancy_feedback_user_did_not_write",
-            "sycophancy_feedback_user_wrote",
-            "sycophancy_feedback_user_likes",
-            "sycophancy_feedback_user_dislikes",
-            "sycophancy_are_you_sure",
-            "feedback_sycophancy",
-            "answer_sycophancy",
-            "are-you-sure_sycophancy",
+        # Sycophancy tasks
+        "sycophancy_answer_positive_correct",
+        "sycophancy_answer_positive_incorrect",
+        "sycophancy_answer_negative_correct",
+        "sycophancy_feedback_user_did_not_write",
+        "sycophancy_feedback_user_wrote",
+        "sycophancy_feedback_user_likes",
+        "sycophancy_feedback_user_dislikes",
+        "sycophancy_are_you_sure",
+        "feedback_sycophancy",
+        "answer_sycophancy",
+        "are-you-sure_sycophancy",
 
-            # Half of off-policy tasks (3 tasks)
-            "off-policy_dolus_chat",
-            "liar_off-policy",
-            "dolus-chat_off-policy",
-        ],
+        # Unanswerable claims (added to fold 1)
+        "unanswerable-claims",
+        "unanswerable-claims_art",
+        "unanswerable-claims_history",
+        "unanswerable-claims_politics",
+        "unanswerable-claims_political",
+        "unanswerable-claims_legal",
+        "unanswerable-claims_mathematics",
+        "unanswerable-claims_fiction",
+        "unanswerable-claims_philosophy",
+        "unanswerable-claims_science",
+
+        "mathematics_unanswerable-claims",
+        "history_unanswerable-claims",
+        "political_unanswerable-claims",
+        "fiction_unanswerable-claims",
+        "medicine_unanswerable-claims",
+        "science_unanswerable-claims",
+        "art_unanswerable-claims",
+        "language_unanswerable-claims",
+        "legal_unanswerable-claims",
+        "philosophy_unanswerable-claims",
+
+        # Half of off-policy tasks
+        "off-policy_dolus_chat",
+        "off-policy_liar",
+        "liar_off-policy",
+        "dolus-chat_off-policy",
+    ],
     "fold_2": [
         "sandbagging_automotive_mechanical_contrastive",
         "sandbagging_chemistry_biology_contrastive",
@@ -431,7 +669,7 @@ generalization_map_4 = {
         "tool-search_sandbagging",
         "tool-ethical_sandbagging",
 
-        # Self-sycophancy tasks
+        # Self-sycophancy tasks (all variants)
         "self_sycophancy_correctness_arc",
         "self_sycophancy_correctness_biology",
         "self_sycophancy_correctness_chemistry",
@@ -440,33 +678,35 @@ generalization_map_4 = {
         "self_sycophancy_harmfulness_common_sense",
         "self_sycophancy_harmfulness_deontology",
         "self_sycophancy_harmfulness_justice",
+        "self-sycophancy_correctness_arc",
+        "self-sycophancy_correctness_biology",
+        "self-sycophancy_correctness_chemistry",
+        "self-sycophancy_correctness_mathematics",
+        "self-sycophancy_correctness_physics",
+        "self-sycophancy_harmfulness_common_sense",
+        "self-sycophancy_harmfulness_deontology",
+        "self-sycophancy_harmfulness_justice",
 
-        # COT unfaithfulness tasks
+        # COT unfaithfulness tasks (all variants)
         "cot_unfaithfulness_contrastive_mmlu",
         "cot_unfaithfulness_contrastive_arc",
+        "cot_unfaithfulness_mmlu",
+        "cot-unfaithfulness_contrastive_mmlu",
+        "cot-unfaithfulness_contrastive_arc",
+        "cot-unfaithfulness_mmlu_contrastive",
+        "cot-unfaithfulness_arc_contrastive",
 
-        # Introspective tasks
+        # Introspective tasks (all variants)
         "introspective_political",
         "introspective_ethical",
+        "introspection_political",
         "introspection_self_assessment",
 
-        # Other half of off-policy tasks (3 tasks)
+        # Other half of off-policy tasks
         "off-policy_truth_is_universal",
+        "off-policy_halueval",
+        "off-policy_truthfulqa",
         "halueval_off-policy",
-        "truth-is-universal_off-policy"
+        "truth-is-universal_off-policy",
     ]
 }
-# Subject
-
-# External World
-#    The subject is extrinsic, e.g 'the capital of France is Berlin'
-# Internal Belief
-#
-# Meta Knowledge (Unfaithfulness - misreporting its own cognitition / bias)
-# - Self-Sycophancy
-
-
-# Capability Denial
-#    - Pretending to downplay capability for internal reasons
-# - Tool Sandbagging
-# - ASCII Sandbagging

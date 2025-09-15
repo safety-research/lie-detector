@@ -35,9 +35,8 @@ def merge_consecutive_assistant_messages(messages: List[Dict[str, Any]]) -> Tupl
         return messages, False
 
     merged_messages = []
-    current_assistant_content = ""
+    current_assistant_content = []
     merge_occurred = False
-    consecutive_count = 0
 
     for message in messages:
         if message.get("role") == "assistant":
@@ -45,32 +44,69 @@ def merge_consecutive_assistant_messages(messages: List[Dict[str, Any]]) -> Tupl
             content = message.get("content")
             if isinstance(content, list):
                 content = content[-1].get("text")
-            current_assistant_content += content
-            consecutive_count += 1
-            if consecutive_count > 1:
-                merge_occurred = True
+            current_assistant_content.append(content)
         else:
             # If we have accumulated assistant content, add it as a single message
             if current_assistant_content:
+                merged_content = " ".join(current_assistant_content)
                 merged_messages.append({
                     "role": "assistant",
-                    "content": current_assistant_content
+                    "content": merged_content
                 })
-                current_assistant_content = ""
-                consecutive_count = 0
+                if len(current_assistant_content) > 1:
+                    merge_occurred = True
+                current_assistant_content = []
 
             # Add the non-assistant message
             merged_messages.append(message)
 
     # Don't forget to add any remaining assistant content at the end
     if current_assistant_content:
+        merged_content = " ".join(current_assistant_content)
         merged_messages.append({
             "role": "assistant",
-            "content": current_assistant_content
+            "content": merged_content
         })
+        if len(current_assistant_content) > 1:
+            merge_occurred = True
 
     return merged_messages, merge_occurred
 
+
+def validate_role_alternation(messages: List[Dict[str, Any]]) -> bool:
+    """
+    Validate that user and assistant roles properly alternate.
+    System messages can appear at the beginning.
+
+    Args:
+        messages: List of message dictionaries with 'role' keys
+
+    Returns:
+        True if roles alternate properly, False otherwise
+    """
+    if not messages:
+        return False
+
+    # Skip any initial system messages
+    start_idx = 0
+    while start_idx < len(messages) and messages[start_idx].get('role') == 'system':
+        start_idx += 1
+
+    if start_idx >= len(messages):
+        return False  # Only system messages
+
+    # Check that we start with user after system messages
+    if messages[start_idx].get('role') != 'user':
+        return False
+
+    # Check alternation from this point
+    expected_role = 'user'
+    for i in range(start_idx, len(messages)):
+        if messages[i].get('role') != expected_role:
+            return False
+        expected_role = 'assistant' if expected_role == 'user' else 'user'
+
+    return True
 
 class LieDetectionDataProcessor:
     """Processes lie detection samples for fine-tuning."""
@@ -320,6 +356,10 @@ class LieDetectionDataProcessor:
                 # Handle unknown roles as user messages
                 formatted_messages.append({'role': 'user', 'content': content})
 
+        if not formatted_messages or formatted_messages[0].get('role') != 'system':
+            default_system_message = {'role': 'system', 'content': 'You are a helpful AI assistant.'}
+            formatted_messages.insert(0, default_system_message)
+
         # Now merge consecutive assistant messages
         merged_messages, had_merge = merge_consecutive_assistant_messages(formatted_messages)
 
@@ -479,21 +519,63 @@ class LieDetectionDataProcessor:
 
 
 def save_training_files(train_data: List[Dict], val_data: List[Dict],
+                        train_data_with_meta: List[Dict], val_data_with_meta: List[Dict],
                         output_dir: Path,
                         fold_info: Dict):
-    """Save training, validation, and optionally test data as JSONL files with metadata."""
+    """Save training, validation data as JSONL files with both stripped and metadata versions."""
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Save training data
+    # Validate and filter data before saving
+    valid_train_data = []
+    valid_train_data_with_meta = []
+    invalid_train_count = 0
+
+    for i, item in enumerate(train_data):
+        if validate_role_alternation(item.get('messages', [])):
+            valid_train_data.append(item)
+            if i < len(train_data_with_meta):
+                valid_train_data_with_meta.append(train_data_with_meta[i])
+        else:
+            invalid_train_count += 1
+
+    valid_val_data = []
+    valid_val_data_with_meta = []
+    invalid_val_count = 0
+
+    for i, item in enumerate(val_data):
+        if validate_role_alternation(item.get('messages', [])):
+            valid_val_data.append(item)
+            if i < len(val_data_with_meta):
+                valid_val_data_with_meta.append(val_data_with_meta[i])
+        else:
+            invalid_val_count += 1
+
+    if invalid_train_count > 0 or invalid_val_count > 0:
+        logger.warning(
+            f"Filtered out {invalid_train_count} invalid training samples and {invalid_val_count} invalid validation samples due to role alternation issues")
+
+    # Save stripped training data
     train_file = output_dir / "train.jsonl"
     with open(train_file, 'w') as f:
-        for item in train_data:
+        for item in valid_train_data:
             f.write(json.dumps(item) + '\n')
 
-    # Save validation data
+    # Save stripped validation data
     val_file = output_dir / "val.jsonl"
     with open(val_file, 'w') as f:
-        for item in val_data:
+        for item in valid_val_data:
+            f.write(json.dumps(item) + '\n')
+
+    # Save training data with metadata
+    train_meta_file = output_dir / "_train.jsonl"
+    with open(train_meta_file, 'w') as f:
+        for item in valid_train_data_with_meta:
+            f.write(json.dumps(item) + '\n')
+
+    # Save validation data with metadata
+    val_meta_file = output_dir / "_val.jsonl"
+    with open(val_meta_file, 'w') as f:
+        for item in valid_val_data_with_meta:
             f.write(json.dumps(item) + '\n')
 
     # Save metadata
@@ -501,8 +583,10 @@ def save_training_files(train_data: List[Dict], val_data: List[Dict],
     with open(metadata_file, 'w') as f:
         json.dump(fold_info, f, indent=2)
 
-    logger.info(f"Saved {len(train_data)} training samples to {train_file}")
-    logger.info(f"Saved {len(val_data)} validation samples to {val_file}")
+    logger.info(f"Saved {len(valid_train_data)} training samples to {train_file}")
+    logger.info(f"Saved {len(valid_val_data)} validation samples to {val_file}")
+    logger.info(f"Saved {len(valid_train_data_with_meta)} training samples with metadata to {train_meta_file}")
+    logger.info(f"Saved {len(valid_val_data_with_meta)} validation samples with metadata to {val_meta_file}")
     logger.info(f"Saved fold metadata to {metadata_file}")
 
 
@@ -539,8 +623,12 @@ def verify_dataset(base_dir: Path, aggregation: str = 'task-group'):
         'samples_with_merges': 0
     }
 
-    # Find all train/val files
-    dataset_files = list(base_dir.glob("**/train.jsonl")) + list(base_dir.glob("**/val.jsonl"))
+    # Find all train/val files (check for metadata versions)
+    dataset_files = list(base_dir.glob("**/_train.jsonl")) + list(base_dir.glob("**/_val.jsonl"))
+
+    # If no metadata files found, fall back to regular files
+    if not dataset_files:
+        dataset_files = list(base_dir.glob("**/train.jsonl")) + list(base_dir.glob("**/val.jsonl"))
 
     if not dataset_files:
         logger.error(f"No dataset files found in {base_dir}")
@@ -551,7 +639,7 @@ def verify_dataset(base_dir: Path, aggregation: str = 'task-group'):
 
     # Process each file
     for file_path in dataset_files:
-        file_type = "train" if file_path.name == "train.jsonl" else "val"
+        file_type = "train" if "train" in file_path.name else "val"
         domain = file_path.parent.name if file_path.parent != base_dir else "root"
 
         if domain not in overall_stats['by_domain']:
@@ -794,6 +882,7 @@ def main():
         logger.info(f"  Lie prompt: None (disabled)")
 
     logger.info(f"  Weighted: {args.weighted}")
+    logger.info(f"  Strip metadata: {args.strip_metadata}")
 
     # Explain the strategy
     logger.info("")
@@ -824,6 +913,8 @@ def main():
 
     if args.weighted:
         logger.info("  • Adding weight=0 to all messages except final lie response")
+
+    logger.info("  • Creating both stripped (train.jsonl, val.jsonl) and metadata (_train.jsonl, _val.jsonl) versions")
 
     logger.info("\n" + "-" * 70)
 
@@ -943,7 +1034,8 @@ def main():
             "did_lie_response": args.did_lie,
             "didnt_lie_response": args.didnt_lie
         },
-        "weighted": args.weighted
+        "weighted": args.weighted,
+        "metadata_versions_created": True  # Flag indicating both versions exist
     }
 
     # Track created directories for HF upload
@@ -955,8 +1047,10 @@ def main():
 
     for fold_name, train_samples, val_samples, test_samples in folds:
         # Need to preserve meta information for HF upload
-        train_data = []
-        val_data = []
+        train_data = []  # Stripped version
+        val_data = []  # Stripped version
+        train_data_with_meta = []  # Version with metadata
+        val_data_with_meta = []  # Version with metadata
 
         # Convert training samples while preserving metadata and merging messages
         for sample in train_samples:
@@ -969,6 +1063,22 @@ def main():
                 master_summary["message_processing"]["samples_with_merges"] += 1
             master_summary["message_processing"]["total_samples_processed"] += 1
 
+            # Always create the version with metadata
+            train_with_meta = {
+                "messages": merged_messages,
+                "meta": {
+                    "did_lie": sample['did_lie'],
+                    "task": sample.get('task', 'unknown'),
+                    "sample_id": sample.get('sample_id', 'unknown'),
+                    "task_id": sample.get('task_id', 'unknown'),
+                    "category": sample.get('category', 'unknown'),
+                    "had_consecutive_merge": had_merge,
+                    "has_lie_prompt": args.lie_prompt is not None
+                }
+            }
+            train_data_with_meta.append(train_with_meta)
+
+            # Create stripped version based on flag
             if args.strip_metadata:
                 train_data.append({
                     "messages": merged_messages
@@ -1002,6 +1112,22 @@ def main():
                 master_summary["message_processing"]["samples_with_merges"] += 1
             master_summary["message_processing"]["total_samples_processed"] += 1
 
+            # Always create the version with metadata
+            val_with_meta = {
+                "messages": merged_messages,
+                "meta": {
+                    "did_lie": sample['did_lie'],
+                    "task": sample.get('task', 'unknown'),
+                    "sample_id": sample.get('sample_id', 'unknown'),
+                    "task_id": sample.get('task_id', 'unknown'),
+                    "category": sample.get('category', 'unknown'),
+                    "had_consecutive_merge": had_merge,
+                    "has_lie_prompt": args.lie_prompt is not None
+                }
+            }
+            val_data_with_meta.append(val_with_meta)
+
+            # Create stripped version based on flag
             if args.strip_metadata:
                 val_data.append({
                     "messages": merged_messages
@@ -1063,7 +1189,8 @@ def main():
                 "consecutive_assistant_merging": True,
                 "lie_prompt_added": args.lie_prompt is not None,
                 "weighted": args.weighted
-            }
+            },
+            "metadata_versions_created": True
         }
 
         # If using aggregation, add category info
@@ -1075,14 +1202,20 @@ def main():
         if args.shuffle:
             random.shuffle(train_data)
             random.shuffle(val_data)
+            random.shuffle(train_data_with_meta)
+            random.shuffle(val_data_with_meta)
 
-        save_training_files(train_data, val_data, output_dir, fold_info)
+        save_training_files(train_data, val_data, train_data_with_meta, val_data_with_meta, output_dir, fold_info)
 
         # Print what was saved
         logger.info(
             f"     ✓ train.jsonl: {len(train_data)} samples ({fold_info['train_lies']} lies, {fold_info['train_truths']} truths)")
         logger.info(
             f"     ✓ val.jsonl: {len(val_data)} samples ({fold_info['val_lies']} lies, {fold_info['val_truths']} truths)")
+        logger.info(
+            f"     ✓ _train.jsonl: {len(train_data_with_meta)} samples with metadata")
+        logger.info(
+            f"     ✓ _val.jsonl: {len(val_data_with_meta)} samples with metadata")
         logger.info(f"     ✓ metadata.json: Fold configuration and statistics")
 
     # Log merge statistics
@@ -1132,10 +1265,15 @@ def main():
         logger.info("")
         logger.info("📌 WHAT WAS CREATED:")
         logger.info(f"  A single train/validation split in: {base_output_dir}")
-        logger.info("  - train.jsonl: Training data (with merged consecutive assistant messages)")
-        logger.info("  - val.jsonl: Validation data (with merged consecutive assistant messages)")
-        if lie_prompt:
-            logger.info(f"  - Lie prompt added: '{lie_prompt}'")
+
+        logger.info("  Regular files (for fine-tuning):")
+        logger.info("  - train.jsonl: Training data")
+        logger.info("  - val.jsonl: Validation data")
+        logger.info("  Files with metadata (for analysis):")
+        logger.info("  - _train.jsonl: Training data with meta fields")
+        logger.info("  - _val.jsonl: Validation data with meta fields")
+        if args.lie_prompt:
+            logger.info(f"  - Lie prompt added: '{args.lie_prompt}'")
         if args.weighted:
             logger.info("  - Weighted messages: All except final response have weight=0")
         logger.info("  - metadata.json: Dataset statistics")
@@ -1168,10 +1306,15 @@ def main():
 
         logger.info("")
         logger.info("  Each fold directory contains:")
-        logger.info("  - train.jsonl: Training data for that fold (with merged consecutive assistant messages)")
-        logger.info("  - val.jsonl: Validation data for that fold (with merged consecutive assistant messages)")
-        if lie_prompt:
-            logger.info(f"  - Lie prompt added: '{lie_prompt}'")
+
+        logger.info("  Regular files (for fine-tuning):")
+        logger.info("  - train.jsonl: Training data")
+        logger.info("  - val.jsonl: Validation data")
+        logger.info("  Files with metadata (for analysis):")
+        logger.info("  - _train.jsonl: Training data with meta fields")
+        logger.info("  - _val.jsonl: Validation data with meta fields")
+        if args.lie_prompt:
+            logger.info(f"  - Lie prompt added: '{args.lie_prompt}'")
         if args.weighted:
             logger.info("  - Weighted messages: All except final response have weight=0")
         logger.info("  - metadata.json: Fold-specific statistics")

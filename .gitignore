@@ -67,3 +67,5 @@ __pycache__
 /plots
 /.data
 *.log
+/.together2/
+/.together-120b/

@@ -263,7 +263,7 @@ if __name__ == "__main__":
         # Use the combined tasks instead of individual ones
         sycophancy_answer_all(),
         sycophancy_feedback_all(),
-        sycophancy_are_you_sure(),
+        #sycophancy_are_you_sure(),
     ]
     
     # Alternatively, if you want to run individual tasks:
@@ -298,7 +298,7 @@ if __name__ == "__main__":
     results = eval(
         tasks=all_tasks,
         model=model,  # or any model you want to test
-        limit=10,  # Limit samples for faster debugging
+        limit=1000,  # Limit samples for faster debugging
         log_dir="../logs/sycophancy",  # Optional: specify log directory
         retry_on_error=5
         # debug_errors=True,  # Optional: enable debug mode
