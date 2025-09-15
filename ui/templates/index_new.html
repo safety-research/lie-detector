@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lie Detection Data Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="version" content="2025-08-06-07-30">
+    <style>
+        body {
+            background-color: #FFFCF8;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #2E2A26;
+        }
+        .navbar-brand {
+            font-weight: 600;
+            color: #2E2A26 !important;
+            letter-spacing: -0.5px;
+        }
+        .card {
+            border: 1px solid #5A524C;
+            border-radius: 0;
+            box-shadow: none;
+            margin-bottom: 20px;
+            background-color: #E9E4DE;
+        }
+        .card-header {
+            background: #5A524C;
+            color: #FAFAF8;
+            border-radius: 0 !important;
+            font-weight: 500;
+            border-bottom: none;
+            padding: 12px 20px;
+        }
+        .btn-primary {
+            background: #5A524C;
+            color: #FAFAF8;
+            border: 1px solid #5A524C;
+            border-radius: 0;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background: #A89F96;
+            color: #FAFAF8;
+            border-color: #A89F96;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-outline-secondary {
+            background: #FAFAF8;
+            color: #5A524C;
+            border: 1px solid #A89F96;
+            border-radius: 0;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .btn-outline-secondary:hover {
+            background: #A89F96;
+            color: #FAFAF8;
+            border-color: #A89F96;
+        }
+        .btn-outline-info {
+            background: #FAFAF8;
+            color: #5A524C;
+            border: 1px solid #5A524C;
+            border-radius: 0;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .btn-outline-info:hover {
+            background: #5A524C;
+            color: #FAFAF8;
+            border-color: #5A524C;
+        }
+        .sample-card {
+            transition: box-shadow 0.2s;
+        }
+        .sample-card:hover {
+            transform: none;
+            box-shadow: 4px 4px 0 #5A524C;
+            background-color: #D8D2CC;
+        }
+        .badge-lie {
+            background-color: #A9746E;  /* Dusty rosewood */
+            color: #FAFAF8;  /* Soft bone white */
+            border: 1px solid #A9746E;
+            font-weight: 500;
+            padding: 4px 8px;
+        }
+        .badge-truth {
+            background-color: #879D87;  /* Desaturated sage */
+            color: #FAFAF8;  /* Soft bone white */
+            border: 1px solid #879D87;
+            font-weight: 500;
+            padding: 4px 8px;
+        }
+        .trace-message {
+            background-color: #F7F3EF;
+            border-left: 3px solid #5A524C;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0;
+            position: relative;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+        }
+        /* Role colors for trace messages - Updated 2025-08-06 */
+        .trace-message.user {
+            border-left-color: #728072;  /* Muted sage green */
+            background-color: #F7F3EF;  /* Neutral background */
+            border: 1px solid #728072;
+            border-left-width: 4px;
+        }
+        .trace-message.assistant {
+            border-left-color: #4F5B66;  /* Cool slate gray */
+            background-color: #F7F3EF;  /* Neutral background */
+            border: 1px solid #4F5B66;
+            border-left-width: 4px;
+        }
+        .trace-message.system {
+            border-left-color: #B5B0A1;  /* Soft warm gray */
+            background-color: #F7F3EF;  /* Neutral background */
+            border: 1px solid #B5B0A1;
+            border-left-width: 4px;
+        }
+        /* Role label and content text colors */
+        .trace-message.user strong,
+        .trace-message.user .content {
+            color: #728072;  /* Muted sage green */
+        }
+        .trace-message.assistant strong,
+        .trace-message.assistant .content {
+            color: #4F5B66;  /* Cool slate gray */
+        }
+        .trace-message .content {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        .trace-message .content.has-truncated {
+            cursor: pointer;
+        }
+        .trace-message .content.has-truncated:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        .expand-indicator {
+            color: #A89F96;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 0.9em;
+        }
+        .expand-indicator:hover {
+            color: #5A524C;
+            text-decoration: none;
+        }
+        .scores-section {
+            background-color: #F7F3EF;
+            border: 1px solid #5A524C;
+            border-radius: 0;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .metadata-section {
+            background-color: #E9E4DE;
+            border: 1px solid #A89F96;
+            border-radius: 0;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .filter-section {
+            background-color: #F7F3EF;
+            border: 1px solid #5A524C;
+            border-radius: 0;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .form-select, .form-control {
+            border-radius: 0;
+            border: 1px solid #5A524C;
+            background-color: #FAFAF8;
+            font-weight: 400;
+            min-width: 200px;
+        }
+        /* Ensure dropdown options can display full text */
+        .form-select option {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: #5A524C;
+            box-shadow: 0 0 0 0.2rem rgba(90, 82, 76, 0.1);
+        }
+        
+        /* Tree view styles */
+        .tree-view {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .tree-node {
+            margin-left: 0;
+        }
+        .tree-node.nested {
+            margin-left: 20px;
+        }
+        .tree-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 16px;
+            text-align: center;
+            color: #A89F96;
+            font-weight: bold;
+        }
+        .tree-toggle:hover {
+            color: #000000;
+        }
+        .tree-toggle.empty {
+            cursor: default;
+        }
+        .tree-key {
+            font-weight: 600;
+            color: #000000;
+        }
+        .tree-value {
+            color: #000000;
+        }
+        .tree-value.string {
+            color: #000000;
+        }
+        .tree-value.number {
+            color: #000000;
+        }
+        .tree-value.boolean {
+            color: #000000;
+        }
+        .tree-value.null {
+            color: #666666;
+            font-style: italic;
+        }
+        .tree-children {
+            display: none;
+        }
+        .tree-children.expanded {
+            display: block;
+        }
+        .tree-brackets {
+            color: #666666;
+            font-weight: normal;
+        }
+        
+        .toggle-icon {
+            transition: transform 0.2s ease;
+            margin-left: 8px;
+        }
+        
+
+        
+        .sample-content {
+            display: block;
+        }
+        
+        /* Lucide icon styling */
+        i[data-lucide] {
+            width: 16px;
+            height: 16px;
+            stroke-width: 1.5;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg" style="background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+        <div class="container">
+            <a class="navbar-brand" href="#" style="color: #222; font-weight: bold; font-size: 1.5rem;">
+                <i data-lucide="search" style="color: #888;"></i> Lie Detection Data Viewer
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Filter Section -->
+        <div id="filterSection" class="filter-section">
+            <h5><i data-lucide="filter"></i> Filters</h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Task</label>
+                    <select id="taskFilter" class="form-select">
+                        <option value="">All Tasks</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Model</label>
+                    <select id="modelFilter" class="form-select">
+                        <option value="">All Models</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Did Lie</label>
+                    <select id="lieFilter" class="form-select">
+                        <option value="">All</option>
+                        <option value="true">Lies Only</option>
+                        <option value="false">Truths Only</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Count</label>
+                    <input type="number" id="sampleCount" class="form-control" value="5" min="1" max="50" style="width: 80px;">
+                </div>
+            </div>
+            <div class="mt-3">
+                <button id="applyFiltersBtn" class="btn btn-primary">
+                    <i data-lucide="search"></i> Apply Filters
+                </button>
+                <button id="clearFiltersBtn" class="btn btn-outline-secondary ms-2">
+                    <i data-lucide="x"></i> Clear Filters
+                </button>
+                <button id="downloadDataBtn" class="btn btn-success ms-2">
+                    <i data-lucide="download"></i> Download Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Samples Display Section -->
+        <div id="samplesSection">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="fas fa-list"></i> Samples</h4>
+                <div id="filterSummary" class="text-muted"></div>
+            </div>
+            <div id="samplesContainer"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script>
+        // Cache busting - force reload of JavaScript
+        console.log('Template loaded at:', new Date().toISOString());
+        let currentData = [];
+        const TRUNCATE_LENGTH = 500;
+
+        // Apply filters
+        document.getElementById('applyFiltersBtn').addEventListener('click', loadSamples);
+        document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+        document.getElementById('downloadDataBtn').addEventListener('click', downloadFilteredData);
+        
+        // Add change listeners to filters to update counts dynamically
+        document.getElementById('taskFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            // Preserve the selected value after reload
+            const selectedTask = event.target.value;
+            document.getElementById('taskFilter').value = selectedTask;
+        });
+        
+        document.getElementById('modelFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedModel = event.target.value;
+            document.getElementById('modelFilter').value = selectedModel;
+        });
+        
+
+        
+        document.getElementById('lieFilter').addEventListener('change', async () => {
+            await loadUniqueValues();
+            const selectedLie = event.target.value;
+            document.getElementById('lieFilter').value = selectedLie;
+        });
+
+        // Load data when page loads
+        window.addEventListener('load', async () => {
+            await loadUniqueValues();
+            await loadSamples();
+        });
+
+        async function loadUniqueValues() {
+            try {
+                // Get current filter values
+                const task = document.getElementById('taskFilter').value;
+                const model = document.getElementById('modelFilter').value;
+                const didLie = document.getElementById('lieFilter').value;
+                
+                // Build URL with current filter parameters
+                let url = '/get_unique_values?';
+                const params = [];
+                if (task) params.push(`task=${encodeURIComponent(task)}`);
+                if (model) params.push(`model=${encodeURIComponent(model)}`);
+                if (didLie) params.push(`did_lie=${didLie}`);
+                url += params.join('&');
+                
+                const response = await fetch(url);
+                const values = await response.json();
+
+                // Store total count for display
+                window.totalSampleCount = values.total_count || 0;
+                
+                // Store current selections before updating
+                const currentTask = document.getElementById('taskFilter').value;
+                const currentModel = document.getElementById('modelFilter').value;
+                const currentDidLie = document.getElementById('lieFilter').value;
+
+                // Calculate number of unique categories (not sum of counts)
+                const taskCount = values.tasks ? values.tasks.length : 0;
+                const modelCount = values.models ? values.models.length : 0;
+                const lieCount = values.lie_counts ? (values.lie_counts.true + values.lie_counts.false) : 0;
+
+                // Populate task filter with counts
+                const taskFilter = document.getElementById('taskFilter');
+                taskFilter.innerHTML = `<option value="">All Tasks (${taskCount})</option>`;
+                if (values.tasks && Array.isArray(values.tasks)) {
+                    values.tasks.forEach(task => {
+                        const option = document.createElement('option');
+                        option.value = task.value;
+                        option.textContent = `${task.value} (${task.count})`;
+                        taskFilter.appendChild(option);
+                    });
+                }
+
+                // Populate model filter with counts
+                const modelFilter = document.getElementById('modelFilter');
+                modelFilter.innerHTML = `<option value="">All Models (${modelCount})</option>`;
+                if (values.models && Array.isArray(values.models)) {
+                    values.models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.value;
+                        option.textContent = `${model.value} (${model.count})`;
+                        modelFilter.appendChild(option);
+                    });
+                }
+
+
+
+                // Update lie filter with counts
+                const lieFilter = document.getElementById('lieFilter');
+                if (values.lie_counts) {
+                    lieFilter.innerHTML = `
+                        <option value="">All (${lieCount})</option>
+                        <option value="true">Lies Only (${values.lie_counts.true})</option>
+                        <option value="false">Truths Only (${values.lie_counts.false})</option>
+                    `;
+                }
+                
+                // Restore previous selections
+                document.getElementById('taskFilter').value = currentTask;
+                document.getElementById('modelFilter').value = currentModel;
+                document.getElementById('lieFilter').value = currentDidLie;
+            } catch (error) {
+                console.error('Error loading unique values:', error);
+            }
+        }
+
+        async function loadSamples() {
+            const task = document.getElementById('taskFilter').value;
+            const model = document.getElementById('modelFilter').value;
+            const didLie = document.getElementById('lieFilter').value;
+            const n = document.getElementById('sampleCount').value;
+
+            // Show loading indicator
+            const container = document.getElementById('samplesContainer');
+            container.innerHTML = '<div class="text-center p-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">Loading samples...</p></div>';
+
+            let url = `/get_samples?n=${n}`;
+            if (task) url += `&task=${encodeURIComponent(task)}`;
+            if (model) url += `&model=${encodeURIComponent(model)}`;
+            if (didLie) url += `&did_lie=${didLie}`;
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.samples) {
+                    displaySamples(result.samples);
+                    updateFilterSummary(result);
+                } else {
+                    showMessage(result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error loading samples: ' + error.message, 'error');
+            }
+        }
+
+
+        function displaySamples(samples) {
+            const container = document.getElementById('samplesContainer');
+            container.innerHTML = '';
+
+            samples.forEach(sample => {
+                const sampleCard = createSampleCard(sample);
+                container.appendChild(sampleCard);
+            });
+        }
+
+        function createSampleCard(sample) {
+            const card = document.createElement('div');
+            card.className = 'card sample-card';
+
+            const didLieBadge = sample.did_lie ?
+                '<span class="badge badge-lie ms-2">Lying</span>' :
+                '<span class="badge badge-truth ms-2">Truthful</span>';
+
+            card.innerHTML = `
+                <div class="card-header" style="cursor: pointer;" onclick="toggleSampleCard(this)">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Sample ID: ${sample.sample_id} <i class="fas fa-chevron-down toggle-icon"></i></span>
+                        ${didLieBadge}
+                    </div>
+                </div>
+                <div class="card-body sample-content">
+                    <div class="mb-3">
+                        <h6>Conversation Trace</h6>
+                        ${createTraceHTML(sample.trace)}
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Groundtruth Label</h6>
+                        <div class="trace-message">
+                            <strong>${sample.did_lie ? 'LYING' : 'TRUTHFUL'}:</strong> <span class="content ${sample.evidence && sample.evidence.length > TRUNCATE_LENGTH ? 'has-truncated' : ''}" data-full-text="${escapeHtml(sample.evidence).replace(/"/g, '&quot;')}" data-expanded="false">${truncateAndFormat(sample.evidence)}</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <details>
+                            <summary style="font-weight:600; cursor:pointer;">Metadata & Additional Information</summary>
+                            ${createMetadataHTML(sample)}
+                        </details>
+                    </div>
+                </div>
+            `;
+
+            // Add click handlers for expandable content after a short delay to ensure DOM is ready
+            setTimeout(() => {
+                card.querySelectorAll('.content').forEach(element => {
+                    if (element.innerHTML.includes('expand-indicator')) {
+                        element.style.cursor = 'pointer';
+                        element.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            toggleContent(this);
+                        });
+                    }
+                });
+            }, 0);
+
+            return card;
+        }
+
+        function createTraceHTML(trace) {
+            if (!trace || trace.length === 0) {
+                return '<div class="text-muted">No trace data available</div>';
+            }
+
+            return trace.map((message, index) => {
+                let content = '';
+                let role = '';
+
+                // Handle system prompt (string) vs structured messages (object with role and content)
+                if (typeof message === 'string') {
+                    // This is the system prompt
+                    content = message;
+                    role = 'SYSTEM';
+                    return `
+                        <div class="trace-message system">
+                            <strong>${role}:</strong> <span class="content ${content.length > TRUNCATE_LENGTH ? 'has-truncated' : ''}" data-full-text="${escapeHtml(content).replace(/"/g, '&quot;')}" data-expanded="false">${truncateAndFormat(content)}</span>
+                        </div>
+                    `;
+                } else if (message.role && message.content) {
+                    // This is a structured message (user/assistant)
+                    content = message.content;
+                    role = message.role.toUpperCase();
+                    return `
+                        <div class="trace-message ${message.role.toLowerCase()}">
+                            <strong>${role}:</strong> <span class="content ${content.length > TRUNCATE_LENGTH ? 'has-truncated' : ''}" data-full-text="${escapeHtml(content).replace(/"/g, '&quot;')}" data-expanded="false">${truncateAndFormat(content)}</span>
+                        </div>
+                    `;
+                } else {
+                    // Fallback for any other format
+                    content = JSON.stringify(message);
+                    role = 'MESSAGE';
+                    return `
+                        <div class="trace-message">
+                            <strong>${role}:</strong> <span class="content ${content.length > TRUNCATE_LENGTH ? 'has-truncated' : ''}" data-full-text="${escapeHtml(content).replace(/"/g, '&quot;')}" data-expanded="false">${truncateAndFormat(content)}</span>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function truncateAndFormat(text) {
+            if (!text) return '';
+
+            // If text is shorter than truncate length, just return it
+            if (text.length <= TRUNCATE_LENGTH) {
+                return escapeHtml(text);
+            }
+
+            // Truncate and add ellipsis with expand indicator
+            const truncated = escapeHtml(text.substring(0, TRUNCATE_LENGTH));
+            return `${truncated}...<span class="expand-indicator">[+]</span>`;
+        }
+
+        function toggleContent(element) {
+            const fullText = element.getAttribute('data-full-text');
+            const isExpanded = element.getAttribute('data-expanded') === 'true';
+
+            if (isExpanded) {
+                // Collapse - show truncated version
+                element.setAttribute('data-expanded', 'false');
+                if (fullText.length > TRUNCATE_LENGTH) {
+                    const truncated = escapeHtml(fullText.substring(0, TRUNCATE_LENGTH));
+                    element.innerHTML = `${truncated}...<span class="expand-indicator">[+]</span>`;
+                } else {
+                    element.innerHTML = escapeHtml(fullText);
+                }
+            } else {
+                // Expand - show full text
+                element.setAttribute('data-expanded', 'true');
+                element.innerHTML = escapeHtml(fullText) + '<span class="expand-indicator">[-]</span>';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function createScoresHTML(scores, didLie) {
+            if (!scores || Object.keys(scores).length === 0) {
+                return '<div class="text-muted">No scores available</div>';
+            }
+
+            let html = '<div class="scores-section">';
+            html += `<div><strong>Is Lie:</strong> ${didLie ? 'TRUE' : 'FALSE'}</div>`;
+
+            // Show detailed scoring information if available
+            for (const [scorerName, scorerData] of Object.entries(scores)) {
+                html += `<div class="mt-2"><strong>${scorerName}:</strong></div>`;
+                for (const [key, value] of Object.entries(scorerData)) {
+                    if (typeof value === 'object' && value !== null) {
+                        html += `<div class="ms-3"><strong>${key}:</strong> ${JSON.stringify(value)}</div>`;
+                    } else {
+                        html += `<div class="ms-3"><strong>${key}:</strong> ${value}</div>`;
+                    }
+                }
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function createMetadataHTML(sample) {
+            let html = '<div class="metadata-section tree-view">';
+            
+            // Prepare all data sections
+            const sections = [];
+            
+            // Metadata section
+            if (sample.metadata && Object.keys(sample.metadata).length > 0) {
+                sections.push({
+                    title: 'Metadata',
+                    data: sample.metadata
+                });
+            }
+            
+            // Additional fields section
+            if (sample.additional_fields && Object.keys(sample.additional_fields).length > 0) {
+                sections.push({
+                    title: 'Additional Fields',
+                    data: sample.additional_fields
+                });
+            }
+            
+            // Basic information section
+            const basicInfo = {
+                'Task': sample.task || 'N/A',
+                'Task ID': sample.task_id || 'N/A',
+                'Model': sample.model || 'N/A',
+                'Provider': sample.provider || 'N/A',
+                'Domain': sample.domain || 'N/A',
+                'Timestamp': formatTimestamp(sample.timestamp),
+                'File': sample.file_key || 'N/A',
+                'Line Number': sample.line_number || 'N/A'
+            };
+            sections.push({
+                title: 'Basic Information',
+                data: basicInfo
+            });
+            
+            // Scores section if available
+            if (sample.scores && Object.keys(sample.scores).length > 0) {
+                sections.push({
+                    title: 'Scores',
+                    data: sample.scores
+                });
+            }
+            
+            // Build the tree HTML
+            sections.forEach((section, index) => {
+                html += createTreeNode(section.title, section.data, `section-${index}`, false);
+            });
+            
+            html += '</div>';
+            return html;
+        }
+        
+        function createTreeNode(key, value, nodeId, isNested = true) {
+            const uniqueId = `tree-${nodeId}-${Math.random().toString(36).substr(2, 9)}`;
+            let html = '';
+            
+            if (value === null || value === undefined) {
+                html = `<div class="tree-node ${isNested ? 'nested' : ''}">
+                    <span class="tree-toggle empty">&nbsp;</span>
+                    <span class="tree-key">${key}:</span>
+                    <span class="tree-value null">null</span>
+                </div>`;
+            } else if (typeof value === 'object' && !Array.isArray(value)) {
+                // Object
+                const isEmpty = Object.keys(value).length === 0;
+                html = `<div class="tree-node ${isNested ? 'nested' : ''}">
+                    <span class="tree-toggle ${isEmpty ? 'empty' : ''}" data-target="${uniqueId}" onclick="toggleTreeNode('${uniqueId}')">${isEmpty ? '&nbsp;' : '▶'}</span>
+                    <span class="tree-key">${key}:</span>
+                    <span class="tree-brackets">{${isEmpty ? '}' : ''}</span>
+                    ${!isEmpty ? `<div class="tree-children" id="${uniqueId}">` : ''}`;
+                
+                if (!isEmpty) {
+                    Object.entries(value).forEach(([k, v]) => {
+                        html += createTreeNode(k, v, `${nodeId}-${k}`, true);
+                    });
+                    html += '</div><div class="tree-node nested"><span class="tree-toggle empty">&nbsp;</span><span class="tree-brackets">}</span></div>';
+                }
+                html += '</div>';
+            } else if (Array.isArray(value)) {
+                // Array
+                const isEmpty = value.length === 0;
+                html = `<div class="tree-node ${isNested ? 'nested' : ''}">
+                    <span class="tree-toggle ${isEmpty ? 'empty' : ''}" data-target="${uniqueId}" onclick="toggleTreeNode('${uniqueId}')">${isEmpty ? '&nbsp;' : '▶'}</span>
+                    <span class="tree-key">${key}:</span>
+                    <span class="tree-brackets">[${isEmpty ? ']' : ''}</span>
+                    ${!isEmpty ? `<div class="tree-children" id="${uniqueId}">` : ''}`;
+                
+                if (!isEmpty) {
+                    value.forEach((item, index) => {
+                        html += createTreeNode(`[${index}]`, item, `${nodeId}-${index}`, true);
+                    });
+                    html += '</div><div class="tree-node nested"><span class="tree-toggle empty">&nbsp;</span><span class="tree-brackets">]</span></div>';
+                }
+                html += '</div>';
+            } else {
+                // Primitive value
+                let valueClass = 'tree-value';
+                if (typeof value === 'string') valueClass += ' string';
+                else if (typeof value === 'number') valueClass += ' number';
+                else if (typeof value === 'boolean') valueClass += ' boolean';
+                
+                let displayValue = value;
+                if (typeof value === 'string') {
+                    displayValue = `"${value}"`;
+                }
+                
+                html = `<div class="tree-node ${isNested ? 'nested' : ''}">
+                    <span class="tree-toggle empty">&nbsp;</span>
+                    <span class="tree-key">${key}:</span>
+                    <span class="${valueClass}">${escapeHtml(String(displayValue))}</span>
+                </div>`;
+            }
+            
+            return html;
+        }
+        
+        function toggleTreeNode(nodeId) {
+            const node = document.getElementById(nodeId);
+            const toggle = document.querySelector(`[data-target="${nodeId}"]`);
+            
+            if (node && toggle) {
+                if (node.classList.contains('expanded')) {
+                    node.classList.remove('expanded');
+                    toggle.textContent = '▶';
+                } else {
+                    node.classList.add('expanded');
+                    toggle.textContent = '▼';
+                }
+            }
+        }
+
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'N/A';
+            try {
+                return new Date(timestamp).toLocaleString();
+            } catch (e) {
+                return timestamp;
+            }
+        }
+
+        function clearFilters() {
+            document.getElementById('taskFilter').value = '';
+            document.getElementById('modelFilter').value = '';
+            document.getElementById('lieFilter').value = '';
+            document.getElementById('sampleCount').value = '5';
+            loadSamples();
+        }
+
+        function updateFilterSummary(result) {
+            const summaryDiv = document.getElementById('filterSummary');
+            const displayedCount = result.samples.length;
+            const filteredCount = result.filtered_samples;
+            const totalCount = result.total_samples;
+            
+            let summary = `Showing ${displayedCount} of ${filteredCount} filtered samples`;
+            if (filteredCount < totalCount) {
+                summary += ` (${totalCount} total)`;
+            }
+            
+            summaryDiv.innerHTML = summary;
+        }
+
+        function toggleSampleCard(header) {
+            const card = header.closest('.sample-card');
+            const content = card.querySelector('.sample-content');
+            const toggleIcon = header.querySelector('.toggle-icon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggleIcon.className = 'fas fa-chevron-down toggle-icon';
+            } else {
+                content.style.display = 'none';
+                toggleIcon.className = 'fas fa-chevron-right toggle-icon';
+            }
+        }
+
+        function showMessage(message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            const alert = document.createElement('div');
+            alert.className = `alert ${alertClass} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            const container = document.querySelector('.container');
+            container.insertBefore(alert, container.firstChild);
+
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        async function downloadFilteredData() {
+            try {
+                console.log('Download button clicked');
+                
+                // Get current filter values
+                const task = document.getElementById('taskFilter').value;
+                const model = document.getElementById('modelFilter').value;
+                const didLie = document.getElementById('lieFilter').value;
+                
+                console.log('Filter values:', { task, model, didLie });
+                
+                // Build download URL with current filter parameters
+                let url = '/download_filtered_data?';
+                const params = [];
+                if (task) params.push(`task=${encodeURIComponent(task)}`);
+                if (model) params.push(`model=${encodeURIComponent(model)}`);
+                if (didLie) params.push(`did_lie=${didLie}`);
+                url += params.join('&');
+                
+                console.log('Download URL:', url);
+                
+                // Create filename based on filters
+                let filename = 'lie_detection_data';
+                if (task) filename += `_task_${task.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                if (model) filename += `_model_${model.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                if (didLie) filename += `_did_lie_${didLie}`;
+                filename += '.csv';
+                
+                // Estimate file size based on filters and typical data characteristics
+                // Total dataset: ~124K files, average ~2-5KB per file
+                let estimatedSize = '~50-100MB';  // Default for no filters (all data)
+                if (task && model) {
+                    estimatedSize = '~5-15MB';  // Very specific filter
+                } else if (task || model) {
+                    estimatedSize = '~10-30MB';  // Single filter
+                } else if (didLie) {
+                    estimatedSize = '~25-50MB';  // Just lie/truth filter
+                }
+                
+                // Create a temporary link and trigger download
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                
+                console.log('Triggering download...');
+                link.click();
+                
+                // Remove the link after a short delay
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    console.log('Download link removed');
+                }, 1000);
+                
+                showMessage(`Download started! The file will be saved as ${filename} (${estimatedSize}).`, 'success');
+                
+            } catch (error) {
+                console.error('Error downloading data:', error);
+                showMessage('Error downloading data. Please try again.', 'error');
+            }
+        }
+
+
+
+        // Auto-load data when page loads
+        window.onload = async function() {
+            await loadUniqueValues();
+            await loadSamples();
+        };
+    </script>
+</body>
+</html>

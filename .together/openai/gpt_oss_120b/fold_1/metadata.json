@@ -1,0 +1,26 @@
+{
+  "fold_name": "fold_1",
+  "model": "openai/gpt-oss-120b",
+  "aggregation": "megafolds",
+  "validation_split": 0.15,
+  "balance_strategy": "downsample",
+  "train_size": 5398,
+  "val_size": 952,
+  "train_lies": 2704,
+  "train_truths": 2694,
+  "val_lies": 471,
+  "val_truths": 481,
+  "timestamp": "2025-09-05T09:46:33.244445",
+  "seed": 42,
+  "split_type": "train/val",
+  "message_processing": {
+    "consecutive_assistant_merging": true,
+    "lie_prompt_added": true,
+    "weighted": true
+  },
+  "fold_category": "fold_1",
+  "contains_categories": [
+    "fold_1"
+  ],
+  "category_only": true
+}

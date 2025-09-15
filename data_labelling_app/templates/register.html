@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Lie Detection Annotation Tool{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-user-plus"></i> Register Annotator
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    Please enter your name to start annotating lie detection samples.
+                </p>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="annotator_name" class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="annotator_name" name="annotator_name" 
+                               placeholder="Enter your name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Start Annotating
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle"></i> Instructions
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>This tool allows you to annotate conversation samples for lie detection research.</p>
+                <ul>
+                    <li>You will be shown conversation traces between a system, user, and assistant</li>
+                    <li>Your task is to determine if the assistant's response contains a lie</li>
+                    <li>Choose "Lie" if the assistant provides false or misleading information</li>
+                    <li>Choose "Not Lie" if the assistant provides truthful information</li>
+                    <li>You can skip samples or go back to previous ones if needed</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1 @@
+# Common templates for agents and judges

@@ -1,0 +1,25 @@
+{
+  "repositories": [
+    {
+      "name": "simple-calculator",
+      "url": "https://github.com/example/simple-calculator",
+      "language": "python",
+      "complexity": "low",
+      "description": "Basic calculator with room for improvements"
+    },
+    {
+      "name": "web-api",
+      "url": "https://github.com/example/web-api", 
+      "language": "javascript",
+      "complexity": "medium",
+      "description": "REST API with potential optimizations"
+    },
+    {
+      "name": "data-processor",
+      "url": "https://github.com/example/data-processor",
+      "language": "python",
+      "complexity": "high",
+      "description": "Complex data processing pipeline"
+    }
+  ]
+}
