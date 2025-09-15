@@ -65,3 +65,5 @@ __pycache__
 /evals/results/
 /plots/plots/
 /plots
+/.data
+*.log

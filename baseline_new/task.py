@@ -1,6 +1,6 @@
 from inspect_ai import task, Task
 from inspect_ai.model import GenerateConfig
-from inspect_ai.solver import generate
+from inspect_ai.solver import generate, Solver
 from typing import Optional, Dict
 import sys
 import os
@@ -15,7 +15,7 @@ if parent_dir not in sys.path:
 
 # Import from current directory only (baseline_new)
 from dataset import baseline_dataset, conversation_dataset, llama_chat_dataset, llama_chat_reasoning_dataset, base_transcript_reasoning_dataset, rowans_escaped_transcript_dataset
-from dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model, rowans_escaped_transcript_dataset_by_model
+from dataset import baseline_dataset_by_model, conversation_dataset_by_model, llama_chat_dataset_by_model, llama_chat_reasoning_dataset_by_model, base_transcript_reasoning_dataset_by_model, rowans_escaped_transcript_dataset_by_model, gt_labelling_rowan_modified_dataset, gt_labelling_rowan_modified_dataset_by_model
 from dataset import baseline_dataset_by_model_from_file, conversation_dataset_by_model_from_file, llama_chat_dataset_by_model_from_file, llama_chat_reasoning_dataset_by_model_from_file
 from scorer import truth_scorer, escaped_transcript_scorer, llama_chat_scorer, llama_chat_reasoning_scorer, base_transcript_reasoning_scorer
 
@@ -291,4 +291,43 @@ def rowans_escaped_transcript_task_by_model(
             scorer=escaped_transcript_scorer()
         )
     
-    return model_tasks 
+    return model_tasks
+
+
+@task
+def gt_labelling_rowan_modified_task(
+    data_dir: str, 
+    limit: Optional[int] = None
+) -> Task:
+    """
+    GT labelling with Rowan's escaped transcript format + lie definitions.
+    Prompts the model to classify whether the assistant is lying or telling the truth.
+    """
+    return Task(
+        dataset=gt_labelling_rowan_modified_dataset(data_dir, limit=limit),
+        solver=generate(max_tokens=8000, temperature=0.6),
+        scorer=escaped_transcript_scorer(),  # Use the same scorer as rowans_escaped_transcript
+        # Note: The target is automatically appended by inspect_ai's generate() solver
+        # This is expected behavior for evaluation, but for GT labelling we need to be careful
+        # about target leakage in the prompt construction
+    )
+
+
+def gt_labelling_rowan_modified_task_by_model(
+    data_dir: str, 
+    limit: Optional[int] = None
+) -> Dict[str, Task]:
+    """
+    GT labelling with Rowan's escaped transcript format + lie definitions, split by model.
+    """
+    model_datasets = gt_labelling_rowan_modified_dataset_by_model(data_dir, limit=limit)
+    model_tasks = {}
+    
+    for model, dataset in model_datasets.items():
+        model_tasks[model] = Task(
+            dataset=dataset,
+            solver=generate(max_tokens=8000, temperature=0.6),
+            scorer=escaped_transcript_scorer()  # Use the same scorer as rowans_escaped_transcript
+        )
+    
+    return model_tasks

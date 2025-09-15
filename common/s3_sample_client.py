@@ -370,32 +370,78 @@ class S3SampleClient:
     
     def _parse_task_name(self, task: str) -> Tuple[str, str]:
         """
-        Parse task name into domain and task type.
+        Parse task name into task_type and domain.
         
         Args:
             task: Task name like "ascii_train" or "mask_continuations"
             
         Returns:
-            Tuple of (domain, task_type)
+            Tuple of (task_type, domain)
         """
-        # For task names like "ascii_train", "mask_continuations", "sandbagging_train"
-        # We want domain first, then task_type
+        # Special cases that need custom parsing
+        # Format: (task_type, domain) -> S3 path will be task_type/domain
+        special_cases = {
+            "truth_is_universal_off_policy": ("off_policy", "truth_is_universal"),
+            "theft_investigation_alibi": ("alibi", "assault_investigation"),
+            "tool_search_sandbagging": ("sandbagging", "tool_search"),
+            "tool_code_sandbagging": ("sandbagging", "tool_code"),
+            "political_unanswerable_claims": ("unanswerable_claims", "political"),
+            "medicine_unanswerable_claims": ("unanswerable_claims", "medicine"),
+            "feedback_sycophancy": ("sycophancy", "feedback"),
+            "ascii_sandbagging_off_policy": ("sandbagging_off_policy", "ascii"),
+            "digital_security_sandbagging": ("sandbagging", "digital_security"),
+        }
         
+        if task in special_cases:
+            return special_cases[task]
+        
+        # Default parsing for other cases
         parts = task.split("_")
         if len(parts) >= 3:
             # For longer names like "sandbagging_physical_security_contrastive"
-            # Assume first part is domain, rest is task_type
-            domain = parts[0]
-            task_type = "_".join(parts[1:])
-            return domain, task_type
+            # Assume first part is task_type, rest is domain
+            task_type = parts[0]
+            domain = "_".join(parts[1:])
+            return task_type, domain
         elif len(parts) == 2:
-            # Two parts: domain and task_type
+            # Two parts: task_type and domain
             # e.g., "ascii_train" -> ("ascii", "train")
             return parts[0], parts[1]
         else:
-            # Single part: use as domain with "general" as task_type
+            # Single part: use as task_type with "general" as domain
             return task, "general"
     
     def _clean_name(self, name: str) -> str:
         """Clean name for use in S3 paths."""
         return name.lower().replace(" ", "_").replace("-", "_").replace("/", "_").replace(":", "_")
+    
+    def file_exists(self, s3_path: str) -> bool:
+        """
+        Check if a file exists in S3.
+        
+        Args:
+            s3_path: S3 path (e.g., "s3://bucket/key")
+            
+        Returns:
+            True if file exists, False otherwise
+        """
+        if not self.enabled:
+            return False
+            
+        try:
+            # Parse S3 path
+            s3_uri = s3_path.replace('s3://', '')
+            bucket_name, key = s3_uri.split('/', 1)
+            
+            # Check if object exists
+            self.s3_client.head_object(Bucket=bucket_name, Key=key)
+            return True
+        except ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                return False
+            else:
+                print(f"Error checking S3 file existence: {e}")
+                return False
+        except Exception as e:
+            print(f"Error checking S3 file existence: {e}")
+            return False

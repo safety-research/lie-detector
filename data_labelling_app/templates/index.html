@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Lie Detection Annotation Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-home"></i> Welcome, {{ annotator_name }}!</h2>
+        <p class="text-muted">Select a fold to start annotating samples.</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for fold in folds %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">
+                    <i class="fas fa-folder"></i> {{ fold.replace('_', ' ').title() }}
+                </h5>
+                <p class="card-text text-muted">
+                    {{ data_manager.samples[fold]|length if data_manager.samples[fold] else 0 }} samples available for annotation
+                </p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('start_annotation', fold_name=fold) }}" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start Annotating
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if not folds %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            No data folds found. Please ensure the data directory contains JSONL files.
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -129,6 +129,10 @@ class LieDetectionDataProcessor:
         if aggregation == 'none':
             return {'all': samples}
 
+        # Handle special categorization for sandbagging and off-policy
+        if aggregation == 'task-group':
+            return self._categorize_with_special_splits(samples, getattr(self, 'offpolicy_max_size', 500))
+        
         generalization_map = self.generalization_maps.get(aggregation, {})
         categorized = defaultdict(list)
         uncategorized = []
@@ -157,6 +161,88 @@ class LieDetectionDataProcessor:
         for category, cat_samples in categorized.items():
             logger.info(f"Category '{category}': {len(cat_samples)} samples")
 
+        return dict(categorized)
+
+    def _categorize_with_special_splits(self, samples: List[Dict], offpolicy_max_size: int = 500) -> Dict[str, List[Dict]]:
+        """Categorize samples with special handling for sandbagging and off-policy splits."""
+        categorized = defaultdict(list)
+        
+        # ASCII-related tasks for sandbagging
+        ascii_tasks = {
+            'ascii_sandbagging',
+            'ascii_sandbagging_off_policy', 
+            'sandbagging_ascii_off_policy',
+            'sandbagging_ascii'
+        }
+        
+        # Off-policy task mappings
+        offpolicy_mappings = {
+            'dolus-chat_off-policy': 'offpolicy_doluschat',
+            'truth-is-universal_off-policy': 'offpolicy_truthisuniversal', 
+            'halueval_off-policy': 'offpolicy_halueval',
+            'liar_off-policy': 'offpolicy_liar'
+        }
+        
+        for sample in samples:
+            task = sample.get('task', '')
+            
+            # Handle sandbagging splits - check for any sandbagging-related task
+            if ('sandbagging' in task.lower() or 
+                task.startswith('sandbagging') or 
+                task.endswith('_sandbagging')):
+                if task in ascii_tasks:
+                    categorized['sandbagging_ascii'].append(sample)
+                else:
+                    categorized['sandbagging_other'].append(sample)
+            
+            # Handle off-policy splits
+            elif task in offpolicy_mappings:
+                categorized[offpolicy_mappings[task]].append(sample)
+            
+            # Handle other categories using the original generalization map
+            else:
+                # Use the original task-group mapping for other tasks
+                generalization_map = self.generalization_maps.get('task-group', {})
+                task_to_category = {}
+                for category, tasks in generalization_map.items():
+                    for task_name in tasks:
+                        task_to_category[task_name] = category
+                
+                category = task_to_category.get(task)
+                if category:
+                    categorized[category].append(sample)
+                else:
+                    # If not in generalization map, put in 'other' category
+                    categorized['other'].append(sample)
+        
+        # Apply size limit to off-policy datasets
+        offpolicy_categories = ['offpolicy_doluschat', 'offpolicy_truthisuniversal', 'offpolicy_halueval', 'offpolicy_liar']
+        for category in offpolicy_categories:
+            if category in categorized and len(categorized[category]) > offpolicy_max_size:
+                # Split into lies and truths
+                lies = [s for s in categorized[category] if s.get('did_lie', False)]
+                truths = [s for s in categorized[category] if not s.get('did_lie', False)]
+                
+                # Calculate target sizes (half each)
+                target_lies = min(len(lies), offpolicy_max_size // 2)
+                target_truths = min(len(truths), offpolicy_max_size // 2)
+                
+                # Sample randomly
+                if target_lies > 0:
+                    lies = random.sample(lies, target_lies)
+                if target_truths > 0:
+                    truths = random.sample(truths, target_truths)
+                
+                # Combine and shuffle
+                categorized[category] = lies + truths
+                random.shuffle(categorized[category])
+                
+                logger.info(f"Limited {category} to {len(categorized[category])} samples ({len(lies)} lies, {len(truths)} truths)")
+        
+        # Log the results
+        for category, cat_samples in categorized.items():
+            logger.info(f"Category '{category}': {len(cat_samples)} samples")
+        
         return dict(categorized)
 
     def balance_samples(self, samples: List[Dict], balance_strategy: Optional[str]) -> List[Dict]:
@@ -237,8 +323,8 @@ class LieDetectionDataProcessor:
         # Now merge consecutive assistant messages
         merged_messages, had_merge = merge_consecutive_assistant_messages(formatted_messages)
 
-        # Add lie prompt if configured
-        if self.lie_prompt:
+        # Add lie prompt if configured (only if lie_prompt is not None and not "None")
+        if self.lie_prompt and self.lie_prompt != "None":
             # Add the lie prompt as a user message
             merged_messages.append({'role': 'user', 'content': self.lie_prompt})
 
@@ -614,6 +700,8 @@ def main():
                         help='Fraction of training data for validation (0.0-0.5). '
                              'If 0.0, uses OOD data as validation with no test set.')
     parser.add_argument('--size', type=int, help='Size of training data (optional)', default=None)
+    parser.add_argument('--offpolicy-max-size', type=int, default=500, 
+                        help='Maximum size for off-policy datasets (default: 500, 250 lies + 250 truths)')
     parser.add_argument('--output-dir', default='.data', help='Base output directory for training files')
     parser.add_argument('--seed', type=int, default=42, help='Random seed for reproducibility')
 
@@ -693,9 +781,13 @@ def main():
     logger.info(f"  Output directory: {base_output_dir}")
     logger.info(f"  Upload to HF: {args.upload_to_hf}")
 
+    # Process lie prompt configuration
+    # Convert "None" string to None
+    lie_prompt = None if args.lie_prompt == "None" else args.lie_prompt
+
     # Log lie prompt configuration
-    if args.lie_prompt:
-        logger.info(f"  Lie prompt: '{args.lie_prompt}'")
+    if lie_prompt:
+        logger.info(f"  Lie prompt: '{lie_prompt}'")
         logger.info(f"  Did lie response: '{args.did_lie}'")
         logger.info(f"  Didn't lie response: '{args.didnt_lie}'")
     else:
@@ -727,7 +819,7 @@ def main():
 
     logger.info("  • Merging consecutive assistant messages in traces")
 
-    if args.lie_prompt:
+    if lie_prompt:
         logger.info("  • Adding lie detection prompt and response to conversations")
 
     if args.weighted:
@@ -750,11 +842,13 @@ def main():
     # Process samples with lie prompt configuration
     processor = LieDetectionDataProcessor(
         samples,
-        lie_prompt=args.lie_prompt if args.lie_prompt else None,
+        lie_prompt=lie_prompt,
         did_lie_response=args.did_lie,
         didnt_lie_response=args.didnt_lie,
         weighted=args.weighted
     )
+    # Set off-policy max size for the processor
+    processor.offpolicy_max_size = args.offpolicy_max_size
 
     # Deduplicate
     logger.info("")
@@ -880,6 +974,9 @@ def main():
                     "messages": merged_messages
                 })
             else:
+                # Create s3_metadata by copying all original sample fields except 'trace'
+                s3_metadata = {k: v for k, v in sample.items() if k != 'trace'}
+                
                 train_data.append({
                     "messages": merged_messages,
                     "meta": {
@@ -889,8 +986,9 @@ def main():
                         "task_id": sample.get('task_id', 'unknown'),
                         "category": sample.get('category', 'unknown'),
                         "had_consecutive_merge": had_merge,
-                        "has_lie_prompt": args.lie_prompt is not None
-                    }
+                        "has_lie_prompt": lie_prompt is not None
+                    },
+                    "s3_metadata": s3_metadata
                 })
 
         # Convert validation samples
@@ -909,6 +1007,9 @@ def main():
                     "messages": merged_messages
                 })
             else:
+                # Create s3_metadata by copying all original sample fields except 'trace'
+                s3_metadata = {k: v for k, v in sample.items() if k != 'trace'}
+                
                 val_data.append({
                     "messages": merged_messages,
                     "meta": {
@@ -918,8 +1019,9 @@ def main():
                         "task_id": sample.get('task_id', 'unknown'),
                         "category": sample.get('category', 'unknown'),
                         "had_consecutive_merge": had_merge,
-                        "has_lie_prompt": args.lie_prompt is not None
-                    }
+                        "has_lie_prompt": lie_prompt is not None
+                    },
+                    "s3_metadata": s3_metadata
                 })
 
         # Determine output directory
@@ -1032,8 +1134,8 @@ def main():
         logger.info(f"  A single train/validation split in: {base_output_dir}")
         logger.info("  - train.jsonl: Training data (with merged consecutive assistant messages)")
         logger.info("  - val.jsonl: Validation data (with merged consecutive assistant messages)")
-        if args.lie_prompt:
-            logger.info(f"  - Lie prompt added: '{args.lie_prompt}'")
+        if lie_prompt:
+            logger.info(f"  - Lie prompt added: '{lie_prompt}'")
         if args.weighted:
             logger.info("  - Weighted messages: All except final response have weight=0")
         logger.info("  - metadata.json: Dataset statistics")
@@ -1068,8 +1170,8 @@ def main():
         logger.info("  Each fold directory contains:")
         logger.info("  - train.jsonl: Training data for that fold (with merged consecutive assistant messages)")
         logger.info("  - val.jsonl: Validation data for that fold (with merged consecutive assistant messages)")
-        if args.lie_prompt:
-            logger.info(f"  - Lie prompt added: '{args.lie_prompt}'")
+        if lie_prompt:
+            logger.info(f"  - Lie prompt added: '{lie_prompt}'")
         if args.weighted:
             logger.info("  - Weighted messages: All except final response have weight=0")
         logger.info("  - metadata.json: Fold-specific statistics")
