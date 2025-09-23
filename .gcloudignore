@@ -1,8 +1,0 @@
-.git
-.gitignore
-__pycache__
-*.pyc
-.env
-.venv
-local_data/
-*.log

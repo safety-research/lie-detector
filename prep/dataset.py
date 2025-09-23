@@ -199,7 +199,7 @@ class LieDetectionDataProcessor:
 
         return dict(categorized)
 
-    def _categorize_with_special_splits(self, samples: List[Dict], offpolicy_max_size: int = 500) -> Dict[str, List[Dict]]:
+    def _categorize_with_special_splits(self, samples: List[Dict], max_size: int = 500) -> Dict[str, List[Dict]]:
         """Categorize samples with special handling for sandbagging and off-policy splits."""
         categorized = defaultdict(list)
         
@@ -211,12 +211,16 @@ class LieDetectionDataProcessor:
             'sandbagging_ascii'
         }
         
-        # Off-policy task mappings
+        # Off-policy task mappings - split into separate categories
         offpolicy_mappings = {
             'dolus-chat_off-policy': 'offpolicy_doluschat',
-            'truth-is-universal_off-policy': 'offpolicy_truthisuniversal', 
+            'off-policy_dolus_chat': 'offpolicy_doluschat',
+            'truth-is-universal_off-policy': 'offpolicy_truthisuniversal',
+            'off-policy_truth_is_universal': 'offpolicy_truthisuniversal',
             'halueval_off-policy': 'offpolicy_halueval',
-            'liar_off-policy': 'offpolicy_liar'
+            'off-policy_halueval': 'offpolicy_halueval',
+            'liar_off-policy': 'offpolicy_liar',
+            'off-policy_liar': 'offpolicy_liar'
         }
         
         for sample in samples:
@@ -251,17 +255,16 @@ class LieDetectionDataProcessor:
                     # If not in generalization map, put in 'other' category
                     categorized['other'].append(sample)
         
-        # Apply size limit to off-policy datasets
-        offpolicy_categories = ['offpolicy_doluschat', 'offpolicy_truthisuniversal', 'offpolicy_halueval', 'offpolicy_liar']
-        for category in offpolicy_categories:
-            if category in categorized and len(categorized[category]) > offpolicy_max_size:
+        # Apply size limit to ALL categories (not just off-policy)
+        for category in categorized:
+            if len(categorized[category]) > max_size:
                 # Split into lies and truths
                 lies = [s for s in categorized[category] if s.get('did_lie', False)]
                 truths = [s for s in categorized[category] if not s.get('did_lie', False)]
                 
                 # Calculate target sizes (half each)
-                target_lies = min(len(lies), offpolicy_max_size // 2)
-                target_truths = min(len(truths), offpolicy_max_size // 2)
+                target_lies = min(len(lies), max_size // 2)
+                target_truths = min(len(truths), max_size // 2)
                 
                 # Sample randomly
                 if target_lies > 0:
